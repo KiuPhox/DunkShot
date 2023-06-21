@@ -2,10 +2,18 @@ import GameplayScene from './scenes/GameplayScene'
 
 const MAX_SHOOT_FORCE = 1000
 
+const CIRC_COUNT = 5
+const CIRC_POSITION = [
+    [0, 30],
+    [32, 0],
+    [-32, 0],
+    [20, 20],
+    [-20, 20],
+]
+
 export default class Basket extends Phaser.GameObjects.Container {
-    private bottomCirc: Phaser.Physics.Arcade.Sprite
-    private leftCirc: Phaser.Physics.Arcade.Sprite
-    private rightCirc: Phaser.Physics.Arcade.Sprite
+    private centerCirc: Phaser.Physics.Arcade.Sprite
+    private otherCirc: Phaser.Physics.Arcade.Sprite[] = []
 
     private hasBall = false
 
@@ -14,6 +22,8 @@ export default class Basket extends Phaser.GameObjects.Container {
     private shootVelocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0)
 
     private player: Phaser.Physics.Arcade.Sprite
+
+    public emitter: Phaser.Events.EventEmitter = new Phaser.Events.EventEmitter()
 
     constructor(scene: GameplayScene, x: number, y: number, player: Phaser.Physics.Arcade.Sprite) {
         super(scene, x, y)
@@ -25,57 +35,45 @@ export default class Basket extends Phaser.GameObjects.Container {
         const graphics = scene.add.graphics()
         const shootLine = new Phaser.Geom.Line()
 
-        this.bottomCirc = scene.physics.add
-            .sprite(0, 30, '')
-            .setCircle(5)
-            .setOffset(10, 10)
+        this.centerCirc = scene.physics.add
+            .sprite(0, 20, '')
+            .setCircle(4)
+            .setOffset(12, 12)
             .setAlpha(0)
 
-        this.leftCirc = scene.physics.add
-            .sprite(30, 0, '')
-            .setCircle(5)
-            .setOffset(10, 10)
-            .setAlpha(0)
+        for (let i = 0; i < CIRC_COUNT; i++) {
+            this.otherCirc[i] = scene.physics.add
+                .sprite(CIRC_POSITION[i][0], CIRC_POSITION[i][1], '')
+                .setCircle(4)
+                .setOffset(12, 12)
+                .setAlpha(0)
 
-        this.rightCirc = scene.physics.add
-            .sprite(-30, 0, '')
-            .setCircle(5)
-            .setOffset(10, 10)
-            .setAlpha(0)
+            this.add(this.otherCirc[i])
+            scene.physics.add.existing(this.otherCirc[i])
+            ;(this.otherCirc[i].body as Phaser.Physics.Arcade.Body)
+                .setImmovable(true)
+                .setBounce(0).moves = false
+            scene.physics.add.collider(this.otherCirc[i], player)
+        }
 
         this.add(netSprite)
         this.add(basketSprite)
-        this.add(this.bottomCirc)
-        this.add(this.leftCirc)
-        this.add(this.rightCirc)
+        this.add(this.centerCirc)
 
-        scene.physics.add.existing(this.bottomCirc)
-        scene.physics.add.existing(this.leftCirc)
-        scene.physics.add.existing(this.rightCirc)
-        ;(this.bottomCirc.body as Phaser.Physics.Arcade.Body)
-            .setImmovable(true)
-            .setBounce(0).moves = false
-        ;(this.leftCirc.body as Phaser.Physics.Arcade.Body).setImmovable(true).setBounce(0).moves =
-            false
-        ;(this.rightCirc.body as Phaser.Physics.Arcade.Body).setImmovable(true).setBounce(0).moves =
-            false
+        scene.physics.add.existing(this.centerCirc)
 
-        scene.physics.add.collider(this.bottomCirc, player, () => {
-            this.hasBall = true
-            player.setVelocity(0)
-            player.setBounce(0)
-            player.setGravityY(0)
+        scene.physics.add.overlap(this.centerCirc, player, () => {
+            if (!this.hasBall) {
+                this.hasBall = true
+                player.setBounce(0)
+                this.emitter.emit('onHasBall', this)
+            }
         })
-
-        scene.physics.add.collider(this.leftCirc, player)
-        scene.physics.add.collider(this.rightCirc, player)
 
         scene.input.on('dragstart', (pointer: PointerEvent) => {
             if (this.hasBall) {
                 this.dragStartPos = new Phaser.Math.Vector2(pointer.x, pointer.y)
-
-                shootLine.setTo(x, y, x, y)
-
+                shootLine.setTo(this.x, this.y, this.x, this.y)
                 graphics.clear()
                 graphics.lineStyle(4, 0xf2a63b)
                 graphics.strokeLineShape(shootLine)
@@ -84,11 +82,13 @@ export default class Basket extends Phaser.GameObjects.Container {
 
         scene.input.on('drag', (pointer: PointerEvent) => {
             if (this.hasBall && this.dragStartPos) {
+                player.setGravityY(0)
+                player.setVelocity(0)
                 this.dragPos = new Phaser.Math.Vector2(pointer.x, pointer.y)
 
                 this.shootVelocity = new Phaser.Math.Vector2(
-                    (this.dragStartPos.x - this.dragPos.x) * 10,
-                    (this.dragStartPos.y - this.dragPos.y) * 10
+                    (this.dragStartPos.x - this.dragPos.x) * 7,
+                    (this.dragStartPos.y - this.dragPos.y) * 7
                 )
 
                 if (this.shootVelocity.length() > 10) {
@@ -96,11 +96,15 @@ export default class Basket extends Phaser.GameObjects.Container {
                     Phaser.Math.RotateAroundDistance(this.player, this.x, this.y, 0, 2)
                 }
 
-                shootLine.x2 = (this.dragPos.x - this.dragStartPos.x) * 3 + x
-                shootLine.y2 = (this.dragPos.y - this.dragStartPos.y) * 3 + y
+                shootLine.x2 = (this.dragPos.x - this.dragStartPos.x) * 2 + this.x
+                shootLine.y2 = (this.dragPos.y - this.dragStartPos.y) * 2 + this.y
 
                 Phaser.Geom.Line.RotateAroundPoint(shootLine, shootLine.getPointA(), Math.PI)
-                scene.dotLine.draw(shootLine)
+                scene.dotLine.drawTrajectoryLine(
+                    new Phaser.Math.Vector2(player.x, player.y),
+                    this.shootVelocity,
+                    1200
+                )
             }
         })
 
@@ -109,31 +113,12 @@ export default class Basket extends Phaser.GameObjects.Container {
                 graphics.clear()
                 this.hasBall = false
 
-                const shootForce =
-                    this.shootVelocity.length() > MAX_SHOOT_FORCE
-                        ? MAX_SHOOT_FORCE
-                        : this.shootVelocity.length()
-                this.shootVelocity.normalize()
-                player.setVelocity(
-                    this.shootVelocity.x * shootForce,
-                    this.shootVelocity.y * shootForce
-                )
+                player.setVelocity(this.shootVelocity.x, this.shootVelocity.y)
                 player.setBounce(0.5)
                 player.setGravityY(1200)
+                scene.shootSound.play()
                 scene.dotLine.clear()
             }
         })
-    }
-
-    public update(): void {
-        super.update()
-    }
-
-    public plot(velocity: Phaser.Math.Vector2, steps: number): Phaser.Math.Vector2[] {
-        const results: Phaser.Math.Vector2[] = []
-        for (let i = 0; i < steps; i++) {
-            //
-        }
-        return results
     }
 }

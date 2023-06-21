@@ -1,5 +1,5 @@
 export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
-    private dotGroup: Phaser.GameObjects.Group
+    private graphics: Phaser.GameObjects.Graphics
 
     constructor(
         scene: Phaser.Scene,
@@ -11,17 +11,26 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
 
     public init(): void {
         if (this.scene) {
-            this.dotGroup = this.scene.add.group({ key: 'dot', frameQuantity: 12 }).setDepth(-2)
-            Phaser.Actions.Spread(this.dotGroup.getChildren(), 'scale', 0.2, 0.3)
+            this.graphics = this.scene.add.graphics()
+        }
+    }
+    public drawTrajectoryLine(
+        position: Phaser.Math.Vector2,
+        velocity: Phaser.Math.Vector2,
+        gravity: number
+    ): void {
+        this.graphics.clear()
+        for (let i = 0; i < 10; i++) {
+            const t = i / 20
+            const x = position.x + velocity.x * t
+            const y = position.y + velocity.y * t + (gravity * t * t) / 2
+            this.graphics.fillStyle(0xf2a63b, 1)
+            this.graphics.setDepth(-2)
+            this.graphics.fillCircle(x, y, (15 - i) / 2)
         }
     }
 
-    public draw(line: Phaser.Geom.Line): void {
-        Phaser.Actions.SetAlpha(this.dotGroup.getChildren(), 1)
-        Phaser.Actions.PlaceOnLine(this.dotGroup.getChildren(), line)
-    }
-
     public clear(): void {
-        Phaser.Actions.SetAlpha(this.dotGroup.getChildren(), 0)
+        this.graphics.clear()
     }
 }

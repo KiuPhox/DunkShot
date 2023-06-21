@@ -8,8 +8,18 @@ export default class Preloader extends Phaser.Scene {
     }
 
     preload() {
-        //
+        const progress = this.add.graphics()
+
+        const { width, height } = this.scale
+
+        this.load.on('progress', (value: number) => {
+            progress.clear()
+            progress.fillStyle(0xf2a63b, 1)
+            progress.fillRect(0, height * 0.5, width * value, 30)
+        })
+
         this.load.on('complete', () => {
+            progress.destroy()
             console.log('Loading complete')
         })
         this.load.spritesheet('ball', 'assets/textures/ball-sheet.png', {
@@ -32,8 +42,8 @@ export default class Preloader extends Phaser.Scene {
     }
 
     private loadAudio(): void {
-        for (const audioName in AUDIO_NAMES) {
-            this.load.audio(audioName, `assets/audios/${audioName}.ogv`)
+        for (const audioName of AUDIO_NAMES) {
+            this.load.audio(audioName, `assets/audios/${audioName}.ogg`)
         }
     }
 }

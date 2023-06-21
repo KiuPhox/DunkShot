@@ -4,16 +4,16 @@ import GameplayScene from './scenes/GameplayScene'
 import DotLinePlugin from './plugins/DotLinePlugin'
 
 const config = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
+            // debug: true,
             gravity: { y: 0 },
         },
     },
     scale: {
-        width: 300,
+        width: 350,
         height: window.innerHeight,
         parent: 'phaser-game',
         mode: Phaser.Scale.FIT,
