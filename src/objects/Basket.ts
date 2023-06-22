@@ -146,6 +146,11 @@ export default class Basket extends Phaser.GameObjects.Container {
 
     private animateBasketEffect(): void {
         this.basketEffectSprite.setAlpha(1).setScale(0.22)
+        this.scene.add.tween({
+            targets: this,
+            rotation: { value: 0, duration: 300 },
+            ease: 'Quad.out',
+        })
 
         this.scene.add.tween({
             targets: this.basketEffectSprite,

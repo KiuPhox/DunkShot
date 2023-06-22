@@ -34,6 +34,9 @@ export default class Preloader extends Phaser.Scene {
         this.load.image('dot', 'assets/textures/dot-sheet.png')
         this.load.image('net', 'assets/textures/net-sheet.png')
         this.load.image('title', 'assets/textures/title-sheet.png')
+        this.load.image('reset-btn', 'assets/textures/btnreset-sheet.png')
+        this.load.image('settings-btn', 'assets/textures/btnsettings-sheet.png')
+        this.load.image('share-btn', 'assets/textures/btnshare-sheet.png')
 
         this.load.bitmapFont(
             'objet',
@@ -45,7 +48,7 @@ export default class Preloader extends Phaser.Scene {
     }
 
     create() {
-        this.scene.launch('game').launch('main-menu')
+        this.scene.start('game').launch('result').launch('main-menu')
     }
 
     private loadAudio(): void {

@@ -1,3 +1,6 @@
+import GameManager from '../GameManager'
+import { GameState } from '../GameState'
+
 export default class MainMenuScene extends Phaser.Scene {
     constructor() {
         super('main-menu')
@@ -13,10 +16,15 @@ export default class MainMenuScene extends Phaser.Scene {
             ease: 'Quad.out',
         })
 
-        const scoreText = this.add
-            .bitmapText(width * 0.5, height * 0.17, 'objet', '0', 90)
-            .setTint(0xc1c1c1)
-            .setDepth(-3)
-            .setOrigin(0.5)
+        this.input.on('pointerdown', () => {
+            if (GameManager.getGameState() === GameState.READY) {
+                GameManager.updateGameState(GameState.PLAYING)
+                this.add.tween({
+                    targets: title,
+                    alpha: { value: 0, duration: 500 },
+                    ease: 'Quad.out',
+                })
+            }
+        })
     }
 }

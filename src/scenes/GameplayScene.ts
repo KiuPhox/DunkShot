@@ -1,6 +1,9 @@
 import Phaser from 'phaser'
 import Basket from '../objects/Basket'
 import DotLinePlugin from '../plugins/DotLinePlugin'
+import GameManager from '../GameManager'
+import { GameState } from '../GameState'
+import ScoreManager from '../ScoreManager'
 
 export default class GameplayScene extends Phaser.Scene {
     private player: Phaser.Physics.Arcade.Sprite
@@ -12,15 +15,16 @@ export default class GameplayScene extends Phaser.Scene {
     private targetBasket: Basket
 
     private draggingZone: Phaser.GameObjects.Rectangle
+    private deadZone: Phaser.GameObjects.Rectangle
 
     private walls: Phaser.GameObjects.Rectangle[] = []
-
-    private scoreText: Phaser.GameObjects.BitmapText
 
     public dotLine: DotLinePlugin
 
     public shootSound: Phaser.Sound.BaseSound
     public kickSound: Phaser.Sound.BaseSound
+
+    private curScore: number
 
     constructor() {
         super('game')
@@ -32,6 +36,8 @@ export default class GameplayScene extends Phaser.Scene {
 
     create() {
         const { width, height } = this.scale
+        this.curScore = 0
+
         this.camera = this.cameras.main
 
         this.player = this.physics.add
@@ -48,6 +54,16 @@ export default class GameplayScene extends Phaser.Scene {
         this.draggingZone = this.add
             .rectangle(width * 0.5, height * 0.5, width, height, 0, 0)
             .setInteractive({ draggable: true })
+
+        // Dead Zone
+        this.deadZone = this.add.rectangle(width * 0.5, height, width, height * 0.2, 0, 0)
+        this.physics.add.existing(this.deadZone)
+        this.physics.add.overlap(this.deadZone, this.player, () => {
+            if (GameManager.getGameState() === GameState.PLAYING) {
+                GameManager.updateGameState(GameState.GAME_OVER)
+                this.camera.stopFollow()
+            }
+        })
 
         // Walls
         const wallPositions = [
@@ -92,13 +108,21 @@ export default class GameplayScene extends Phaser.Scene {
             // Swap target basket
             this.targetBasket = targetBasket
             targetBasket.y = this.math.integerInRange(basket.y - 150, basket.y - 50)
+            // targetBasket.x = this.math.integerInRange(
+            //     this.scale.width * 0.2,
+            //     this.scale.width * 0.8
+            // )
             targetBasket.rotation =
                 targetBasketIndex === 1
                     ? this.math.realInRange(0, 0.5)
                     : this.math.realInRange(-0.5, 0)
 
             this.draggingZone.y = targetBasket.y
+            this.deadZone.y = basket.y + 200
             this.walls.forEach((wall) => (wall.y = targetBasket.y))
+
+            this.curScore++
+            ScoreManager.updateScore(this.curScore)
         }
     }
 }
