@@ -1,9 +1,8 @@
 import Phaser from 'phaser'
-import Basket from '../Basket'
+import Basket from '../objects/Basket'
 import DotLinePlugin from '../plugins/DotLinePlugin'
 
 export default class GameplayScene extends Phaser.Scene {
-    private cursors: Phaser.Types.Input.Keyboard.CursorKeys
     private player: Phaser.Physics.Arcade.Sprite
     private math: Phaser.Math.RandomDataGenerator = new Phaser.Math.RandomDataGenerator()
 
@@ -14,14 +13,14 @@ export default class GameplayScene extends Phaser.Scene {
 
     private draggingZone: Phaser.GameObjects.Rectangle
 
-    private wall1: Phaser.GameObjects.Rectangle
-    private wall2: Phaser.GameObjects.Rectangle
+    private walls: Phaser.GameObjects.Rectangle[] = []
+
+    private scoreText: Phaser.GameObjects.BitmapText
 
     public dotLine: DotLinePlugin
-    public shootSound:
-        | Phaser.Sound.NoAudioSound
-        | Phaser.Sound.HTML5AudioSound
-        | Phaser.Sound.WebAudioSound
+
+    public shootSound: Phaser.Sound.BaseSound
+    public kickSound: Phaser.Sound.BaseSound
 
     constructor() {
         super('game')
@@ -50,23 +49,28 @@ export default class GameplayScene extends Phaser.Scene {
             .rectangle(width * 0.5, height * 0.5, width, height, 0, 0)
             .setInteractive({ draggable: true })
 
-        // Wall
-        this.wall1 = this.add.rectangle(0, height * 0.5, 24, height * 3, 0xc9c9c9)
-        this.wall2 = this.add.rectangle(width, height * 0.5, 24, height * 3, 0xc9c9c9)
+        // Walls
+        const wallPositions = [
+            { x: 0, y: height * 0.5 },
+            { x: width, y: height * 0.5 },
+        ]
+        this.walls = wallPositions.map((position) =>
+            this.add.rectangle(position.x, position.y, 24, height * 3, 0xc9c9c9)
+        )
 
-        this.physics.add.existing(this.wall1)
-        this.physics.add.existing(this.wall2)
-        ;(this.wall1.body as Phaser.Physics.Arcade.Body).setImmovable(true).moves = false
-        ;(this.wall2.body as Phaser.Physics.Arcade.Body).setImmovable(true).moves = false
-
-        this.physics.add.collider(this.player, this.wall1)
-        this.physics.add.collider(this.player, this.wall2)
+        this.walls.forEach((wall) => {
+            this.physics.add.existing(wall)
+            ;(wall.body as Phaser.Physics.Arcade.Body).setImmovable(true).moves = false
+            this.physics.add.collider(this.player, wall)
+        })
 
         this.baskets[0] = new Basket(this, width * 0.25, 400, this.player)
         this.baskets[1] = new Basket(this, width * 0.8, 350, this.player)
 
-        this.baskets[0].emitter.on('onHasBall', this.handleBallTouch)
-        this.baskets[1].emitter.on('onHasBall', this.handleBallTouch)
+        this.baskets.forEach((basket) => {
+            basket.emitter.on('onHasBall', this.handleBallTouch)
+            this.add.existing(basket)
+        })
 
         this.targetBasket = this.baskets[1]
 
@@ -77,27 +81,24 @@ export default class GameplayScene extends Phaser.Scene {
         this.camera.startFollow(this.player, false, 0, 0.01, -width / 4, height / 4)
 
         this.shootSound = this.sound.add('shoot')
+        this.kickSound = this.sound.add('kick')
     }
 
     private handleBallTouch = (basket: Basket) => {
         if (basket === this.targetBasket) {
             const targetBasketIndex = this.baskets.indexOf(basket)
+            const targetBasket = this.baskets[1 - targetBasketIndex]
 
             // Swap target basket
-            this.targetBasket = this.baskets[1 - targetBasketIndex]
-            this.targetBasket.y = this.math.integerInRange(basket.y - 150, basket.y - 50)
-
-            this.targetBasket.rotation =
+            this.targetBasket = targetBasket
+            targetBasket.y = this.math.integerInRange(basket.y - 150, basket.y - 50)
+            targetBasket.rotation =
                 targetBasketIndex === 1
                     ? this.math.realInRange(0, 0.5)
                     : this.math.realInRange(-0.5, 0)
-            this.draggingZone.y = this.targetBasket.y
-            this.wall1.y = this.targetBasket.y
-            this.wall2.y = this.targetBasket.y
-        }
-    }
 
-    update() {
-        //
+            this.draggingZone.y = targetBasket.y
+            this.walls.forEach((wall) => (wall.y = targetBasket.y))
+        }
     }
 }

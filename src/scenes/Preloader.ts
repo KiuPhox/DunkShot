@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-const AUDIO_NAMES = ['shoot']
+const AUDIO_NAMES = ['shoot', 'kick']
 
 export default class Preloader extends Phaser.Scene {
     constructor() {
@@ -33,12 +33,19 @@ export default class Preloader extends Phaser.Scene {
 
         this.load.image('dot', 'assets/textures/dot-sheet.png')
         this.load.image('net', 'assets/textures/net-sheet.png')
+        this.load.image('title', 'assets/textures/title-sheet.png')
+
+        this.load.bitmapFont(
+            'objet',
+            'assets/fonts/objet-extrabold.png',
+            'assets/fonts/objet-extrabold.xml'
+        )
 
         this.loadAudio()
     }
 
     create() {
-        this.scene.start('game')
+        this.scene.launch('game').launch('main-menu')
     }
 
     private loadAudio(): void {

@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import Preloader from './scenes/Preloader'
 import GameplayScene from './scenes/GameplayScene'
 import DotLinePlugin from './plugins/DotLinePlugin'
+import MainMenuScene from './scenes/MainMenuScene'
 
 const config = {
     type: Phaser.WEBGL,
@@ -13,7 +14,7 @@ const config = {
         },
     },
     scale: {
-        width: 350,
+        width: window.innerHeight / 1.7,
         height: window.innerHeight,
         parent: 'phaser-game',
         mode: Phaser.Scale.FIT,
@@ -30,7 +31,7 @@ const config = {
         ],
     },
     backgroundColor: '0xe5e5e5',
-    scene: [Preloader, GameplayScene],
+    scene: [Preloader, GameplayScene, MainMenuScene],
 }
 
 export default new Phaser.Game(config)
