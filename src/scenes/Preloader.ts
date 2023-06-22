@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-const AUDIO_NAMES = ['shoot', 'kick']
+const AUDIO_NAMES = ['shoot', 'kick', 'die', '1']
 
 export default class Preloader extends Phaser.Scene {
     constructor() {

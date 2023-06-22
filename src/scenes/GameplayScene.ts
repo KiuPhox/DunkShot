@@ -23,6 +23,7 @@ export default class GameplayScene extends Phaser.Scene {
 
     public shootSound: Phaser.Sound.BaseSound
     public kickSound: Phaser.Sound.BaseSound
+    public dieSound: Phaser.Sound.BaseSound
 
     private curScore: number
 
@@ -61,6 +62,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.physics.add.overlap(this.deadZone, this.player, () => {
             if (GameManager.getGameState() === GameState.PLAYING) {
                 GameManager.updateGameState(GameState.GAME_OVER)
+                this.dieSound.play()
                 this.camera.stopFollow()
             }
         })
@@ -98,6 +100,7 @@ export default class GameplayScene extends Phaser.Scene {
 
         this.shootSound = this.sound.add('shoot')
         this.kickSound = this.sound.add('kick')
+        this.dieSound = this.sound.add('die')
     }
 
     private handleBallTouch = (basket: Basket) => {

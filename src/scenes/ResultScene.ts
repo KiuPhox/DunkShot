@@ -52,6 +52,11 @@ export default class ResultScene extends Phaser.Scene {
             ease: 'Quad.out',
         })
 
+        this.add.tween({
+            targets: [ScoreManager.highScoreText, ScoreManager.bestScoreText],
+            alpha: { value: 1, duration: 500 },
+            ease: 'Quad.out',
+        })
         // GameManager.updateGameState(GameState.READY)
         // this.scene.start('result').launch('game').launch('main-menu')
     }
