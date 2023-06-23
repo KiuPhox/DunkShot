@@ -1,4 +1,4 @@
-import GameManager from '../GameManager'
+import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
 import Button from '../objects/Button'
 

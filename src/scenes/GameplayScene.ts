@@ -1,10 +1,11 @@
 import Phaser from 'phaser'
 import Basket from '../objects/Basket'
 import DotLinePlugin from '../plugins/DotLinePlugin'
-import GameManager from '../GameManager'
+import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
-import ScoreManager from '../ScoreManager'
 import Ball from '../objects/Ball'
+import ScoreManager from '../manager/ScoreManager'
+import SkinManager from '../manager/SkinManager'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -43,12 +44,14 @@ export default class GameplayScene extends Phaser.Scene {
 
         this.camera = this.cameras.main
 
+        SkinManager.init()
+
         this.ball = new Ball({
             scene: this,
             x: width * 0.25,
             y: height * 0.25,
             texture: 'ball',
-            frame: 0,
+            frame: SkinManager.getCurrentSkin(),
         })
             .setDepth(1)
             .setName('Ball')
@@ -67,7 +70,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.deadZone = this.add.rectangle(width * 0.5, height, width, height * 0.2, 0, 0)
         this.physics.add.existing(this.deadZone)
         this.physics.add.overlap(this.deadZone, this.ball, () => {
-            if (GameManager.getGameState() === GameState.PLAYING) {
+            if (GameManager.getCurrentState() === GameState.PLAYING) {
                 GameManager.updateGameState(GameState.GAME_OVER)
                 this.dieSound.play()
                 this.camera.stopFollow()

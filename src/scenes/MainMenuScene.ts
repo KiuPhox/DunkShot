@@ -1,9 +1,11 @@
-import GameManager from '../GameManager'
+import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
 import Button from '../objects/Button'
 
 export default class MainMenuScene extends Phaser.Scene {
     private pauseBtn: Button
+    private customizeBtn: Button
+
     constructor() {
         super('main-menu')
         GameManager.emitter.on('game-state-changed', this.onGameStateChanged)
@@ -34,11 +36,23 @@ export default class MainMenuScene extends Phaser.Scene {
             texture: 'pause-btn',
             scale: 0.15,
             pointerUpCallback: () => {
-                if (GameManager.getGameState() === GameState.PLAYING) {
+                if (GameManager.getCurrentState() === GameState.PLAYING) {
                     this.scene.sleep().pause('game').launch('pause')
                 }
             },
         }).setAlpha(0)
+
+        this.customizeBtn = new Button({
+            scene: this,
+            x: width * 0.7,
+            y: height * 0.8,
+            texture: 'customize-btn',
+            scale: 0.25,
+            pointerDownCallback: () => {
+                GameManager.updateGameState(GameState.CUSTOMIZE)
+                this.scene.stop('game').stop('result').start('customize')
+            },
+        })
 
         this.add.tween({
             targets: title,
@@ -47,11 +61,12 @@ export default class MainMenuScene extends Phaser.Scene {
         })
 
         this.input.on('pointerdown', () => {
-            if (GameManager.getGameState() === GameState.READY) {
+            if (GameManager.getCurrentState() === GameState.READY) {
                 GameManager.updateGameState(GameState.PLAYING)
                 help.stop()
+
                 this.add.tween({
-                    targets: [title, help],
+                    targets: [title, help, this.customizeBtn],
                     alpha: { value: 0, duration: 500 },
                     ease: 'Quad.out',
                 })

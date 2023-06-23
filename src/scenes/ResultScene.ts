@@ -1,7 +1,7 @@
-import GameManager from '../GameManager'
+import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
-import ScoreManager from '../ScoreManager'
 import Button from '../objects/Button'
+import ScoreManager from '../manager/ScoreManager'
 
 export default class ResultScene extends Phaser.Scene {
     private resetBtn: Phaser.GameObjects.Image

@@ -1,3 +1,5 @@
+import { SkinColor } from '../constant/SkinColor'
+import SkinManager from '../manager/SkinManager'
 import GameplayScene from '../scenes/GameplayScene'
 import { IBall } from '../types/ball'
 
@@ -26,8 +28,10 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
             frequency: 60,
         })
 
+        console.log('a')
+
         this.specialParticle = b.scene.add.particles(150, 450, 'special', {
-            color: [0xfff323, 0xffca03, 0xff5403],
+            color: SkinColor[SkinManager.getCurrentSkin()],
             colorEase: 'quad.out',
             lifespan: 700,
             angle: { min: 0, max: 360 },
@@ -45,6 +49,8 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
 
         b.scene.add.existing(this)
         b.scene.physics.add.existing(this)
+
+        SkinManager.emitter.on('skin-changed', this.onSkinChanged)
     }
 
     public shoot(velocity: Phaser.Math.Vector2): void {
@@ -79,5 +85,9 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         this.combo = 0
         this.specialParticle.stop()
         this.smokeParticle.stop()
+    }
+
+    private onSkinChanged = (skinFrame: number) => {
+        this.setFrame(skinFrame)
     }
 }

@@ -1,7 +1,8 @@
-import { GameState } from './GameState'
+import { GameState } from '../GameState'
 
 export default class GameManager {
-    private static gameState: GameState = GameState.READY
+    private static currentState: GameState = GameState.READY
+    private static previousState: GameState = GameState.READY
 
     public static emitter: Phaser.Events.EventEmitter
 
@@ -10,9 +11,10 @@ export default class GameManager {
     }
 
     public static updateGameState(gameState: GameState): void {
-        this.gameState = gameState
+        this.previousState = gameState
+        this.currentState = gameState
 
-        switch (this.gameState) {
+        switch (this.currentState) {
             case GameState.READY:
                 this.handleReadyState()
                 break
@@ -24,7 +26,7 @@ export default class GameManager {
                 break
         }
 
-        this.emitter.emit('game-state-changed', this.gameState)
+        this.emitter.emit('game-state-changed', this.currentState)
     }
 
     private static handleReadyState(): void {
@@ -39,7 +41,11 @@ export default class GameManager {
         //
     }
 
-    public static getGameState(): GameState {
-        return this.gameState
+    public static getCurrentState(): GameState {
+        return this.currentState
+    }
+
+    public static getPreviousState(): GameState {
+        return this.previousState
     }
 }
