@@ -28,7 +28,7 @@ export default class Preloader extends Phaser.Scene {
 
         this.load.spritesheet('basket', 'assets/textures/basket-sheet.png', {
             frameWidth: 354,
-            frameHeight: 113,
+            frameHeight: 56.5,
         })
 
         this.load.image('dot', 'assets/textures/dot-sheet.png')
@@ -37,6 +37,7 @@ export default class Preloader extends Phaser.Scene {
         this.load.image('reset-btn', 'assets/textures/btnreset-sheet.png')
         this.load.image('settings-btn', 'assets/textures/btnsettings-sheet.png')
         this.load.image('share-btn', 'assets/textures/btnshare-sheet.png')
+        this.load.image('e3', 'assets/textures/e3-sheet.png')
 
         this.load.bitmapFont(
             'objet',

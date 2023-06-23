@@ -1,11 +1,13 @@
 import GameManager from '../GameManager'
 import { GameState } from '../GameState'
 import ScoreManager from '../ScoreManager'
+import Button from '../objects/Button'
 
 export default class ResultScene extends Phaser.Scene {
     private resetBtn: Phaser.GameObjects.Image
     private settingsBtn: Phaser.GameObjects.Image
     private shareBtn: Phaser.GameObjects.Image
+
     private score: ScoreManager
 
     private curScore: number
@@ -22,23 +24,33 @@ export default class ResultScene extends Phaser.Scene {
 
         this.score = new ScoreManager(this)
 
-        this.resetBtn = this.add
-            .image(width * 0.5, height * 0.8, 'reset-btn')
-            .setScale(0)
-            .setInteractive()
+        this.resetBtn = new Button({
+            scene: this,
+            x: width * 0.5,
+            y: height * 0.8,
+            texture: 'reset-btn',
+            scale: 0.23,
+            pointerUpCallback: () => {
+                GameManager.updateGameState(GameState.READY)
+                this.scene.start('result').launch('game').launch('main-menu')
+            },
+        }).setScale(0)
 
-        this.resetBtn.on('pointerdown', () => {
-            this.resetBtn.setScale(0.2)
-        })
+        this.settingsBtn = new Button({
+            scene: this,
+            x: width * 0.7,
+            y: height * 0.8,
+            texture: 'settings-btn',
+            scale: 0.23,
+        }).setScale(0)
 
-        this.resetBtn.on('pointerup', () => {
-            GameManager.updateGameState(GameState.READY)
-            this.scene.start('result').launch('game').launch('main-menu')
-        })
-
-        this.settingsBtn = this.add.image(width * 0.7, height * 0.8, 'settings-btn').setScale(0)
-
-        this.shareBtn = this.add.image(width * 0.3, height * 0.8, 'share-btn').setScale(0)
+        this.shareBtn = new Button({
+            scene: this,
+            x: width * 0.3,
+            y: height * 0.8,
+            texture: 'share-btn',
+            scale: 0.23,
+        }).setScale(0)
     }
 
     private showResult(): void {
@@ -57,8 +69,6 @@ export default class ResultScene extends Phaser.Scene {
             alpha: { value: 1, duration: 500 },
             ease: 'Quad.out',
         })
-        // GameManager.updateGameState(GameState.READY)
-        // this.scene.start('result').launch('game').launch('main-menu')
     }
 
     private onGameStateChanged = (gameState: GameState) => {

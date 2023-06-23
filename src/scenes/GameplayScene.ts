@@ -24,6 +24,7 @@ export default class GameplayScene extends Phaser.Scene {
     public shootSound: Phaser.Sound.BaseSound
     public kickSound: Phaser.Sound.BaseSound
     public dieSound: Phaser.Sound.BaseSound
+    public hitSound: Phaser.Sound.BaseSound
 
     private curScore: number
 
@@ -42,12 +43,12 @@ export default class GameplayScene extends Phaser.Scene {
         this.camera = this.cameras.main
 
         this.player = this.physics.add
-            .sprite(width * 0.25, height * 0.5, 'ball', 0)
+            .sprite(width * 0.25, height * 0.7, 'ball', 0)
             .setDepth(1)
             .setName('Ball')
             .setCircle(116)
             .setScale(0.15)
-            .setDepth(-1)
+            .setDepth(0)
             .setGravityY(1200)
             .setFriction(0)
 
@@ -101,6 +102,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.shootSound = this.sound.add('shoot')
         this.kickSound = this.sound.add('kick')
         this.dieSound = this.sound.add('die')
+        this.hitSound = this.sound.add('1')
     }
 
     private handleBallTouch = (basket: Basket) => {
@@ -125,7 +127,20 @@ export default class GameplayScene extends Phaser.Scene {
             this.walls.forEach((wall) => (wall.y = targetBasket.y))
 
             this.curScore++
+            this.hitSound.play()
+
             ScoreManager.updateScore(this.curScore)
+        }
+    }
+
+    update(): void {
+        if (this.player.body) {
+            const velocityX = this.player.body.velocity.x
+            if (velocityX > 10) {
+                this.player.rotation += 0.05
+            } else if (velocityX < -10) {
+                this.player.rotation -= 0.05
+            }
         }
     }
 }

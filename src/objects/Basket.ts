@@ -22,7 +22,8 @@ export default class Basket extends Phaser.GameObjects.Container {
     private player: Phaser.Physics.Arcade.Sprite
 
     // Texture
-    private basketSprite: Phaser.GameObjects.Sprite
+    private basketTopSprite: Phaser.GameObjects.Sprite
+    private basketBottomSprite: Phaser.GameObjects.Sprite
     private basketEffectSprite: Phaser.GameObjects.Sprite
 
     public emitter: Phaser.Events.EventEmitter = new Phaser.Events.EventEmitter()
@@ -38,8 +39,9 @@ export default class Basket extends Phaser.GameObjects.Container {
     }
 
     private createBasketObjects(scene: GameplayScene): void {
-        this.basketSprite = scene.add.sprite(0, 0, 'basket', 0).setScale(0.22)
-        this.basketEffectSprite = scene.add.sprite(0, 0, 'basket', 0).setScale(0.22)
+        this.basketTopSprite = scene.add.sprite(0, -10, 'basket', 0).setScale(0.22)
+        this.basketBottomSprite = scene.add.sprite(0, 2, 'basket', 1).setScale(0.22)
+        this.basketEffectSprite = scene.add.sprite(0, 0, 'e3').setScale(0.2).setAlpha(0)
         const netSprite = scene.add.sprite(0, 15, 'net').setScale(0.22)
 
         this.centerCirc = scene.physics.add
@@ -64,7 +66,8 @@ export default class Basket extends Phaser.GameObjects.Container {
         }
 
         this.add(netSprite)
-        this.add(this.basketSprite)
+        this.add(this.basketTopSprite)
+        this.add(this.basketBottomSprite)
         this.add(this.centerCirc)
         this.add(this.basketEffectSprite)
 
@@ -145,7 +148,7 @@ export default class Basket extends Phaser.GameObjects.Container {
     }
 
     private animateBasketEffect(): void {
-        this.basketEffectSprite.setAlpha(1).setScale(0.22)
+        this.basketEffectSprite.setAlpha(1).setScale(0.2)
         this.scene.add.tween({
             targets: this,
             rotation: { value: 0, duration: 300 },
@@ -155,13 +158,14 @@ export default class Basket extends Phaser.GameObjects.Container {
         this.scene.add.tween({
             targets: this.basketEffectSprite,
             alpha: { value: 0, duration: 300 },
-            scale: { value: 0.4, duration: 300 },
+            scale: { value: 0.5, duration: 300 },
             ease: 'Quad.out',
         })
     }
 
     private changeBasketTexture(frame: number): void {
-        this.basketSprite.setTexture('basket', frame)
+        this.basketTopSprite.setTexture('basket', frame * 2)
+        this.basketBottomSprite.setTexture('basket', frame * 2 + 1)
     }
 
     private shootBall(): void {
