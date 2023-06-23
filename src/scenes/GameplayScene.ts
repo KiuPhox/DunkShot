@@ -43,7 +43,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.camera = this.cameras.main
 
         this.player = this.physics.add
-            .sprite(width * 0.25, height * 0.7, 'ball', 0)
+            .sprite(width * 0.25, height * 0.5, 'ball', 0)
             .setDepth(1)
             .setName('Ball')
             .setCircle(116)
@@ -85,6 +85,8 @@ export default class GameplayScene extends Phaser.Scene {
 
         this.baskets[0] = new Basket(this, width * 0.25, 400, this.player)
         this.baskets[1] = new Basket(this, width * 0.8, 350, this.player)
+
+        this.player.y = this.baskets[0].y
 
         this.baskets.forEach((basket) => {
             basket.emitter.on('onHasBall', this.handleBallTouch)
