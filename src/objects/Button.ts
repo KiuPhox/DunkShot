@@ -18,6 +18,7 @@ export default class Button extends Phaser.GameObjects.Image {
         this.on('pointerout', this.onPointerOut)
 
         this.defaultScale = b.scale
+        this.setScale(b.scale)
 
         b.scene.add.existing(this)
     }

@@ -4,6 +4,7 @@ import GameplayScene from './scenes/GameplayScene'
 import DotLinePlugin from './plugins/DotLinePlugin'
 import MainMenuScene from './scenes/MainMenuScene'
 import ResultScene from './scenes/ResultScene'
+import PauseScene from './scenes/PauseScene'
 
 const config = {
     type: Phaser.WEBGL,
@@ -32,7 +33,7 @@ const config = {
         ],
     },
     backgroundColor: '0xe5e5e5',
-    scene: [Preloader, GameplayScene, ResultScene, MainMenuScene],
+    scene: [Preloader, GameplayScene, ResultScene, MainMenuScene, PauseScene],
 }
 
 export default new Phaser.Game(config)
