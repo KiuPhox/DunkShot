@@ -130,7 +130,8 @@ export default class GameplayScene extends Phaser.Scene {
                     ? this.math.realInRange(0, 0.5)
                     : this.math.realInRange(-0.5, 0)
 
-            targetBasket.scale = 0
+            // There's a bug on mobile when set this scale to zero
+            targetBasket.scale = 0.01
 
             this.add.tween({
                 targets: targetBasket,
