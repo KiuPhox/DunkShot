@@ -44,20 +44,21 @@ export default class Preloader extends Phaser.Scene {
             frameHeight: 1960 / 6,
         })
 
-        this.load.image('dot', 'assets/textures/dot-sheet.png')
-        this.load.image('net', 'assets/textures/net-sheet.png')
-        this.load.image('title', 'assets/textures/title-sheet.png')
+        this.load.image('net', 'assets/textures/net.png')
+        this.load.image('title', 'assets/textures/title.png')
 
         // Buttons
-        this.load.image('reset-btn', 'assets/textures/btnreset-sheet.png')
-        this.load.image('settings-btn', 'assets/textures/btnsettings-sheet.png')
-        this.load.image('share-btn', 'assets/textures/btnshare-sheet.png')
-        this.load.image('pause-btn', 'assets/textures/btnpause-sheet.png')
-        this.load.image('resume-btn', 'assets/textures/btnresume-sheet.png')
-        this.load.image('mainmenu-btn', 'assets/textures/btnmainmenu-sheet.png')
+        this.load.image('reset-btn', 'assets/textures/btnreset.png')
+        this.load.image('settings-btn', 'assets/textures/btnsettings.png')
+        this.load.image('share-btn', 'assets/textures/btnshare.png')
+        this.load.image('pause-btn', 'assets/textures/btnpause.png')
+        this.load.image('resume-btn', 'assets/textures/btnresume.png')
+        this.load.image('mainmenu-btn', 'assets/textures/btnmainmenu.png')
 
         // Effects
-        this.load.image('e3', 'assets/textures/e3-sheet.png')
+        this.load.image('e3', 'assets/textures/e3.png')
+        this.load.image('circle', 'assets/textures/circle.png')
+        this.load.image('special', 'assets/textures/special.png')
 
         this.load.bitmapFont(
             'objet',

@@ -11,6 +11,7 @@ export default class ScoreManager {
 
         ScoreManager.curScore = 0
         ScoreManager.highScore = 0
+
         const highScoreStr = localStorage.getItem('highScore')
         if (highScoreStr !== null) {
             ScoreManager.highScore = parseInt(highScoreStr)

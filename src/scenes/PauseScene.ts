@@ -9,6 +9,7 @@ export default class PauseScene extends Phaser.Scene {
 
     create() {
         const { width, height } = this.scale
+
         const resumeBtn = new Button({
             scene: this,
             x: width * 0.5,

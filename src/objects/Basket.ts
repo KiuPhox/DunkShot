@@ -1,10 +1,11 @@
 import GameplayScene from '../scenes/GameplayScene'
+import Ball from './Ball'
 
 const CIRC_COUNT = 5
 const CIRC_POSITION = [
     [0, 30],
-    [32, 0],
-    [-32, 0],
+    [34, 0],
+    [-34, 0],
     [20, 20],
     [-20, 20],
 ]
@@ -19,19 +20,20 @@ export default class Basket extends Phaser.GameObjects.Container {
     private dragPos: Phaser.Math.Vector2
     private shootVelocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0)
 
-    private player: Phaser.Physics.Arcade.Sprite
+    private ball: Ball
 
     // Texture
     private basketTopSprite: Phaser.GameObjects.Sprite
     private basketBottomSprite: Phaser.GameObjects.Sprite
     private basketEffectSprite: Phaser.GameObjects.Sprite
+    private netSprite: Phaser.GameObjects.Sprite
 
     public emitter: Phaser.Events.EventEmitter = new Phaser.Events.EventEmitter()
 
-    constructor(scene: GameplayScene, x: number, y: number, player: Phaser.Physics.Arcade.Sprite) {
+    constructor(scene: GameplayScene, x: number, y: number, player: Ball) {
         super(scene, x, y)
 
-        this.player = player
+        this.ball = player
 
         this.createBasketObjects(scene)
         this.registerOverlapEvent(scene)
@@ -42,12 +44,12 @@ export default class Basket extends Phaser.GameObjects.Container {
         this.basketTopSprite = scene.add.sprite(0, -10, 'basket', 0).setScale(0.22)
         this.basketBottomSprite = scene.add.sprite(0, 2, 'basket', 1).setScale(0.22)
         this.basketEffectSprite = scene.add.sprite(0, 0, 'e3').setScale(0.2).setAlpha(0)
-        const netSprite = scene.add.sprite(0, 15, 'net').setScale(0.22)
+        this.netSprite = scene.add.sprite(0, 15, 'net').setScale(0.22)
 
         this.centerCirc = scene.physics.add
             .sprite(0, 20, '')
-            .setCircle(4)
-            .setOffset(12, 12)
+            .setCircle(6)
+            .setOffset(10, 10)
             .setAlpha(0)
 
         for (let i = 0; i < CIRC_COUNT; i++) {
@@ -62,10 +64,17 @@ export default class Basket extends Phaser.GameObjects.Container {
             ;(this.otherCirc[i].body as Phaser.Physics.Arcade.Body)
                 .setImmovable(true)
                 .setBounce(0).moves = false
-            scene.physics.add.collider(this.otherCirc[i], this.player)
+
+            if (i === 1 || i === 2) {
+                scene.physics.add.collider(this.otherCirc[i], this.ball, () => {
+                    this.ball.resetCombo()
+                })
+            } else {
+                scene.physics.add.collider(this.otherCirc[i], this.ball)
+            }
         }
 
-        this.add(netSprite)
+        this.add(this.netSprite)
         this.add(this.basketTopSprite)
         this.add(this.basketBottomSprite)
         this.add(this.centerCirc)
@@ -75,10 +84,10 @@ export default class Basket extends Phaser.GameObjects.Container {
     }
 
     private registerOverlapEvent(scene: GameplayScene): void {
-        scene.physics.add.overlap(this.centerCirc, this.player, () => {
+        scene.physics.add.overlap(this.centerCirc, this.ball, () => {
             if (!this.hasBall) {
                 this.hasBall = true
-                this.player.setBounce(0)
+                this.ball.setBounce(0)
                 this.emitter.emit('onHasBall', this)
                 this.changeBasketTexture(1)
                 this.animateBasketEffect()
@@ -105,7 +114,7 @@ export default class Basket extends Phaser.GameObjects.Container {
                 this.handleDragMovement(pointer)
                 this.updateShootLine(shootLine)
                 scene.dotLine.drawTrajectoryLine(
-                    new Phaser.Math.Vector2(this.player.x, this.player.y),
+                    new Phaser.Math.Vector2(this.ball.x, this.ball.y),
                     this.shootVelocity,
                     1200
                 )
@@ -117,7 +126,7 @@ export default class Basket extends Phaser.GameObjects.Container {
                 graphics.clear()
                 this.hasBall = false
 
-                this.shootBall()
+                this.ball.shoot(this.shootVelocity)
                 scene.dotLine.clear()
                 this.changeBasketTexture(0)
             }
@@ -125,8 +134,8 @@ export default class Basket extends Phaser.GameObjects.Container {
     }
 
     private handleDragMovement(pointer: PointerEvent): void {
-        this.player.setGravityY(0)
-        this.player.setVelocity(0)
+        this.ball.setGravityY(0)
+        this.ball.setVelocity(0)
         this.dragPos = new Phaser.Math.Vector2(pointer.x, pointer.y)
 
         this.shootVelocity = new Phaser.Math.Vector2(
@@ -136,7 +145,7 @@ export default class Basket extends Phaser.GameObjects.Container {
 
         if (this.shootVelocity.length() > 10) {
             this.rotation = this.shootVelocity.angle() + Math.PI / 2
-            Phaser.Math.RotateAroundDistance(this.player, this.x, this.y, 0, 2)
+            Phaser.Math.RotateAroundDistance(this.ball, this.x, this.y, 0, 2)
         }
     }
 
@@ -161,17 +170,24 @@ export default class Basket extends Phaser.GameObjects.Container {
             scale: { value: 0.5, duration: 300 },
             ease: 'Quad.out',
         })
+
+        this.scene.add.tween({
+            targets: this.ball,
+            y: { value: this.y + 13, duration: 100 },
+            yolo: true,
+            ease: 'Quad.out',
+        })
+
+        this.scene.add.tween({
+            targets: this.netSprite,
+            scaleY: { value: 0.3, duration: 100 },
+            yoyo: true,
+            ease: 'Quad.out',
+        })
     }
 
     private changeBasketTexture(frame: number): void {
         this.basketTopSprite.setTexture('basket', frame * 2)
         this.basketBottomSprite.setTexture('basket', frame * 2 + 1)
-    }
-
-    private shootBall(): void {
-        this.player.setVelocity(this.shootVelocity.x, this.shootVelocity.y)
-        this.player.setBounce(0.7)
-        this.player.setGravityY(1200)
-        ;(this.scene as GameplayScene).shootSound.play()
     }
 }

@@ -8,6 +8,7 @@ import PauseScene from './scenes/PauseScene'
 
 const config = {
     type: Phaser.WEBGL,
+
     physics: {
         default: 'arcade',
         arcade: {
@@ -32,6 +33,7 @@ const config = {
             },
         ],
     },
+    roundPixels: true,
     backgroundColor: '0xe5e5e5',
     scene: [Preloader, GameplayScene, ResultScene, MainMenuScene, PauseScene],
 }

@@ -4,9 +4,10 @@ import DotLinePlugin from '../plugins/DotLinePlugin'
 import GameManager from '../GameManager'
 import { GameState } from '../GameState'
 import ScoreManager from '../ScoreManager'
+import Ball from '../objects/Ball'
 
 export default class GameplayScene extends Phaser.Scene {
-    private player: Phaser.Physics.Arcade.Sprite
+    private ball: Ball
     private math: Phaser.Math.RandomDataGenerator = new Phaser.Math.RandomDataGenerator()
 
     private camera: Phaser.Cameras.Scene2D.Camera
@@ -42,8 +43,13 @@ export default class GameplayScene extends Phaser.Scene {
 
         this.camera = this.cameras.main
 
-        this.player = this.physics.add
-            .sprite(width * 0.25, height * 0.5, 'ball', 0)
+        this.ball = new Ball({
+            scene: this,
+            x: width * 0.25,
+            y: height * 0.25,
+            texture: 'ball',
+            frame: 0,
+        })
             .setDepth(1)
             .setName('Ball')
             .setCircle(116)
@@ -60,7 +66,7 @@ export default class GameplayScene extends Phaser.Scene {
         // Dead Zone
         this.deadZone = this.add.rectangle(width * 0.5, height, width, height * 0.2, 0, 0)
         this.physics.add.existing(this.deadZone)
-        this.physics.add.overlap(this.deadZone, this.player, () => {
+        this.physics.add.overlap(this.deadZone, this.ball, () => {
             if (GameManager.getGameState() === GameState.PLAYING) {
                 GameManager.updateGameState(GameState.GAME_OVER)
                 this.dieSound.play()
@@ -80,13 +86,13 @@ export default class GameplayScene extends Phaser.Scene {
         this.walls.forEach((wall) => {
             this.physics.add.existing(wall)
             ;(wall.body as Phaser.Physics.Arcade.Body).setImmovable(true).moves = false
-            this.physics.add.collider(this.player, wall)
+            this.physics.add.collider(this.ball, wall)
         })
 
-        this.baskets[0] = new Basket(this, width * 0.25, 400, this.player)
-        this.baskets[1] = new Basket(this, width * 0.8, 350, this.player)
+        this.baskets[0] = new Basket(this, width * 0.25, 400, this.ball)
+        this.baskets[1] = new Basket(this, width * 0.8, 350, this.ball)
 
-        this.player.y = this.baskets[0].y
+        this.ball.y = this.baskets[0].y
 
         this.baskets.forEach((basket) => {
             basket.emitter.on('onHasBall', this.handleBallTouch)
@@ -99,7 +105,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.add.existing(this.baskets[1])
 
         this.input.dragDistanceThreshold = 10
-        this.camera.startFollow(this.player, false, 0, 0.01, -width / 4, height / 4)
+        this.camera.startFollow(this.ball, false, 0, 0.01, -width / 4, height / 4)
 
         this.shootSound = this.sound.add('shoot')
         this.kickSound = this.sound.add('kick')
@@ -124,11 +130,20 @@ export default class GameplayScene extends Phaser.Scene {
                     ? this.math.realInRange(0, 0.5)
                     : this.math.realInRange(-0.5, 0)
 
+            targetBasket.scale = 0
+
+            this.add.tween({
+                targets: targetBasket,
+                scale: 1,
+                duration: 300,
+                ease: 'Quad.out',
+            })
+
             this.draggingZone.y = targetBasket.y
             this.deadZone.y = basket.y + 200
             this.walls.forEach((wall) => (wall.y = targetBasket.y))
-
-            this.curScore++
+            this.ball.increaseCombo()
+            this.curScore += this.ball.getCombo()
             this.hitSound.play()
 
             ScoreManager.updateScore(this.curScore)
@@ -136,12 +151,12 @@ export default class GameplayScene extends Phaser.Scene {
     }
 
     update(): void {
-        if (this.player.body) {
-            const velocityX = this.player.body.velocity.x
+        if (this.ball.body) {
+            const velocityX = this.ball.body.velocity.x
             if (velocityX > 10) {
-                this.player.rotation += 0.05
+                this.ball.rotation += 0.05
             } else if (velocityX < -10) {
-                this.player.rotation -= 0.05
+                this.ball.rotation -= 0.05
             }
         }
     }
