@@ -13,9 +13,9 @@ export default class MainMenuScene extends Phaser.Scene {
 
     create() {
         const { width, height } = this.scale
-        const title = this.add.image(width * 0.5, -height * 0.25, 'title').setScale(0.3)
+        const title = this.add.image(width * 0.5, -height * 0.25, 'title').setScale(0.65)
 
-        const help = this.add.sprite(width * 0.2, height * 0.88, 'help').setScale(0.3)
+        const help = this.add.sprite(width * 0.2, height * 0.88, 'help').setScale(0.6)
 
         help.anims.create({
             key: 'idle',
@@ -34,9 +34,10 @@ export default class MainMenuScene extends Phaser.Scene {
             x: width * 0.1,
             y: height * 0.035,
             texture: 'pause-btn',
-            scale: 0.15,
+            scale: 0.3,
             pointerUpCallback: () => {
                 if (GameManager.getCurrentState() === GameState.PLAYING) {
+                    GameManager.updateGameState(GameState.PAUSE)
                     this.scene.sleep().pause('game').launch('pause')
                 }
             },
@@ -45,9 +46,9 @@ export default class MainMenuScene extends Phaser.Scene {
         this.customizeBtn = new Button({
             scene: this,
             x: width * 0.7,
-            y: height * 0.8,
-            texture: 'customize-btn',
-            scale: 0.25,
+            y: height * 0.85,
+            texture: 'customize-mainmenu-btn',
+            scale: 0.5,
             pointerDownCallback: () => {
                 GameManager.updateGameState(GameState.CUSTOMIZE)
                 this.scene.stop('game').stop('result').start('customize')

@@ -23,13 +23,20 @@ export default class ResultScene extends Phaser.Scene {
         const { width, height } = this.scale
 
         this.score = new ScoreManager(this)
+        this.shareBtn = new Button({
+            scene: this,
+            x: width * 0.28,
+            y: height * 0.8,
+            texture: 'share-btn',
+            scale: 0.5,
+        }).setScale(0)
 
         this.resetBtn = new Button({
             scene: this,
             x: width * 0.5,
             y: height * 0.8,
             texture: 'reset-btn',
-            scale: 0.23,
+            scale: 0.5,
             pointerUpCallback: () => {
                 GameManager.updateGameState(GameState.READY)
                 this.scene.start('result').launch('game').launch('main-menu')
@@ -38,18 +45,10 @@ export default class ResultScene extends Phaser.Scene {
 
         this.settingsBtn = new Button({
             scene: this,
-            x: width * 0.7,
+            x: width * 0.72,
             y: height * 0.8,
             texture: 'settings-btn',
-            scale: 0.23,
-        }).setScale(0)
-
-        this.shareBtn = new Button({
-            scene: this,
-            x: width * 0.3,
-            y: height * 0.8,
-            texture: 'share-btn',
-            scale: 0.23,
+            scale: 0.5,
         }).setScale(0)
     }
 
@@ -60,7 +59,7 @@ export default class ResultScene extends Phaser.Scene {
 
         this.add.tween({
             targets: [this.resetBtn, this.settingsBtn, this.shareBtn],
-            scale: { value: 0.23, duration: 300 },
+            scale: { value: 0.5, duration: 300 },
             ease: 'Quad.out',
         })
 

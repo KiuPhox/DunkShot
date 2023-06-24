@@ -15,10 +15,15 @@ export default class CustomizeScene extends Phaser.Scene {
             x: width * 0.1,
             y: height * 0.05,
             texture: 'back-btn',
-            scale: 0.2,
+            scale: 0.4,
             pointerUpCallback: () => {
-                GameManager.updateGameState(GameState.READY)
-                this.scene.start('result').launch('game').launch('main-menu')
+                if (GameManager.getPreviousState() === GameState.READY) {
+                    GameManager.updateGameState(GameState.READY)
+                    this.scene.start('result').launch('game').launch('main-menu')
+                } else if (GameManager.getPreviousState() === GameState.PAUSE) {
+                    GameManager.updateGameState(GameState.PAUSE)
+                    this.scene.stop().wake('pause')
+                }
             },
         })
 
@@ -26,11 +31,11 @@ export default class CustomizeScene extends Phaser.Scene {
             for (let j = 0; j < 4; j++) {
                 const ballSkin = new Button({
                     scene: this,
-                    x: (width * i) / 4.5 + 60,
-                    y: (height * j) / 8 + 200,
+                    x: (width * i) / 4.5 + 120,
+                    y: (height * j) / 8 + 300,
                     texture: 'ball',
                     frame: i + j * 4,
-                    scale: 0.3,
+                    scale: 0.55,
                     pointerDownCallback: () => {
                         SkinManager.changeSkin(i + j * 4)
                     },

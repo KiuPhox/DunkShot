@@ -54,6 +54,7 @@ export default class Preloader extends Phaser.Scene {
         this.load.image('pause-btn', 'assets/textures/btnpause.png')
         this.load.image('resume-btn', 'assets/textures/btnresume.png')
         this.load.image('mainmenu-btn', 'assets/textures/btnmainmenu.png')
+        this.load.image('customize-mainmenu-btn', 'assets/textures/btncustomize-mainmenu.png')
         this.load.image('customize-btn', 'assets/textures/btncustomize.png')
         this.load.image('back-btn', 'assets/textures/btnback.png')
 

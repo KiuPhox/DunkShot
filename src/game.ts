@@ -18,8 +18,8 @@ const config = {
         },
     },
     scale: {
-        width: window.innerHeight / 1.7,
-        height: window.innerHeight,
+        width: 700,
+        height: 1280,
         parent: 'phaser-game',
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,

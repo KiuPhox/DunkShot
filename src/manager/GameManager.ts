@@ -11,7 +11,7 @@ export default class GameManager {
     }
 
     public static updateGameState(gameState: GameState): void {
-        this.previousState = gameState
+        this.previousState = this.currentState
         this.currentState = gameState
 
         switch (this.currentState) {

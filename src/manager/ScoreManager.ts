@@ -18,13 +18,13 @@ export default class ScoreManager {
         }
 
         ScoreManager.curScoreText = scene.add
-            .bitmapText(width * 0.5, height * 0.17, 'objet', '0', 90)
+            .bitmapText(width * 0.5, height * 0.17, 'objet', '0', 200)
             .setTint(0xc1c1c1)
             .setDepth(-3)
             .setOrigin(0.5)
 
         ScoreManager.bestScoreText = scene.add
-            .bitmapText(width * 0.5, height * 0.02, 'objet', 'Best Score', 20)
+            .bitmapText(width * 0.5, height * 0.02, 'objet', 'Best Score', 50)
             .setTint(0xfb8b25)
             .setDepth(-3)
             .setOrigin(0.5)
@@ -36,7 +36,7 @@ export default class ScoreManager {
                 height * 0.07,
                 'objet',
                 localStorage.getItem('highScore')?.toString(),
-                50
+                100
             )
             .setTint(0xfb8b25)
             .setDepth(-3)

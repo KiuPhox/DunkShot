@@ -17,33 +17,11 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         this._scene = b.scene
 
         // Effect
-        this.smokeParticle = b.scene.add.particles(150, 450, 'circle', {
-            color: [0xffffff, 0xf0f0f0, 0x888888],
-            alpha: { start: 0.8, end: 0.1, ease: 'sine.out' },
-            colorEase: 'quad.out',
-            lifespan: 500,
-            angle: { min: 0, max: 360 },
-            scale: 0.35,
-            speed: { min: 50, max: 60 },
-            frequency: 60,
-        })
+        this.addSmokeParticle()
+        this.addSpecialParticle()
 
-        console.log('a')
-
-        this.specialParticle = b.scene.add.particles(150, 450, 'special', {
-            color: SkinColor[SkinManager.getCurrentSkin()],
-            colorEase: 'quad.out',
-            lifespan: 700,
-            angle: { min: 0, max: 360 },
-            scale: { start: 0.2, end: 0 },
-            speed: { min: 10, max: 20 },
-            frequency: 60,
-        })
-
-        this.specialParticle.startFollow(this, -150, -450)
-        this.smokeParticle.startFollow(this, -150, -450)
-        this.specialParticle.stop()
         this.smokeParticle.stop()
+        this.specialParticle.stop()
 
         this.combo = 0
 
@@ -56,7 +34,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     public shoot(velocity: Phaser.Math.Vector2): void {
         this.setVelocity(velocity.x, velocity.y)
         this.setBounce(0.7)
-        this.setGravityY(1200)
+        this.setGravityY(2000)
         ;(this._scene as GameplayScene).shootSound.play()
     }
 
@@ -87,7 +65,43 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         this.smokeParticle.stop()
     }
 
+    private addSpecialParticle(): void {
+        this.specialParticle = this._scene.add.particles(150, 450, 'special', {
+            color: SkinColor[SkinManager.getCurrentSkin()],
+            colorEase: 'quad.out',
+            lifespan: 700,
+            angle: { min: 0, max: 360 },
+            scale: { start: 0.35, end: 0 },
+            speed: { min: 10, max: 20 },
+            frequency: 60,
+        })
+
+        this.specialParticle.startFollow(this, -150, -450)
+        this.specialParticle.setDepth(-4)
+    }
+
+    private addSmokeParticle(): void {
+        this.smokeParticle = this._scene.add.particles(150, 450, 'circle', {
+            color: [0xffffff, 0xf0f0f0, 0x888888],
+            alpha: { start: 0.8, end: 0.1, ease: 'sine.out' },
+            colorEase: 'quad.out',
+            lifespan: 500,
+            angle: { min: 0, max: 360 },
+            scale: 0.8,
+            speed: { min: 50, max: 60 },
+            frequency: 60,
+        })
+        this.smokeParticle.startFollow(this, -150, -450)
+        this.smokeParticle.setDepth(-5)
+    }
+
     private onSkinChanged = (skinFrame: number) => {
         this.setFrame(skinFrame)
+        this.specialParticle.destroy()
+        this.addSpecialParticle()
+
+        if (this.combo < 4) {
+            this.specialParticle.stop()
+        }
     }
 }

@@ -56,7 +56,7 @@ export default class GameplayScene extends Phaser.Scene {
             .setDepth(1)
             .setName('Ball')
             .setCircle(116)
-            .setScale(0.15)
+            .setScale(0.3)
             .setDepth(0)
             .setGravityY(1200)
             .setFriction(0)
@@ -83,7 +83,7 @@ export default class GameplayScene extends Phaser.Scene {
             { x: width, y: height * 0.5 },
         ]
         this.walls = wallPositions.map((position) =>
-            this.add.rectangle(position.x, position.y, 24, height * 3, 0xc9c9c9)
+            this.add.rectangle(position.x, position.y, 50, height * 3, 0xc9c9c9)
         )
 
         this.walls.forEach((wall) => {
@@ -123,7 +123,7 @@ export default class GameplayScene extends Phaser.Scene {
 
             // Swap target basket
             this.targetBasket = targetBasket
-            targetBasket.y = this.math.integerInRange(basket.y - 150, basket.y - 50)
+            targetBasket.y = this.math.integerInRange(basket.y - 400, basket.y - 100)
             // targetBasket.x = this.math.integerInRange(
             //     this.scale.width * 0.2,
             //     this.scale.width * 0.8
@@ -140,11 +140,11 @@ export default class GameplayScene extends Phaser.Scene {
                 targets: targetBasket,
                 scale: 1,
                 duration: 300,
-                ease: 'Quad.out',
+                ease: 'Back.out',
             })
 
             this.draggingZone.y = targetBasket.y
-            this.deadZone.y = basket.y + 200
+            this.deadZone.y = basket.y + 450
             this.walls.forEach((wall) => (wall.y = targetBasket.y))
             this.ball.increaseCombo()
             this.curScore += this.ball.getCombo()
@@ -153,15 +153,25 @@ export default class GameplayScene extends Phaser.Scene {
             ScoreManager.updateScore(this.curScore)
         }
     }
-
-    update(): void {
+    update(time: number, delta: number): void {
         if (this.ball.body) {
             const velocityX = this.ball.body.velocity.x
             if (velocityX > 10) {
-                this.ball.rotation += 0.05
+                this.ball.rotation += 0.01 * delta
             } else if (velocityX < -10) {
-                this.ball.rotation -= 0.05
+                this.ball.rotation -= 0.01 * delta
             }
         }
     }
+
+    // update(delta: number): void {
+    //     if (this.ball.body) {
+    //         const velocityX = this.ball.body.velocity.x
+    //         if (velocityX > 10) {
+    //             this.ball.rotation += 0.05
+    //         } else if (velocityX < -10) {
+    //             this.ball.rotation -= 0.05
+    //         }
+    //     }
+    // }
 }

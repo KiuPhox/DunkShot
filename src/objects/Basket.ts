@@ -3,11 +3,11 @@ import Ball from './Ball'
 
 const CIRC_COUNT = 5
 const CIRC_POSITION = [
-    [0, 30],
-    [34, 0],
-    [-34, 0],
-    [20, 20],
-    [-20, 20],
+    [0, 50],
+    [65, -10],
+    [-65, -10],
+    [45, 25],
+    [-45, 25],
 ]
 
 export default class Basket extends Phaser.GameObjects.Container {
@@ -41,22 +41,22 @@ export default class Basket extends Phaser.GameObjects.Container {
     }
 
     private createBasketObjects(scene: GameplayScene): void {
-        this.basketTopSprite = scene.add.sprite(0, -10, 'basket', 0).setScale(0.22)
-        this.basketBottomSprite = scene.add.sprite(0, 2, 'basket', 1).setScale(0.22)
-        this.basketEffectSprite = scene.add.sprite(0, 0, 'e3').setScale(0.2).setAlpha(0)
-        this.netSprite = scene.add.sprite(0, 15, 'net').setScale(0.22)
+        this.basketTopSprite = scene.add.sprite(0, -22, 'basket', 0).setScale(0.45)
+        this.basketBottomSprite = scene.add.sprite(0, 0, 'basket', 1).setScale(0.45)
+        this.basketEffectSprite = scene.add.sprite(0, 0, 'e3').setScale(0.42).setAlpha(0)
+        this.netSprite = scene.add.sprite(0, 25, 'net').setScale(0.45)
 
         this.centerCirc = scene.physics.add
-            .sprite(0, 20, '')
-            .setCircle(6)
-            .setOffset(10, 10)
+            .sprite(0, 35, '')
+            .setCircle(10)
+            .setOffset(7, 7)
             .setAlpha(0)
 
         for (let i = 0; i < CIRC_COUNT; i++) {
             this.otherCirc[i] = scene.physics.add
                 .sprite(CIRC_POSITION[i][0], CIRC_POSITION[i][1], '')
-                .setCircle(4)
-                .setOffset(12, 12)
+                .setCircle(6)
+                .setOffset(10, 10)
                 .setAlpha(0)
 
             this.add(this.otherCirc[i])
@@ -64,7 +64,6 @@ export default class Basket extends Phaser.GameObjects.Container {
             ;(this.otherCirc[i].body as Phaser.Physics.Arcade.Body)
                 .setImmovable(true)
                 .setBounce(0).moves = false
-
             if (i === 1 || i === 2) {
                 scene.physics.add.collider(this.otherCirc[i], this.ball, () => {
                     this.ball.resetCombo()
@@ -116,7 +115,7 @@ export default class Basket extends Phaser.GameObjects.Container {
                 scene.dotLine.drawTrajectoryLine(
                     new Phaser.Math.Vector2(this.ball.x, this.ball.y),
                     this.shootVelocity,
-                    1200
+                    2000
                 )
             }
         })
@@ -161,26 +160,26 @@ export default class Basket extends Phaser.GameObjects.Container {
         this.scene.add.tween({
             targets: this,
             rotation: { value: 0, duration: 300 },
-            ease: 'Quad.out',
+            ease: 'Back.out',
         })
 
         this.scene.add.tween({
             targets: this.basketEffectSprite,
             alpha: { value: 0, duration: 300 },
-            scale: { value: 0.5, duration: 300 },
+            scale: { value: 1, duration: 300 },
             ease: 'Quad.out',
         })
 
         this.scene.add.tween({
             targets: this.ball,
-            y: { value: this.y + 13, duration: 100 },
+            y: { value: this.y + 23, duration: 150 },
             yolo: true,
             ease: 'Quad.out',
         })
 
         this.scene.add.tween({
             targets: this.netSprite,
-            scaleY: { value: 0.3, duration: 100 },
+            scaleY: { value: 0.5, duration: 150 },
             yoyo: true,
             ease: 'Quad.out',
         })
