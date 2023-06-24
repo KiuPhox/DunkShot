@@ -21,6 +21,7 @@ export default class Basket extends Phaser.GameObjects.Container {
     private shootVelocity: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 0)
 
     private ball: Ball
+    private isAvaliable: boolean
 
     // Texture
     private basketTopSprite: Phaser.GameObjects.Sprite
@@ -38,6 +39,8 @@ export default class Basket extends Phaser.GameObjects.Container {
         this.createBasketObjects(scene)
         this.registerOverlapEvent(scene)
         this.registerDragEvents(scene)
+
+        this.isAvaliable = true
     }
 
     private createBasketObjects(scene: GameplayScene): void {
@@ -47,9 +50,9 @@ export default class Basket extends Phaser.GameObjects.Container {
         this.netSprite = scene.add.sprite(0, 25, 'net').setScale(0.45)
 
         this.centerCirc = scene.physics.add
-            .sprite(0, 35, '')
-            .setCircle(10)
-            .setOffset(7, 7)
+            .sprite(0, 15, '')
+            .setCircle(20)
+            .setOffset(-4, -4)
             .setAlpha(0)
 
         for (let i = 0; i < CIRC_COUNT; i++) {
@@ -84,7 +87,8 @@ export default class Basket extends Phaser.GameObjects.Container {
 
     private registerOverlapEvent(scene: GameplayScene): void {
         scene.physics.add.overlap(this.centerCirc, this.ball, () => {
-            if (!this.hasBall) {
+            if (!this.hasBall && this.isAvaliable) {
+                this.isAvaliable = false
                 this.hasBall = true
                 this.ball.setBounce(0)
                 this.emitter.emit('onHasBall', this)
@@ -128,6 +132,9 @@ export default class Basket extends Phaser.GameObjects.Container {
                 this.ball.shoot(this.shootVelocity)
                 scene.dotLine.clear()
                 this.changeBasketTexture(0)
+                this.scene.time.delayedCall(300, () => {
+                    this.isAvaliable = true
+                })
             }
         })
     }

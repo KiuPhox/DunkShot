@@ -54,8 +54,11 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
             if (this.combo === 4) {
                 this.specialParticle.start()
             }
-            this._scene.cameras.main.flash(500)
-            this._scene.cameras.main.shake(200, 0.002)
+            const rgb = Phaser.Display.Color.IntegerToRGB(
+                SkinColor[SkinManager.getCurrentSkin()][0]
+            )
+            this._scene.cameras.main.flash(300, rgb.r, rgb.g, rgb.b)
+            this._scene.cameras.main.shake(300, 0.003)
         }
     }
 
