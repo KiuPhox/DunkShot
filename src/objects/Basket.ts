@@ -69,7 +69,9 @@ export default class Basket extends Phaser.GameObjects.Container {
                 .setBounce(0).moves = false
             if (i === 1 || i === 2) {
                 scene.physics.add.collider(this.otherCirc[i], this.ball, () => {
-                    this.ball.resetCombo()
+                    if (!this.hasBall) {
+                        this.ball.resetCombo()
+                    }
                 })
             } else {
                 scene.physics.add.collider(this.otherCirc[i], this.ball)
