@@ -1,5 +1,6 @@
 import { CANVAS_WIDTH } from '../constant/CanvasSize'
 import GameplayScene from '../scenes/GameplayScene'
+import { Random } from '../utils/Random'
 import Ball from './Ball'
 import Star from './Star'
 
@@ -108,18 +109,45 @@ export default class Basket extends Phaser.GameObjects.Container {
     public setMoveable(moveable: boolean): void {
         if (this.moveTween) this.moveTween.destroy()
 
-        const dist = this.x > CANVAS_WIDTH / 2 ? -200 : 200
+        const dist = this.x > CANVAS_WIDTH / 2 ? Random.Float(-300, -200) : Random.Float(200, 300)
 
-        this.moveTween = this.scene.add.tween({
-            targets: this,
-            x: this.x + dist,
-            ease: 'Sine.easeInOut',
-            duration: 2000,
-            yoyo: true,
-            repeat: -1,
-        })
+        const isHorizontal = Random.Percent(50)
+
+        if (isHorizontal) {
+            this.moveTween = this.scene.add.tween({
+                targets: this,
+                x: this.x + dist,
+                ease: 'Sine.easeInOut',
+                duration: 2000,
+                yoyo: true,
+                repeat: -1,
+            })
+        } else {
+            this.moveTween = this.scene.add.tween({
+                targets: this,
+                y: this.y + dist,
+                ease: 'Sine.easeInOut',
+                duration: 2000,
+                yoyo: true,
+                repeat: -1,
+            })
+        }
 
         if (moveable) {
+            if (isHorizontal) {
+                (this.scene as GameplayScene).dotLine.drawLine(
+                    new Phaser.Math.Vector2(this.x, this.y),
+                    new Phaser.Math.Vector2(this.x + dist, this.y),
+                    8
+                )
+            } else {
+                (this.scene as GameplayScene).dotLine.drawLine(
+                    new Phaser.Math.Vector2(this.x, this.y),
+                    new Phaser.Math.Vector2(this.x, this.y + dist),
+                    8
+                )
+            }
+
             this.moveTween.play()
         } else {
             this.moveTween.pause()
@@ -141,23 +169,15 @@ export default class Basket extends Phaser.GameObjects.Container {
     }
 
     private registerDragEvents(scene: GameplayScene): void {
-        const graphics = scene.add.graphics()
-        const shootLine = new Phaser.Geom.Line()
-
         scene.input.on('dragstart', (pointer: PointerEvent) => {
             if (this.hasBall) {
                 this.dragStartPos = new Phaser.Math.Vector2(pointer.x, pointer.y)
-                shootLine.setTo(this.x, this.y, this.x, this.y)
-                graphics.clear()
-                graphics.lineStyle(4, 0xf2a63b)
-                graphics.strokeLineShape(shootLine)
             }
         })
 
         scene.input.on('drag', (pointer: PointerEvent) => {
             if (this.hasBall && this.dragStartPos) {
                 this.handleDragMovement(pointer)
-                this.updateShootLine(shootLine)
                 scene.dotLine.drawTrajectoryLine(
                     new Phaser.Math.Vector2(this.ball.x, this.ball.y),
                     this.shootVelocity,
@@ -168,11 +188,10 @@ export default class Basket extends Phaser.GameObjects.Container {
 
         scene.input.on('dragend', () => {
             if (this.hasBall && this.shootVelocity.length() > 100) {
-                graphics.clear()
                 this.hasBall = false
 
                 this.ball.shoot(this.shootVelocity)
-                scene.dotLine.clear()
+                scene.dotLine.clearTrajectoryLine()
                 this.changeBasketTexture(0)
                 this.scene.time.delayedCall(300, () => {
                     this.isAvaliable = true
@@ -195,13 +214,6 @@ export default class Basket extends Phaser.GameObjects.Container {
             this.rotation = this.shootVelocity.angle() + Math.PI / 2
             Phaser.Math.RotateAroundDistance(this.ball, this.x, this.y, 0, 2)
         }
-    }
-
-    private updateShootLine(shootLine: Phaser.Geom.Line): void {
-        shootLine.x2 = (this.dragPos.x - this.dragStartPos.x) * 2 + this.x
-        shootLine.y2 = (this.dragPos.y - this.dragStartPos.y) * 2 + this.y
-
-        Phaser.Geom.Line.RotateAroundPoint(shootLine, shootLine.getPointA(), Math.PI)
     }
 
     private animateBasketEffect(): void {

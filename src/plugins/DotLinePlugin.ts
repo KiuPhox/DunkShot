@@ -1,11 +1,12 @@
 import { CANVAS_WIDTH } from '../constant/CanvasSize'
 
-const DOT_COUNT = 10
+const INITIAL_DOT_COUNT = 10
 const FIRST_SIZE = 15
 const LAST_SIZE = 5
 
 export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
-    private graphics: Phaser.GameObjects.Graphics
+    private trajectoryLineGraphics: Phaser.GameObjects.Graphics
+    private normalLineGraphics: Phaser.GameObjects.Graphics
 
     constructor(
         scene: Phaser.Scene,
@@ -17,17 +18,26 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
 
     public init(): void {
         if (this.scene) {
-            this.graphics = this.scene.add.graphics()
+            this.trajectoryLineGraphics = this.scene.add.graphics()
+            this.normalLineGraphics = this.scene.add.graphics()
         }
     }
 
-    public drawLine(pointA: Phaser.Math.Vector2, pointB: Phaser.Math.Vector2): void {
-        for (let i = 0; i <= DOT_COUNT; i++) {
-            const x = ((pointB.x - pointA.x) / DOT_COUNT) * i
-            const y = ((pointB.y - pointA.y) / DOT_COUNT) * i
-            this.graphics.fillStyle(0xf2a63b, 1)
-            this.graphics.setDepth(-2)
-            this.graphics.fillCircle(x, y, LAST_SIZE)
+    public drawLine(
+        pointA: Phaser.Math.Vector2,
+        pointB: Phaser.Math.Vector2,
+        dotCount?: number
+    ): void {
+        this.normalLineGraphics.clear()
+
+        const count = dotCount ? dotCount : INITIAL_DOT_COUNT
+        for (let i = 0; i < count; i++) {
+            const x = ((pointB.x - pointA.x) / count) * i + pointA.x
+            const y = ((pointB.y - pointA.y) / count) * i + pointA.y
+
+            this.normalLineGraphics.fillStyle(0xc9c9c9, 1)
+            this.normalLineGraphics.setDepth(-2)
+            this.normalLineGraphics.fillCircle(x, y, 7)
         }
     }
 
@@ -36,20 +46,26 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
         velocity: Phaser.Math.Vector2,
         gravity: number
     ): void {
-        this.graphics.clear()
-        for (let i = 0; i <= DOT_COUNT; i++) {
+        this.trajectoryLineGraphics.clear()
+
+        for (let i = 0; i <= INITIAL_DOT_COUNT; i++) {
             const t = i / 20
             let x = position.x + velocity.x * t
             const y = position.y + velocity.y * t + (gravity * t * t) / 2
             if (x < 0) x = -x
             else if (x > CANVAS_WIDTH) x = CANVAS_WIDTH - (x - CANVAS_WIDTH)
-            this.graphics.fillStyle(0xf2a63b, 1)
-            this.graphics.setDepth(-2)
-            this.graphics.fillCircle(x, y, FIRST_SIZE / (i + 1) + LAST_SIZE)
+
+            this.trajectoryLineGraphics.fillStyle(0xf2a63b, 1)
+            this.trajectoryLineGraphics.setDepth(-2)
+            this.trajectoryLineGraphics.fillCircle(x, y, FIRST_SIZE / (i + 1) + LAST_SIZE)
         }
     }
 
-    public clear(): void {
-        this.graphics.clear()
+    public clearTrajectoryLine(): void {
+        this.trajectoryLineGraphics.clear()
+    }
+
+    public clearNormalLine(): void {
+        this.normalLineGraphics.clear()
     }
 }

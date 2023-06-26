@@ -74,8 +74,9 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
             colorEase: 'quad.out',
             lifespan: 700,
             angle: { min: 0, max: 360 },
+            rotate: { min: 0, max: 360 },
             scale: { start: 0.35, end: 0 },
-            speed: { min: 10, max: 20 },
+            speed: { min: 10, max: 30 },
             frequency: 60,
         })
 
@@ -90,6 +91,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
             colorEase: 'quad.out',
             lifespan: 500,
             angle: { min: 0, max: 360 },
+            rotate: { min: 0, max: 360 },
             scale: 0.8,
             speed: { min: 50, max: 60 },
             frequency: 60,

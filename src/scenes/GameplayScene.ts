@@ -9,6 +9,7 @@ import SkinManager from '../manager/SkinManager'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
 import { Random } from '../utils/Random'
 import { MOVEABLE_BASKET_CHANCES, STAR_CHANCES } from '../constant/Level'
+import PopUpManager from '../manager/PopUpManager'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -34,6 +35,8 @@ export default class GameplayScene extends Phaser.Scene {
     public starSound: Phaser.Sound.BaseSound
 
     private curScore: number
+    private bounceCounter: number
+    private previousCombo: number
 
     constructor() {
         super('game')
@@ -45,10 +48,13 @@ export default class GameplayScene extends Phaser.Scene {
 
     create() {
         this.curScore = 0
+        this.bounceCounter = 0
+        this.previousCombo = 0
 
         this.camera = this.cameras.main
 
         SkinManager.init()
+        PopUpManager.init(this)
 
         this.ball = new Ball({
             scene: this,
@@ -134,6 +140,8 @@ export default class GameplayScene extends Phaser.Scene {
                         wallHitEffect.setAlpha(0)
                     },
                 })
+
+                this.bounceCounter++
             })
         })
 
@@ -158,6 +166,8 @@ export default class GameplayScene extends Phaser.Scene {
 
     private handleBallTouch = (basket: Basket) => {
         if (basket === this.targetBasket) {
+            this.dotLine.clearNormalLine()
+
             this.generateNextBasket(basket)
 
             this.draggingZone.y = this.targetBasket.y
@@ -165,11 +175,36 @@ export default class GameplayScene extends Phaser.Scene {
             this.walls.forEach((wall) => (wall.y = this.targetBasket.y))
 
             this.ball.increaseCombo()
-            this.curScore += this.ball.getCombo()
-            this.pointSounds[this.ball.getCombo() - 1].play()
+
+            const combo = this.ball.getCombo()
+
+            this.curScore += combo
+            this.pointSounds[combo - 1].play()
 
             ScoreManager.updateScore(this.curScore)
+
+            // Pop Up
+
+            // Bounce
+            if (this.bounceCounter > 1) {
+                PopUpManager.create({ text: `Bank shot x${this.bounceCounter}`, color: 0x30a2ff })
+            } else if (this.bounceCounter === 1) {
+                PopUpManager.create({ text: `Bank shot`, color: 0x30a2ff })
+            }
+
+            // Air
+            if (this.previousCombo > 0 && combo > this.previousCombo) {
+                PopUpManager.create({ text: `Airball`, color: 0xfb8b25 })
+            }
+
+            this.previousCombo = combo
+
+            // Score
+            PopUpManager.create({ text: `+${combo}`, color: 0xd0532a })
+
+            PopUpManager.playTweenQueue(basket.x, basket.y - 50)
         }
+        this.bounceCounter = 0
     }
 
     private generateNextBasket(basket: Basket): void {
@@ -220,15 +255,4 @@ export default class GameplayScene extends Phaser.Scene {
             }
         }
     }
-
-    // update(delta: number): void {
-    //     if (this.ball.body) {
-    //         const velocityX = this.ball.body.velocity.x
-    //         if (velocityX > 10) {
-    //             this.ball.rotation += 0.05
-    //         } else if (velocityX < -10) {
-    //             this.ball.rotation -= 0.05
-    //         }
-    //     }
-    // }
 }

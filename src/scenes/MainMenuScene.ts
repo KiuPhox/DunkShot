@@ -83,7 +83,7 @@ export default class MainMenuScene extends Phaser.Scene {
             }
         })
 
-        const starManager = new StarManager(this)
+        new StarManager(this)
     }
 
     private onGameStateChanged = (gameState: GameState) => {
