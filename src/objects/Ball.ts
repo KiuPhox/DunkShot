@@ -1,4 +1,4 @@
-import { SkinColor } from '../constant/SkinColor'
+import { SPECIAL_COLOR } from '../constant/SkinColor'
 import SkinManager from '../manager/SkinManager'
 import GameplayScene from '../scenes/GameplayScene'
 import { IBall } from '../types/ball'
@@ -55,7 +55,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
                 this.specialParticle.start()
             }
             const rgb = Phaser.Display.Color.IntegerToRGB(
-                SkinColor[SkinManager.getCurrentSkin()][0]
+                SPECIAL_COLOR[SkinManager.getCurrentSkin()][0]
             )
             this._scene.cameras.main.flash(200, rgb.r, rgb.g, rgb.b)
             this._scene.cameras.main.shake(200, 0.003)
@@ -70,7 +70,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
 
     private addSpecialParticle(): void {
         this.specialParticle = this._scene.add.particles(150, 450, 'special', {
-            color: SkinColor[SkinManager.getCurrentSkin()],
+            color: SPECIAL_COLOR[SkinManager.getCurrentSkin()],
             colorEase: 'quad.out',
             lifespan: 700,
             angle: { min: 0, max: 360 },

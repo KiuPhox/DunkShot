@@ -1,11 +1,12 @@
 import Phaser from 'phaser'
-import Preloader from './scenes/Preloader'
+import PreloadScene from './scenes/PreloadScene'
 import GameplayScene from './scenes/GameplayScene'
 import DotLinePlugin from './plugins/DotLinePlugin'
 import MainMenuScene from './scenes/MainMenuScene'
 import ResultScene from './scenes/ResultScene'
 import PauseScene from './scenes/PauseScene'
 import CustomizeScene from './scenes/CustomizeScene'
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from './constant/CanvasSize'
 
 const config = {
     type: Phaser.WEBGL,
@@ -18,8 +19,8 @@ const config = {
         },
     },
     scale: {
-        width: 700,
-        height: 1280,
+        width: CANVAS_WIDTH,
+        height: CANVAS_HEIGHT,
         parent: 'phaser-game',
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -36,7 +37,7 @@ const config = {
     },
     roundPixels: true,
     backgroundColor: '0xe5e5e5',
-    scene: [Preloader, GameplayScene, ResultScene, MainMenuScene, CustomizeScene, PauseScene],
+    scene: [PreloadScene, GameplayScene, ResultScene, MainMenuScene, CustomizeScene, PauseScene],
 }
 
 export default new Phaser.Game(config)

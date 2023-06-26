@@ -1,5 +1,7 @@
+import { CANVAS_WIDTH } from '../constant/CanvasSize'
 import GameplayScene from '../scenes/GameplayScene'
 import Ball from './Ball'
+import Star from './Star'
 
 const CIRC_COUNT = 5
 const CIRC_POSITION = [
@@ -29,7 +31,13 @@ export default class Basket extends Phaser.GameObjects.Container {
     private basketEffectSprite: Phaser.GameObjects.Sprite
     private netSprite: Phaser.GameObjects.Sprite
 
+    // Effect
     public emitter: Phaser.Events.EventEmitter = new Phaser.Events.EventEmitter()
+
+    // Tween
+    private moveTween: Phaser.Tweens.Tween
+
+    public star: Star
 
     constructor(scene: GameplayScene, x: number, y: number, player: Ball) {
         super(scene, x, y)
@@ -44,10 +52,10 @@ export default class Basket extends Phaser.GameObjects.Container {
     }
 
     private createBasketObjects(scene: GameplayScene): void {
-        this.basketTopSprite = scene.add.sprite(0, -22, 'basket', 0).setScale(0.45)
-        this.basketBottomSprite = scene.add.sprite(0, 0, 'basket', 1).setScale(0.45)
-        this.basketEffectSprite = scene.add.sprite(0, 0, 'e3').setScale(0.42).setAlpha(0)
-        this.netSprite = scene.add.sprite(0, 25, 'net').setScale(0.45)
+        this.basketTopSprite = scene.add.sprite(0, -22, 'basket', 0).setScale(0.4)
+        this.basketBottomSprite = scene.add.sprite(0, 0, 'basket', 1).setScale(0.4)
+        this.basketEffectSprite = scene.add.sprite(0, 0, 'e3').setScale(0.4).setAlpha(0)
+        this.netSprite = scene.add.sprite(0, 25, 'net').setScale(0.4)
 
         this.centerCirc = scene.physics.add
             .sprite(0, 15, '')
@@ -87,6 +95,37 @@ export default class Basket extends Phaser.GameObjects.Container {
         scene.physics.add.existing(this.centerCirc)
     }
 
+    public createStar(scene: GameplayScene): void {
+        if (!this.star) {
+            this.star = new Star({ scene: scene, x: 0, y: -70, ball: this.ball }).setScale(0.3)
+            this.add(this.star)
+        }
+
+        this.star.setAlpha(1)
+        this.star.isActive = true
+    }
+
+    public setMoveable(moveable: boolean): void {
+        if (this.moveTween) this.moveTween.destroy()
+
+        const dist = this.x > CANVAS_WIDTH / 2 ? -200 : 200
+
+        this.moveTween = this.scene.add.tween({
+            targets: this,
+            x: this.x + dist,
+            ease: 'Sine.easeInOut',
+            duration: 2000,
+            yoyo: true,
+            repeat: -1,
+        })
+
+        if (moveable) {
+            this.moveTween.play()
+        } else {
+            this.moveTween.pause()
+        }
+    }
+
     private registerOverlapEvent(scene: GameplayScene): void {
         scene.physics.add.overlap(this.centerCirc, this.ball, () => {
             if (!this.hasBall && this.isAvaliable) {
@@ -96,6 +135,7 @@ export default class Basket extends Phaser.GameObjects.Container {
                 this.emitter.emit('onHasBall', this)
                 this.changeBasketTexture(1)
                 this.animateBasketEffect()
+                this.setMoveable(false)
             }
         })
     }

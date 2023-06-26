@@ -1,4 +1,4 @@
-export const SkinColor = [
+export const SPECIAL_COLOR = [
     [0xfff323, 0xffca03, 0xff5403],
     [0xff2171, 0xff90bb, 0xffe4a7],
     [0xf2d388, 0xc98474, 0x874c62],

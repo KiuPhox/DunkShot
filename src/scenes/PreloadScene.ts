@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 
 const AUDIO_NAMES = ['shoot', 'kick', 'die', '1']
 
-export default class Preloader extends Phaser.Scene {
+export default class PreloadScene extends Phaser.Scene {
     constructor() {
         super('preloader')
     }
@@ -30,6 +30,7 @@ export default class Preloader extends Phaser.Scene {
             progress.destroy()
             console.log('Loading complete')
         })
+
         this.load.spritesheet('ball', 'assets/textures/ball-sheet.png', {
             frameWidth: 232,
         })
@@ -46,6 +47,8 @@ export default class Preloader extends Phaser.Scene {
 
         this.load.image('net', 'assets/textures/net.png')
         this.load.image('title', 'assets/textures/title.png')
+        this.load.image('star', 'assets/textures/star.png')
+        this.load.image('mini-wall', 'assets/textures/miniwall.png')
 
         // Buttons
         this.load.image('reset-btn', 'assets/textures/btnreset.png')

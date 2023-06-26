@@ -1,6 +1,8 @@
 import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
 import Button from '../objects/Button'
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constant/CanvasSize'
+import StarManager from '../manager/StarManager'
 
 export default class MainMenuScene extends Phaser.Scene {
     private pauseBtn: Button
@@ -12,10 +14,11 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     create() {
-        const { width, height } = this.scale
-        const title = this.add.image(width * 0.5, -height * 0.25, 'title').setScale(0.65)
+        const title = this.add
+            .image(CANVAS_WIDTH * 0.5, -CANVAS_HEIGHT * 0.25, 'title')
+            .setScale(0.5)
 
-        const help = this.add.sprite(width * 0.2, height * 0.88, 'help').setScale(0.6)
+        const help = this.add.sprite(CANVAS_WIDTH * 0.2, CANVAS_HEIGHT * 0.88, 'help').setScale(0.6)
 
         help.anims.create({
             key: 'idle',
@@ -31,10 +34,10 @@ export default class MainMenuScene extends Phaser.Scene {
 
         this.pauseBtn = new Button({
             scene: this,
-            x: width * 0.1,
-            y: height * 0.035,
+            x: CANVAS_WIDTH * 0.06,
+            y: CANVAS_HEIGHT * 0.035,
             texture: 'pause-btn',
-            scale: 0.3,
+            scale: 0.25,
             pointerUpCallback: () => {
                 if (GameManager.getCurrentState() === GameState.PLAYING) {
                     GameManager.updateGameState(GameState.PAUSE)
@@ -45,10 +48,10 @@ export default class MainMenuScene extends Phaser.Scene {
 
         this.customizeBtn = new Button({
             scene: this,
-            x: width * 0.7,
-            y: height * 0.85,
+            x: CANVAS_WIDTH * 0.7,
+            y: CANVAS_HEIGHT * 0.85,
             texture: 'customize-mainmenu-btn',
-            scale: 0.5,
+            scale: 0.4,
             pointerDownCallback: () => {
                 GameManager.updateGameState(GameState.CUSTOMIZE)
                 this.scene.stop('game').stop('result').start('customize')
@@ -57,7 +60,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
         this.add.tween({
             targets: title,
-            y: { value: height * 0.25, duration: 500 },
+            y: { value: CANVAS_HEIGHT * 0.25, duration: 500 },
             ease: 'Quad.out',
         })
 
@@ -79,6 +82,8 @@ export default class MainMenuScene extends Phaser.Scene {
                 })
             }
         })
+
+        const starManager = new StarManager(this)
     }
 
     private onGameStateChanged = (gameState: GameState) => {

@@ -6,6 +6,9 @@ import { GameState } from '../GameState'
 import Ball from '../objects/Ball'
 import ScoreManager from '../manager/ScoreManager'
 import SkinManager from '../manager/SkinManager'
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
+import { Random } from '../utils/Random'
+import { MOVEABLE_BASKET_CHANCES, STAR_CHANCES } from '../constant/Level'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -39,7 +42,6 @@ export default class GameplayScene extends Phaser.Scene {
     }
 
     create() {
-        const { width, height } = this.scale
         this.curScore = 0
 
         this.camera = this.cameras.main
@@ -48,26 +50,33 @@ export default class GameplayScene extends Phaser.Scene {
 
         this.ball = new Ball({
             scene: this,
-            x: width * 0.25,
-            y: height * 0.25,
+            x: CANVAS_WIDTH * 0.25,
+            y: CANVAS_HEIGHT * 0.25,
             texture: 'ball',
             frame: SkinManager.getCurrentSkin(),
         })
             .setDepth(1)
             .setName('Ball')
             .setCircle(116)
-            .setScale(0.3)
+            .setScale(0.27)
             .setDepth(0)
             .setGravityY(1200)
             .setFriction(0)
 
         // Dragging Zone
         this.draggingZone = this.add
-            .rectangle(width * 0.5, height * 0.5, width, height, 0, 0)
+            .rectangle(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.5, CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0)
             .setInteractive({ draggable: true })
 
         // Dead Zone
-        this.deadZone = this.add.rectangle(width * 0.5, height, width, height * 0.2, 0, 0)
+        this.deadZone = this.add.rectangle(
+            CANVAS_WIDTH * 0.5,
+            CANVAS_HEIGHT,
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT * 0.2,
+            0,
+            0
+        )
         this.physics.add.existing(this.deadZone)
         this.physics.add.overlap(this.deadZone, this.ball, () => {
             if (GameManager.getCurrentState() === GameState.PLAYING) {
@@ -79,11 +88,13 @@ export default class GameplayScene extends Phaser.Scene {
 
         // Walls
         const wallPositions = [
-            { x: 0, y: height * 0.5 },
-            { x: width, y: height * 0.5 },
+            { x: 0, y: CANVAS_HEIGHT * 0.5, origin: { x: 1, y: 0.5 } },
+            { x: CANVAS_WIDTH, y: CANVAS_HEIGHT * 0.5, origin: { x: 0, y: 0.5 } },
         ]
         this.walls = wallPositions.map((position) =>
-            this.add.rectangle(position.x, position.y, 50, height * 3, 0xc9c9c9)
+            this.add
+                .rectangle(position.x, position.y, 50, CANVAS_HEIGHT * 3, 0xc9c9c9)
+                .setOrigin(position.origin.x, position.origin.y)
         )
 
         this.walls.forEach((wall) => {
@@ -92,8 +103,8 @@ export default class GameplayScene extends Phaser.Scene {
             this.physics.add.collider(this.ball, wall)
         })
 
-        this.baskets[0] = new Basket(this, width * 0.25, 400, this.ball)
-        this.baskets[1] = new Basket(this, width * 0.8, 350, this.ball)
+        this.baskets[0] = new Basket(this, CANVAS_WIDTH * 0.25, 400, this.ball)
+        this.baskets[1] = new Basket(this, CANVAS_WIDTH * 0.8, 350, this.ball)
 
         this.ball.y = this.baskets[0].y
 
@@ -108,7 +119,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.add.existing(this.baskets[1])
 
         this.input.dragDistanceThreshold = 10
-        this.camera.startFollow(this.ball, false, 0, 0.01, -width / 4, height / 4)
+        this.camera.startFollow(this.ball, false, 0, 0.01, -CANVAS_WIDTH / 4, CANVAS_HEIGHT / 4)
 
         this.shootSound = this.sound.add('shoot')
         this.kickSound = this.sound.add('kick')
@@ -118,34 +129,12 @@ export default class GameplayScene extends Phaser.Scene {
 
     private handleBallTouch = (basket: Basket) => {
         if (basket === this.targetBasket) {
-            const targetBasketIndex = this.baskets.indexOf(basket)
-            const targetBasket = this.baskets[1 - targetBasketIndex]
+            this.generateNextBasket(basket)
 
-            // Swap target basket
-            this.targetBasket = targetBasket
-            targetBasket.y = this.math.integerInRange(basket.y - 400, basket.y - 100)
-            // targetBasket.x = this.math.integerInRange(
-            //     this.scale.width * 0.2,
-            //     this.scale.width * 0.8
-            // )
-            targetBasket.rotation =
-                targetBasketIndex === 1
-                    ? this.math.realInRange(0, 0.5)
-                    : this.math.realInRange(-0.5, 0)
-
-            // There's a bug on mobile when set this scale to zero
-            targetBasket.scale = 0.01
-
-            this.add.tween({
-                targets: targetBasket,
-                scale: 1,
-                duration: 300,
-                ease: 'Back.out',
-            })
-
-            this.draggingZone.y = targetBasket.y
+            this.draggingZone.y = this.targetBasket.y
             this.deadZone.y = basket.y + 450
-            this.walls.forEach((wall) => (wall.y = targetBasket.y))
+            this.walls.forEach((wall) => (wall.y = this.targetBasket.y))
+
             this.ball.increaseCombo()
             this.curScore += this.ball.getCombo()
             this.hitSound.play()
@@ -153,6 +142,45 @@ export default class GameplayScene extends Phaser.Scene {
             ScoreManager.updateScore(this.curScore)
         }
     }
+
+    private generateNextBasket(basket: Basket): void {
+        const targetBasketIndex = this.baskets.indexOf(basket)
+        const nextTargetBasket = this.baskets[1 - targetBasketIndex]
+
+        // Swap target basket
+        this.targetBasket = nextTargetBasket
+
+        this.targetBasket.y = this.math.integerInRange(basket.y - 400, basket.y - 100)
+
+        if (targetBasketIndex === 0) {
+            // Right basket
+            this.targetBasket.x = this.math.integerInRange(CANVAS_WIDTH * 0.6, CANVAS_WIDTH * 0.8)
+            this.targetBasket.rotation = this.math.realInRange(-0.5, 0)
+        } else {
+            // Left basket
+            this.targetBasket.x = this.math.integerInRange(CANVAS_WIDTH * 0.2, CANVAS_WIDTH * 0.4)
+            this.targetBasket.rotation = this.math.realInRange(0, 0.5)
+        }
+
+        if (Random.Percent(STAR_CHANCES)) {
+            this.targetBasket.createStar(this)
+        }
+
+        if (Random.Percent(MOVEABLE_BASKET_CHANCES)) {
+            this.targetBasket.setMoveable(true)
+        }
+
+        // There's a bug on mobile when set this scale to zero
+        this.targetBasket.scale = 0.01
+
+        this.add.tween({
+            targets: this.targetBasket,
+            scale: 1,
+            duration: 300,
+            ease: 'Back.out',
+        })
+    }
+
     update(time: number, delta: number): void {
         if (this.ball.body) {
             const velocityX = this.ball.body.velocity.x
