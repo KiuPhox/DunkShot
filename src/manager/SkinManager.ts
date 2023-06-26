@@ -1,3 +1,5 @@
+import { SPECIAL_COLOR } from '../constant/SkinColor'
+
 export default class SkinManager {
     private static currentSkin: number
 
@@ -18,6 +20,10 @@ export default class SkinManager {
         this.currentSkin = skinIndex
         localStorage.setItem('currentSkin', skinIndex.toString())
         this.emitter.emit('skin-changed', skinIndex)
+    }
+
+    public static getCurrentSkinColors(): number[] {
+        return SPECIAL_COLOR[this.currentSkin]
     }
 
     public static getCurrentSkin(): number {

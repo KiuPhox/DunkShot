@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-const AUDIO_NAMES = ['shoot', 'kick', 'die', '1']
+const AUDIO_NAMES = ['shoot', 'kick', 'die']
 
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -63,6 +63,7 @@ export default class PreloadScene extends Phaser.Scene {
 
         // Effects
         this.load.image('e3', 'assets/textures/e3.png')
+        this.load.image('e4', 'assets/textures/e4.png')
         this.load.image('circle', 'assets/textures/circle.png')
         this.load.image('special', 'assets/textures/special.png')
 
@@ -83,5 +84,12 @@ export default class PreloadScene extends Phaser.Scene {
         for (const audioName of AUDIO_NAMES) {
             this.load.audio(audioName, `assets/audios/${audioName}.ogg`)
         }
+
+        for (let i = 1; i <= 10; i++) {
+            this.load.audio(i.toString(), `assets/audios/notes/${i}.mp3`)
+        }
+
+        this.load.audio('star', `assets/audios/star.mp3`)
+        this.load.audio('wall-hit', `assets/audios/wall-hit.mp3`)
     }
 }
