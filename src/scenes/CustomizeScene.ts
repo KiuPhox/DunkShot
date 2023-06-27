@@ -3,6 +3,7 @@ import { GameState } from '../GameState'
 import Button from '../objects/Button'
 import SkinManager from '../manager/SkinManager'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
+import StarManager from '../manager/StarManager'
 
 const ROWS = 4
 const COLUMNS = 4
@@ -40,22 +41,45 @@ export default class CustomizeScene extends Phaser.Scene {
 
     private createSkinButtons() {
         const buttonScale = 0.55
+        const unlockedSkins = SkinManager.getUnlockedSkins()
 
         this.skins = []
         for (let i = 0; i < ROWS * COLUMNS; i++) {
-            this.skins.push(
-                new Button({
+            if (unlockedSkins.indexOf(i) === -1) {
+                const b = new Button({
                     scene: this,
                     x: 0,
                     y: 0,
-                    texture: 'ball',
-                    frame: i,
+                    texture: 'item',
                     scale: buttonScale,
                     pointerDownCallback: () => {
-                        SkinManager.changeSkin(i)
+                        if (unlockedSkins.indexOf(i) === -1) {
+                            if (StarManager.getCurrentStar() > 100) {
+                                StarManager.updateStar(StarManager.getCurrentStar() - 100)
+                                SkinManager.unlockSkin(i)
+                                b.setTexture('ball', i)
+                            }
+                        } else {
+                            SkinManager.changeSkin(i)
+                        }
                     },
                 })
-            )
+                this.skins.push(b)
+            } else {
+                this.skins.push(
+                    new Button({
+                        scene: this,
+                        x: 0,
+                        y: 0,
+                        texture: 'ball',
+                        frame: i,
+                        scale: buttonScale,
+                        pointerDownCallback: () => {
+                            SkinManager.changeSkin(i)
+                        },
+                    })
+                )
+            }
 
             Phaser.Actions.GridAlign(this.skins, {
                 width: 4,
@@ -66,21 +90,5 @@ export default class CustomizeScene extends Phaser.Scene {
                 y: CANVAS_HEIGHT / 4,
             })
         }
-
-        // for (let i = 0; i < COLUMNS; i++) {
-        //     for (let j = 0; j < ROWS; j++) {
-        //         const button = new Button({
-        //             scene: this,
-        //             x: (CANVAS_WIDTH * i) / 4.5 + startX,
-        //             y: (CANVAS_HEIGHT * j) / 8 + startY,
-        //             texture: 'ball',
-        //             frame: i + j * COLUMNS,
-        //             scale: buttonScale,
-        //             pointerDownCallback: () => {
-        //                 SkinManager.changeSkin(i + j * COLUMNS)
-        //             },
-        //         })
-        //     }
-        // }
     }
 }

@@ -12,11 +12,16 @@ export default class SkinManager {
         this.emitter = new Phaser.Events.EventEmitter()
 
         this.currentSkin = Storage.getInt(STORAGE_KEY.CURRENT_SKIN)
-        this.unlockedSkins = JSON.parse(Storage.getString(STORAGE_KEY.UNLOCKED_SKIN))
+        this.unlockedSkins = Storage.getArray(STORAGE_KEY.UNLOCKED_SKIN)
+
+        if (this.unlockedSkins.length === 0) {
+            this.unlockedSkins = [0]
+        }
     }
 
-    public static unlockedSkin(skin: number): void {
+    public static unlockSkin(skin: number): void {
         this.unlockedSkins.push(skin)
+        Storage.setArray(STORAGE_KEY.UNLOCKED_SKIN, this.unlockedSkins)
     }
 
     public static changeSkin(skinIndex: number): void {
@@ -31,5 +36,9 @@ export default class SkinManager {
 
     public static getCurrentSkin(): number {
         return this.currentSkin
+    }
+
+    public static getUnlockedSkins(): number[] {
+        return this.unlockedSkins
     }
 }
