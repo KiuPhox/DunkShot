@@ -1,5 +1,7 @@
 import { GameState } from '../GameState'
+import Storage from '../Storage'
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constant/CanvasSize'
+import { STORAGE_KEY } from '../constant/StorageKey'
 import GameManager from '../manager/GameManager'
 import Button from '../objects/Button/Button'
 import SwitchButton from '../objects/Button/SwitchButton'
@@ -58,12 +60,26 @@ export default class SettingsScene extends Phaser.Scene {
     }
 
     private createSwitchButtons() {
-        this.soundBtn = this.createSwitchButton(CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.4)
-        this.vibrationBtn = this.createSwitchButton(CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.5)
-        this.nightModeBtn = this.createSwitchButton(CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.6)
+        this.soundBtn = this.createSwitchButton(
+            CANVAS_WIDTH * 0.7,
+            CANVAS_HEIGHT * 0.4,
+            STORAGE_KEY.SOUND
+        ).setActive(Storage.getString(STORAGE_KEY.SOUND) === 'true')
+
+        this.vibrationBtn = this.createSwitchButton(
+            CANVAS_WIDTH * 0.7,
+            CANVAS_HEIGHT * 0.5,
+            STORAGE_KEY.VIBRATION
+        ).setActive(Storage.getString(STORAGE_KEY.VIBRATION) === 'true')
+
+        this.nightModeBtn = this.createSwitchButton(
+            CANVAS_WIDTH * 0.7,
+            CANVAS_HEIGHT * 0.6,
+            STORAGE_KEY.NIGHT_MODE
+        ).setActive(Storage.getString(STORAGE_KEY.NIGHT_MODE) === 'true')
     }
 
-    private createSwitchButton(x: number, y: number): SwitchButton {
+    private createSwitchButton(x: number, y: number, key: STORAGE_KEY): SwitchButton {
         const switchButton = new SwitchButton({
             scene: this,
             x: x,
@@ -75,6 +91,7 @@ export default class SettingsScene extends Phaser.Scene {
             scale: 0.5,
             pointerUpCallback: () => {
                 switchButton.toggle()
+                Storage.setString(key, `${switchButton.getActive()}`)
             },
         }).setOrigin(0)
 
