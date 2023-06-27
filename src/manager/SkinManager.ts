@@ -1,4 +1,6 @@
+import Storage from '../Storage'
 import { SPECIAL_COLOR } from '../constant/SkinColor'
+import { STORAGE_KEY } from '../constant/StorageKey'
 
 export default class SkinManager {
     private static currentSkin: number
@@ -8,17 +10,12 @@ export default class SkinManager {
     public static init(): void {
         this.emitter = new Phaser.Events.EventEmitter()
 
-        this.currentSkin = 0
-
-        const temp = localStorage.getItem('currentSkin')
-        if (temp !== null) {
-            this.currentSkin = parseInt(temp)
-        }
+        this.currentSkin = parseInt(Storage.load(STORAGE_KEY.CURRENT_SKIN))
     }
 
     public static changeSkin(skinIndex: number): void {
         this.currentSkin = skinIndex
-        localStorage.setItem('currentSkin', skinIndex.toString())
+        Storage.save(STORAGE_KEY.CURRENT_SKIN, skinIndex.toString())
         this.emitter.emit('skin-changed', skinIndex)
     }
 
