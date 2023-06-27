@@ -1,10 +1,12 @@
-import { IButton } from '../types/button'
+import { IButton } from '../../types/button'
 
 export default class Button extends Phaser.GameObjects.Image {
     public pointerDownCallback?: () => void
     public pointerUpCallback?: () => void
 
     private defaultScale: number
+
+    private isDown: boolean
 
     constructor(b: IButton) {
         super(b.scene, b.x, b.y, b.texture, b.frame)
@@ -20,11 +22,14 @@ export default class Button extends Phaser.GameObjects.Image {
         this.defaultScale = b.scale
         this.setScale(b.scale)
 
+        this.isDown = false
+
         b.scene.add.existing(this)
     }
 
     private onPointerDown() {
         this.setScale(this.defaultScale * 0.9)
+        this.isDown = true
         if (this.pointerDownCallback !== undefined) {
             this.pointerDownCallback()
         }
@@ -32,8 +37,11 @@ export default class Button extends Phaser.GameObjects.Image {
 
     private onPointerUp() {
         this.setScale(this.defaultScale)
-        if (this.pointerUpCallback !== undefined) {
-            this.pointerUpCallback()
+        if (this.isDown) {
+            this.isDown = false
+            if (this.pointerUpCallback !== undefined) {
+                this.pointerUpCallback()
+            }
         }
     }
 

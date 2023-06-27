@@ -72,4 +72,8 @@ export default class Storage {
         }
         return []
     }
+
+    public static deleteAll(): void {
+        localStorage.clear()
+    }
 }

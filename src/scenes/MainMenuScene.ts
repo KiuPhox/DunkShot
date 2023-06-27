@@ -1,12 +1,13 @@
 import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
-import Button from '../objects/Button'
+import Button from '../objects/Button/Button'
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constant/CanvasSize'
 import StarManager from '../manager/StarManager'
 
 export default class MainMenuScene extends Phaser.Scene {
     private pauseBtn: Button
     private customizeBtn: Button
+    private settingsBtn: Button
 
     private title: Phaser.GameObjects.Image
     private help: Phaser.GameObjects.Sprite
@@ -20,6 +21,7 @@ export default class MainMenuScene extends Phaser.Scene {
         this.createTitle()
         this.createHelpAnimation()
         this.createPauseButton()
+        this.createSettingsButton()
         this.createCustomizeButton()
         this.setupInputEvents()
         new StarManager(this)
@@ -64,6 +66,17 @@ export default class MainMenuScene extends Phaser.Scene {
         }).setAlpha(0)
     }
 
+    private createSettingsButton() {
+        this.settingsBtn = new Button({
+            scene: this,
+            x: CANVAS_WIDTH * 0.06,
+            y: CANVAS_HEIGHT * 0.035,
+            texture: 'settings-mainmenu-btn',
+            scale: 1,
+            pointerDownCallback: this.handleSettingsButtonClick,
+        })
+    }
+
     private createCustomizeButton() {
         this.customizeBtn = new Button({
             scene: this,
@@ -96,9 +109,14 @@ export default class MainMenuScene extends Phaser.Scene {
         this.scene.stop('game').stop('result').start('customize')
     }
 
+    private handleSettingsButtonClick = () => {
+        GameManager.updateGameState(GameState.SETTINGS)
+        this.scene.stop('game').stop('result').start('settings')
+    }
+
     private handleGameStart() {
         this.tweens.add({
-            targets: [this.title, this.help, this.customizeBtn],
+            targets: [this.title, this.help, this.customizeBtn, this.settingsBtn],
             alpha: { value: 0, duration: 500 },
             ease: 'Quad.out',
         })

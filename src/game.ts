@@ -6,6 +6,7 @@ import MainMenuScene from './scenes/MainMenuScene'
 import ResultScene from './scenes/ResultScene'
 import PauseScene from './scenes/PauseScene'
 import CustomizeScene from './scenes/CustomizeScene'
+import SettingsScene from './scenes/SettingsScene'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from './constant/CanvasSize'
 
 const config = {
@@ -37,7 +38,15 @@ const config = {
     },
     roundPixels: true,
     backgroundColor: '0xe5e5e5',
-    scene: [PreloadScene, GameplayScene, ResultScene, MainMenuScene, CustomizeScene, PauseScene],
+    scene: [
+        PreloadScene,
+        GameplayScene,
+        ResultScene,
+        MainMenuScene,
+        CustomizeScene,
+        SettingsScene,
+        PauseScene,
+    ],
 }
 
 export default new Phaser.Game(config)

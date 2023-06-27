@@ -4,4 +4,5 @@ export enum GameState {
     GAME_OVER = 'game_over',
     PAUSE = 'pause',
     CUSTOMIZE = 'customize',
+    SETTINGS = 'settings',
 }

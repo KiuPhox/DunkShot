@@ -54,6 +54,8 @@ export default class PreloadScene extends Phaser.Scene {
         // Buttons
         this.load.image('reset-btn', 'assets/textures/btnreset.png')
         this.load.image('settings-btn', 'assets/textures/btnsettings.png')
+        this.load.image('settings-mainmenu-btn', 'assets/textures/btnsettings-mainmenu.png')
+        this.load.image('settings-pause-btn', 'assets/textures/btnsettings-pause.png')
         this.load.image('share-btn', 'assets/textures/btnshare.png')
         this.load.image('pause-btn', 'assets/textures/btnpause.png')
         this.load.image('resume-btn', 'assets/textures/btnresume.png')
@@ -61,6 +63,11 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('customize-mainmenu-btn', 'assets/textures/btncustomize-mainmenu.png')
         this.load.image('customize-btn', 'assets/textures/btncustomize.png')
         this.load.image('back-btn', 'assets/textures/btnback.png')
+        this.load.image('cleardata-btn', 'assets/textures/btncleardata.png')
+        this.load.spritesheet('rounded-btn', 'assets/textures/btnrounded-sheet.png', {
+            frameHeight: 122,
+            frameWidth: 224,
+        })
 
         // Effects
         this.load.image('e3', 'assets/textures/e3.png')

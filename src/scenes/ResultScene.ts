@@ -1,6 +1,6 @@
 import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
-import Button from '../objects/Button'
+import Button from '../objects/Button/Button'
 import ScoreManager from '../manager/ScoreManager'
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constant/CanvasSize'
 
@@ -48,6 +48,10 @@ export default class ResultScene extends Phaser.Scene {
             y: CANVAS_HEIGHT * 0.8,
             texture: 'settings-btn',
             scale: 0.4,
+            pointerUpCallback: () => {
+                GameManager.updateGameState(GameState.SETTINGS)
+                this.scene.launch('settings').sleep('result')
+            },
         }).setScale(0)
     }
 

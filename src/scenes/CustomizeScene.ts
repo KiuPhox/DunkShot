@@ -1,6 +1,6 @@
 import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
-import Button from '../objects/Button'
+import Button from '../objects/Button/Button'
 import SkinManager from '../manager/SkinManager'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
 import StarManager from '../manager/StarManager'
@@ -23,17 +23,20 @@ export default class CustomizeScene extends Phaser.Scene {
     private createBackButton() {
         const backBtn = new Button({
             scene: this,
-            x: CANVAS_WIDTH * 0.05,
-            y: CANVAS_HEIGHT * 0.05,
+            x: CANVAS_WIDTH * 0.06,
+            y: CANVAS_HEIGHT * 0.035,
             texture: 'back-btn',
             scale: 0.3,
             pointerUpCallback: () => {
-                if (GameManager.getPreviousState() === GameState.READY) {
-                    GameManager.updateGameState(GameState.READY)
-                    this.scene.start('result').launch('game').launch('main-menu')
-                } else if (GameManager.getPreviousState() === GameState.PAUSE) {
-                    GameManager.updateGameState(GameState.PAUSE)
-                    this.scene.stop().wake('pause')
+                switch (GameManager.getPreviousState()) {
+                    case GameState.READY:
+                        GameManager.updateGameState(GameState.READY)
+                        this.scene.start('result').launch('game').launch('main-menu')
+                        break
+                    case GameState.PAUSE:
+                        GameManager.updateGameState(GameState.PAUSE)
+                        this.scene.stop().wake('pause')
+                        break
                 }
             },
         })
