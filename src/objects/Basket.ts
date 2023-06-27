@@ -92,7 +92,6 @@ export default class Basket extends Phaser.GameObjects.Container {
         }
 
         this.add(this.netSprite)
-        // this.add(this.basketTopSprite)
         this.add(this.basketBottomSprite)
         this.add(this.centerCirc)
         this.add(this.basketEffectSprite)

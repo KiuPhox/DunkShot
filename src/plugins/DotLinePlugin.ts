@@ -36,7 +36,7 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
             const y = ((pointB.y - pointA.y) / count) * i + pointA.y
 
             this.normalLineGraphics.fillStyle(0xc9c9c9, 1)
-            this.normalLineGraphics.setDepth(-2)
+            this.normalLineGraphics.setDepth(-4)
             this.normalLineGraphics.fillCircle(x, y, 7)
         }
     }

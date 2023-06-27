@@ -29,7 +29,7 @@ export default class CustomizeScene extends Phaser.Scene {
 
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
-                const ballSkin = new Button({
+                new Button({
                     scene: this,
                     x: (CANVAS_WIDTH * i) / 4.5 + 120,
                     y: (CANVAS_HEIGHT * j) / 8 + 300,

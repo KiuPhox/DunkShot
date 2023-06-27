@@ -9,6 +9,14 @@ export default class ScoreManager {
     private static highScore: number
 
     constructor(scene: Phaser.Scene) {
+        this.init()
+
+        this.createCurrentScoreText(scene)
+        this.createBestScoreText(scene)
+        this.createHighScoreText(scene)
+    }
+
+    private init(): void {
         ScoreManager.curScore = 0
         ScoreManager.highScore = 0
 
@@ -16,20 +24,26 @@ export default class ScoreManager {
         if (highScoreStr !== null) {
             ScoreManager.highScore = parseInt(highScoreStr)
         }
+    }
 
+    private createCurrentScoreText(scene: Phaser.Scene): void {
         ScoreManager.curScoreText = scene.add
             .bitmapText(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.17, 'objet', '0', 180)
             .setTint(0xc1c1c1)
             .setDepth(-3)
             .setOrigin(0.5)
+    }
 
+    private createBestScoreText(scene: Phaser.Scene): void {
         ScoreManager.bestScoreText = scene.add
             .bitmapText(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.02, 'objet', 'Best Score', 40)
             .setTint(0xfb8b25)
             .setDepth(-3)
             .setOrigin(0.5)
             .setAlpha(0)
+    }
 
+    private createHighScoreText(scene: Phaser.Scene): void {
         ScoreManager.highScoreText = scene.add
             .bitmapText(
                 CANVAS_WIDTH * 0.5,

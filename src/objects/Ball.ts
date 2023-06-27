@@ -22,10 +22,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         this.addSmokeParticle()
         this.addSpecialParticle()
 
-        this.smokeParticle.stop()
-        this.specialParticle.stop()
-
-        this.combo = 0
+        this.resetCombo()
 
         b.scene.add.existing(this)
         b.scene.physics.add.existing(this)

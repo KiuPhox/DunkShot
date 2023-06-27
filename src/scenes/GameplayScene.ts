@@ -1,8 +1,6 @@
 import Phaser from 'phaser'
 import Basket from '../objects/Basket'
 import DotLinePlugin from '../plugins/DotLinePlugin'
-import GameManager from '../manager/GameManager'
-import { GameState } from '../GameState'
 import Ball from '../objects/Ball'
 import ScoreManager from '../manager/ScoreManager'
 import SkinManager from '../manager/SkinManager'
@@ -11,6 +9,8 @@ import { Random } from '../utils/Random'
 import { MINI_WALL_CHANCES, MOVEABLE_BASKET_CHANCES, STAR_CHANCES } from '../constant/Level'
 import PopUpManager from '../manager/PopUpManager'
 import MiniWall from '../objects/MiniWall'
+import { GameState } from '../GameState'
+import GameManager from '../manager/GameManager'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -50,15 +50,39 @@ export default class GameplayScene extends Phaser.Scene {
     }
 
     create() {
+        this.initializeVariables()
+
+        this.createBall()
+        this.createDraggingZone()
+        this.createDeadZone()
+        this.createWalls()
+        this.createBaskets()
+        this.createMiniWall()
+
+        this.configureCamera()
+    }
+
+    private initializeVariables() {
         this.curScore = 0
         this.bounceCount = 0
         this.previousCombo = 0
-
         this.camera = this.cameras.main
+        this.dotLine.init()
+
+        this.shootSound = this.sound.add('shoot')
+        this.kickSound = this.sound.add('kick')
+        this.dieSound = this.sound.add('die')
+        this.wallHitSound = this.sound.add('wall-hit')
+        this.starSound = this.sound.add('star')
+        for (let i = 1; i <= 10; i++) {
+            this.pointSounds[i - 1] = this.sound.add(i.toString())
+        }
 
         SkinManager.init()
         PopUpManager.init(this)
+    }
 
+    private createBall(): void {
         this.ball = new Ball({
             scene: this,
             x: CANVAS_WIDTH * 0.25,
@@ -73,13 +97,15 @@ export default class GameplayScene extends Phaser.Scene {
             .setDepth(0)
             .setGravityY(1200)
             .setFriction(0)
+    }
 
-        // Dragging Zone
+    private createDraggingZone(): void {
         this.draggingZone = this.add
             .rectangle(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.5, CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0)
             .setInteractive({ draggable: true })
+    }
 
-        // Dead Zone
+    private createDeadZone(): void {
         this.deadZone = this.add.rectangle(
             CANVAS_WIDTH * 0.5,
             CANVAS_HEIGHT,
@@ -96,18 +122,9 @@ export default class GameplayScene extends Phaser.Scene {
                 this.camera.stopFollow()
             }
         })
+    }
 
-        this.shootSound = this.sound.add('shoot')
-        this.kickSound = this.sound.add('kick')
-        this.dieSound = this.sound.add('die')
-        this.wallHitSound = this.sound.add('wall-hit')
-        this.starSound = this.sound.add('star')
-
-        for (let i = 1; i <= 10; i++) {
-            this.pointSounds[i - 1] = this.sound.add(i.toString())
-        }
-
-        // Walls
+    private createWalls(): void {
         const wallHitEffect = this.add.image(0, 0, 'e4').setAlpha(0).setScale(0.5)
 
         const wallPositions = [
@@ -147,7 +164,9 @@ export default class GameplayScene extends Phaser.Scene {
                 this.bounceCount++
             })
         })
+    }
 
+    private createBaskets(): void {
         this.baskets[0] = new Basket(this, CANVAS_WIDTH * 0.25, 400, this.ball)
         this.baskets[1] = new Basket(this, CANVAS_WIDTH * 0.8, 350, this.ball)
 
@@ -162,10 +181,14 @@ export default class GameplayScene extends Phaser.Scene {
 
         this.add.existing(this.baskets[0])
         this.add.existing(this.baskets[1])
+    }
 
+    private configureCamera(): void {
         this.input.dragDistanceThreshold = 10
         this.camera.startFollow(this.ball, false, 0, 0.01, -CANVAS_WIDTH / 4, CANVAS_HEIGHT / 4)
+    }
 
+    private createMiniWall(): void {
         this.miniWall = new MiniWall({ scene: this, x: 300, y: 100, ball: this.ball })
             .setActive(false)
             .setScale(0)
