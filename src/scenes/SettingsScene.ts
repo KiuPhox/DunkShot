@@ -14,6 +14,12 @@ export default class SettingsScene extends Phaser.Scene {
     }
 
     create() {
+        this.createBackButton()
+        this.createTexts()
+        this.createSwitchButtons()
+    }
+
+    private createBackButton() {
         const backBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.06,
@@ -21,7 +27,9 @@ export default class SettingsScene extends Phaser.Scene {
             texture: 'back-btn',
             scale: 0.3,
             pointerUpCallback: () => {
-                switch (GameManager.getPreviousState()) {
+                const previousState = GameManager.getPreviousState()
+
+                switch (previousState) {
                     case GameState.READY:
                         GameManager.updateGameState(GameState.READY)
                         this.scene.start('result').launch('game').launch('main-menu')
@@ -33,65 +41,43 @@ export default class SettingsScene extends Phaser.Scene {
                     case GameState.GAME_OVER:
                         GameManager.updateGameState(GameState.GAME_OVER)
                         this.scene.stop().wake('result')
+                        break
                 }
             },
         })
+    }
 
-        this.add
-            .bitmapText(CANVAS_WIDTH * 0.1, CANVAS_HEIGHT * 0.4, 'objet', 'SOUNDS', 50)
-            .setTint(0xc1c1c1)
-            .setDepth(-3)
+    private createTexts() {
+        this.addText(CANVAS_WIDTH * 0.1, CANVAS_HEIGHT * 0.4, 'SOUNDS')
+        this.addText(CANVAS_WIDTH * 0.1, CANVAS_HEIGHT * 0.5, 'VIBRATION')
+        this.addText(CANVAS_WIDTH * 0.1, CANVAS_HEIGHT * 0.6, 'NIGHT MODE')
+    }
 
-        this.add
-            .bitmapText(CANVAS_WIDTH * 0.1, CANVAS_HEIGHT * 0.5, 'objet', 'VIBRATION', 50)
-            .setTint(0xc1c1c1)
-            .setDepth(-3)
+    private addText(x: number, y: number, text: string) {
+        this.add.bitmapText(x, y, 'objet', text, 50).setTint(0xc1c1c1).setDepth(-3)
+    }
 
-        this.add
-            .bitmapText(CANVAS_WIDTH * 0.1, CANVAS_HEIGHT * 0.6, 'objet', 'NIGHT MODE', 50)
-            .setTint(0xc1c1c1)
-            .setDepth(-3)
+    private createSwitchButtons() {
+        this.soundBtn = this.createSwitchButton(CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.4)
+        this.vibrationBtn = this.createSwitchButton(CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.5)
+        this.nightModeBtn = this.createSwitchButton(CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.6)
+    }
 
-        this.soundBtn = new SwitchButton({
+    private createSwitchButton(x: number, y: number): SwitchButton {
+        const switchButton = new SwitchButton({
             scene: this,
-            x: CANVAS_WIDTH * 0.7,
-            y: CANVAS_HEIGHT * 0.4,
+            x: x,
+            y: y,
             textureOn: 'rounded-btn',
             frameOn: 0,
             textureOff: 'rounded-btn',
             frameOff: 1,
             scale: 0.5,
             pointerUpCallback: () => {
-                this.soundBtn.toggle()
+                switchButton.toggle()
             },
         }).setOrigin(0)
 
-        this.vibrationBtn = new SwitchButton({
-            scene: this,
-            x: CANVAS_WIDTH * 0.7,
-            y: CANVAS_HEIGHT * 0.5,
-            textureOn: 'rounded-btn',
-            frameOn: 0,
-            textureOff: 'rounded-btn',
-            frameOff: 1,
-            scale: 0.5,
-            pointerUpCallback: () => {
-                this.vibrationBtn.toggle()
-            },
-        }).setOrigin(0)
-
-        this.nightModeBtn = new SwitchButton({
-            scene: this,
-            x: CANVAS_WIDTH * 0.7,
-            y: CANVAS_HEIGHT * 0.6,
-            textureOn: 'rounded-btn',
-            frameOn: 0,
-            textureOff: 'rounded-btn',
-            frameOff: 1,
-            scale: 0.5,
-            pointerUpCallback: () => {
-                this.nightModeBtn.toggle()
-            },
-        }).setOrigin(0)
+        return switchButton
     }
 }
