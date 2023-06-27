@@ -53,7 +53,7 @@ export default class Storage {
         return 0
     }
 
-    public static setArray(key: STORAGE_KEY, value: any[]): void {
+    public static setArray<T>(key: STORAGE_KEY, value: T[]): void {
         try {
             localStorage.setItem(key, JSON.stringify(value))
         } catch (error) {
@@ -61,7 +61,7 @@ export default class Storage {
         }
     }
 
-    public static getArray(key: STORAGE_KEY): any[] {
+    public static getArray<T>(key: STORAGE_KEY): T[] {
         try {
             const serializedArray = localStorage.getItem(key)
             if (serializedArray !== null) {
