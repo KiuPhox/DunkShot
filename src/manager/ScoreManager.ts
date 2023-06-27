@@ -22,7 +22,7 @@ export default class ScoreManager {
         ScoreManager.curScore = 0
         ScoreManager.highScore = 0
 
-        ScoreManager.highScore = parseInt(Storage.load(STORAGE_KEY.HIGH_SCORE))
+        ScoreManager.highScore = Storage.getInt(STORAGE_KEY.HIGH_SCORE)
     }
 
     private createCurrentScoreText(scene: Phaser.Scene): void {
@@ -48,7 +48,7 @@ export default class ScoreManager {
                 CANVAS_WIDTH * 0.5,
                 CANVAS_HEIGHT * 0.07,
                 'objet',
-                Storage.load(STORAGE_KEY.HIGH_SCORE),
+                Storage.getString(STORAGE_KEY.HIGH_SCORE),
                 90
             )
             .setTint(0xfb8b25)
@@ -62,7 +62,7 @@ export default class ScoreManager {
 
         if (this.curScore > this.highScore) {
             this.highScore = this.curScore
-            Storage.save(STORAGE_KEY.HIGH_SCORE, this.highScore.toString())
+            Storage.setNumber(STORAGE_KEY.HIGH_SCORE, this.highScore)
             this.highScoreText.setText(this.highScore.toString())
         }
         this.curScoreText.setText(this.curScore.toString())

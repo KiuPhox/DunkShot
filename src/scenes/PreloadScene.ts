@@ -49,6 +49,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('title', 'assets/textures/title.png')
         this.load.image('star', 'assets/textures/star.png')
         this.load.image('mini-wall', 'assets/textures/miniwall.png')
+        this.load.image('item', 'assets/textures/item.png')
 
         // Buttons
         this.load.image('reset-btn', 'assets/textures/btnreset.png')
