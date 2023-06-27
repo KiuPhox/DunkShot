@@ -265,5 +265,7 @@ export default class GameplayScene extends Phaser.Scene {
 
     update(time: number, delta: number): void {
         this.ball.update(time, delta)
+        this.baskets[0].update()
+        this.baskets[1].update()
     }
 }

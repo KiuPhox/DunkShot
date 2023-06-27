@@ -53,7 +53,11 @@ export default class Basket extends Phaser.GameObjects.Container {
     }
 
     private createBasketObjects(scene: GameplayScene): void {
-        this.basketTopSprite = scene.add.sprite(0, -22, 'basket', 0).setScale(0.4)
+        this.basketTopSprite = scene.add
+            .sprite(this.x, this.y, 'basket', 0)
+            .setScale(0.4)
+            .setOrigin(0.5, 1.5)
+            .setDepth(-3)
         this.basketBottomSprite = scene.add.sprite(0, 0, 'basket', 1).setScale(0.4)
         this.basketEffectSprite = scene.add.sprite(0, 0, 'e3').setScale(0.4).setAlpha(0)
         this.netSprite = scene.add.sprite(0, 25, 'net').setScale(0.4)
@@ -88,7 +92,7 @@ export default class Basket extends Phaser.GameObjects.Container {
         }
 
         this.add(this.netSprite)
-        this.add(this.basketTopSprite)
+        // this.add(this.basketTopSprite)
         this.add(this.basketBottomSprite)
         this.add(this.centerCirc)
         this.add(this.basketEffectSprite)
@@ -178,6 +182,7 @@ export default class Basket extends Phaser.GameObjects.Container {
         scene.input.on('drag', (pointer: PointerEvent) => {
             if (this.hasBall && this.dragStartPos) {
                 this.handleDragMovement(pointer)
+
                 scene.dotLine.drawTrajectoryLine(
                     new Phaser.Math.Vector2(this.ball.x, this.ball.y),
                     this.shootVelocity,
@@ -249,5 +254,12 @@ export default class Basket extends Phaser.GameObjects.Container {
     private changeBasketTexture(frame: number): void {
         this.basketTopSprite.setTexture('basket', frame * 2)
         this.basketBottomSprite.setTexture('basket', frame * 2 + 1)
+    }
+
+    update(): void {
+        this.basketTopSprite.rotation = this.rotation
+        this.basketTopSprite.x = this.x
+        this.basketTopSprite.y = this.y
+        this.basketTopSprite.setScale(this.scale * 0.4)
     }
 }
