@@ -5,7 +5,6 @@ export default class PopUpManager {
 
     private static popUpText: Phaser.GameObjects.BitmapText
     private static popUpQueue: IPopUp[] = []
-    private static popUpTween: Phaser.Tweens.Tween
 
     public static init(scene: Phaser.Scene): void {
         PopUpManager.scene = scene
@@ -30,7 +29,7 @@ export default class PopUpManager {
             this.popUpText.y = y
             this.popUpText.setText(popUp.text).setTint(popUp.color)
 
-            this.popUpTween = this.scene.add.tween({
+            this.scene.add.tween({
                 targets: this.popUpText,
                 alpha: { value: 1, duration: 250, yoyo: true },
                 y: { value: y - 20, duration: 300, ease: 'Back.out' },

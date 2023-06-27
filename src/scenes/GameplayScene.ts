@@ -8,8 +8,9 @@ import ScoreManager from '../manager/ScoreManager'
 import SkinManager from '../manager/SkinManager'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
 import { Random } from '../utils/Random'
-import { MOVEABLE_BASKET_CHANCES, STAR_CHANCES } from '../constant/Level'
+import { MINI_WALL_CHANCES, MOVEABLE_BASKET_CHANCES, STAR_CHANCES } from '../constant/Level'
 import PopUpManager from '../manager/PopUpManager'
+import MiniWall from '../objects/MiniWall'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -35,8 +36,10 @@ export default class GameplayScene extends Phaser.Scene {
     public starSound: Phaser.Sound.BaseSound
 
     private curScore: number
-    private bounceCounter: number
+    public bounceCount: number
     private previousCombo: number
+
+    private miniWall: MiniWall
 
     constructor() {
         super('game')
@@ -48,7 +51,7 @@ export default class GameplayScene extends Phaser.Scene {
 
     create() {
         this.curScore = 0
-        this.bounceCounter = 0
+        this.bounceCount = 0
         this.previousCombo = 0
 
         this.camera = this.cameras.main
@@ -141,7 +144,7 @@ export default class GameplayScene extends Phaser.Scene {
                     },
                 })
 
-                this.bounceCounter++
+                this.bounceCount++
             })
         })
 
@@ -162,6 +165,10 @@ export default class GameplayScene extends Phaser.Scene {
 
         this.input.dragDistanceThreshold = 10
         this.camera.startFollow(this.ball, false, 0, 0.01, -CANVAS_WIDTH / 4, CANVAS_HEIGHT / 4)
+
+        this.miniWall = new MiniWall({ scene: this, x: 300, y: 100, ball: this.ball })
+            .setActive(false)
+            .setScale(0)
     }
 
     private handleBallTouch = (basket: Basket) => {
@@ -186,9 +193,9 @@ export default class GameplayScene extends Phaser.Scene {
             // Pop Up
 
             // Bounce
-            if (this.bounceCounter > 1) {
-                PopUpManager.create({ text: `Bank shot x${this.bounceCounter}`, color: 0x30a2ff })
-            } else if (this.bounceCounter === 1) {
+            if (this.bounceCount > 1) {
+                PopUpManager.create({ text: `Bank shot x${this.bounceCount}`, color: 0x30a2ff })
+            } else if (this.bounceCount === 1) {
                 PopUpManager.create({ text: `Bank shot`, color: 0x30a2ff })
             }
 
@@ -204,7 +211,7 @@ export default class GameplayScene extends Phaser.Scene {
 
             PopUpManager.playTweenQueue(basket.x, basket.y - 50)
         }
-        this.bounceCounter = 0
+        this.bounceCount = 0
     }
 
     private generateNextBasket(basket: Basket): void {
@@ -214,7 +221,7 @@ export default class GameplayScene extends Phaser.Scene {
         // Swap target basket
         this.targetBasket = nextTargetBasket
 
-        this.targetBasket.y = this.math.integerInRange(basket.y - 400, basket.y - 100)
+        this.targetBasket.y = this.math.integerInRange(basket.y - 450, basket.y - 150)
 
         if (targetBasketIndex === 0) {
             // Right basket
@@ -230,8 +237,19 @@ export default class GameplayScene extends Phaser.Scene {
             this.targetBasket.createStar(this)
         }
 
+        this.miniWall.setActive(false).setScale(0)
+
         if (Random.Percent(MOVEABLE_BASKET_CHANCES)) {
             this.targetBasket.setMoveable(true)
+        } else if (Random.Percent(MINI_WALL_CHANCES)) {
+            this.miniWall.setActive(true).y = this.targetBasket.y - 50
+            this.add.tween({
+                targets: this.miniWall,
+                scale: 0.65,
+                duration: 300,
+                ease: 'Back.out',
+            })
+            this.miniWall.x = this.targetBasket.x + (Random.Percent(50) ? 100 : -100)
         }
 
         // There's a bug on mobile when set this scale to zero
@@ -246,13 +264,6 @@ export default class GameplayScene extends Phaser.Scene {
     }
 
     update(time: number, delta: number): void {
-        if (this.ball.body) {
-            const velocityX = this.ball.body.velocity.x
-            if (velocityX > 10) {
-                this.ball.rotation += 0.01 * delta
-            } else if (velocityX < -10) {
-                this.ball.rotation -= 0.01 * delta
-            }
-        }
+        this.ball.update(time, delta)
     }
 }

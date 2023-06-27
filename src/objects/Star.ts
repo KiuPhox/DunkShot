@@ -9,7 +9,6 @@ export default class Star extends Phaser.Physics.Arcade.Sprite {
 
     constructor(s: IStar) {
         super(s.scene, s.x, s.y, 'star')
-        this.scene.physics.add.existing(this)
         this.isActive = true
 
         if (s.ball) {
