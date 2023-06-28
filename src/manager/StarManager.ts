@@ -1,6 +1,8 @@
+import { GameState } from '../GameState'
 import Storage from '../Storage'
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constant/CanvasSize'
 import { STORAGE_KEY } from '../constant/StorageKey'
+import GameManager from './GameManager'
 
 export default class StarManager {
     public static curStarText: Phaser.GameObjects.BitmapText
@@ -28,7 +30,9 @@ export default class StarManager {
     public static updateStar(star: number) {
         this.curStar = star
 
-        this.curStarText.setText(star.toString())
+        if (GameManager.getPreviousState() === GameState.PAUSE) {
+            this.curStarText.setText(star.toString())
+        }
 
         Storage.setNumber(STORAGE_KEY.STAR, star)
     }
