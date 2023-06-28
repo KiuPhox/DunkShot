@@ -36,6 +36,9 @@ export default class GameplayScene extends Phaser.Scene {
     public pointSounds: Phaser.Sound.BaseSound[] = []
     public wallHitSound: Phaser.Sound.BaseSound
     public starSound: Phaser.Sound.BaseSound
+    public comboHitSound: Phaser.Sound.BaseSound
+    public comboStartSound: Phaser.Sound.BaseSound
+    public comboShootSound: Phaser.Sound.BaseSound
 
     private curScore: number
     public bounceCount: number
@@ -76,6 +79,9 @@ export default class GameplayScene extends Phaser.Scene {
         this.dieSound = this.sound.add('die')
         this.wallHitSound = this.sound.add('wall-hit')
         this.starSound = this.sound.add('star')
+        this.comboHitSound = this.sound.add('combo-hit')
+        this.comboShootSound = this.sound.add('combo-shoot')
+        this.comboStartSound = this.sound.add('combo-start')
 
         for (let i = 1; i <= 10; i++) {
             this.pointSounds[i - 1] = this.sound.add(i.toString())
@@ -210,8 +216,13 @@ export default class GameplayScene extends Phaser.Scene {
             this.walls.forEach((wall) => (wall.y = this.targetBasket.y))
 
             this.ball.increaseCombo()
-
             const combo = this.ball.getCombo()
+
+            if (combo === 4) {
+                this.comboStartSound.play()
+            } else if (combo > 4) {
+                this.comboHitSound.play()
+            }
 
             this.curScore += combo
             this.pointSounds[combo - 1].play()
