@@ -62,7 +62,7 @@ export default class Basket extends Phaser.GameObjects.Container {
             .setDepth(-3)
         this.basketBottomSprite = scene.add.sprite(0, 0, 'basket', 1).setScale(0.4)
         this.basketEffectSprite = scene.add.sprite(0, 0, 'e3').setScale(0.4).setAlpha(0)
-        this.netSprite = scene.add.sprite(0, 25, 'net').setScale(0.4)
+        this.netSprite = scene.add.sprite(0, -5, 'net').setScale(0.4).setOrigin(0.5, 0)
 
         this.centerCirc = scene.physics.add
             .sprite(0, 15, '')
@@ -225,8 +225,7 @@ export default class Basket extends Phaser.GameObjects.Container {
 
         if (this.shootVelocity.length() > 10) {
             this.rotation = this.shootVelocity.angle() + Math.PI / 2
-
-            Phaser.Math.RotateAroundDistance(this.ball, this.x, this.y, 0, 2)
+            // Phaser.Math.RotateAroundDistance(this.ball, this.x, this.y, 0, 2)
         }
     }
 
@@ -247,14 +246,21 @@ export default class Basket extends Phaser.GameObjects.Container {
 
         this.scene.add.tween({
             targets: this.ball,
-            y: { value: this.y + 23, duration: 150 },
+            y: { value: this.y + 25, duration: 100 },
+            yolo: true,
+            ease: 'Quad.out',
+        })
+
+        this.scene.add.tween({
+            targets: this.otherCirc[0],
+            y: { value: this.otherCirc[0].y + 15, duration: 100, yoyo: true },
             yolo: true,
             ease: 'Quad.out',
         })
 
         this.scene.add.tween({
             targets: this.netSprite,
-            scaleY: { value: 0.5, duration: 150 },
+            scaleY: { value: 0.5, duration: 100 },
             yoyo: true,
             ease: 'Quad.out',
         })

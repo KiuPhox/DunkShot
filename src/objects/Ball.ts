@@ -82,7 +82,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
                 rotate: { min: 0, max: 360 },
                 scale: { start: 0.35, end: 0 },
                 speed: { min: 10, max: 30 },
-                frequency: 50,
+                frequency: 40,
             }
         )
 

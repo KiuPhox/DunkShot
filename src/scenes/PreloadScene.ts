@@ -29,15 +29,10 @@ export default class PreloadScene extends Phaser.Scene {
             console.log('Loading complete')
         })
 
-        this.load.spritesheet('ball', 'assets/textures/ball-atlas.png', {
-            frameWidth: 200,
+        this.load.spritesheet('ball', 'assets/textures/balls-atlas.png', {
+            frameWidth: 210,
+            frameHeight: 210,
         })
-
-        this.load.atlas(
-            'balls',
-            'assets/textures/ball-sheet.png',
-            'assets/textures/balls/ball-atlas.json'
-        )
 
         this.load.spritesheet('basket', 'assets/textures/basket-sheet.png', {
             frameWidth: 354,

@@ -6,7 +6,7 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
 import StarManager from '../manager/StarManager'
 
 const ROWS = 4
-const COLUMNS = 19
+const COLUMNS = 29
 
 export default class CustomizeScene extends Phaser.Scene {
     private skins: Button[] = []
@@ -27,7 +27,7 @@ export default class CustomizeScene extends Phaser.Scene {
         this.createBackButton()
         this.createSkinButtons()
 
-        this.selectedCirc = this.add.ellipse(200, 200, 130, 130, 0xffd93d).setDepth(-4)
+        this.selectedCirc = this.add.ellipse(200, 200, 140, 140, 0xffd93d).setDepth(-4)
 
         this.selectedCirc.x = this.skins[SkinManager.getCurrentSkin()].x
         this.selectedCirc.y = this.skins[SkinManager.getCurrentSkin()].y
@@ -70,7 +70,7 @@ export default class CustomizeScene extends Phaser.Scene {
     }
 
     private createSkinButtons() {
-        const buttonScale = 0.55
+        const buttonScale = 0.56
         const unlockedSkins = SkinManager.getUnlockedSkins()
 
         this.skins = []
