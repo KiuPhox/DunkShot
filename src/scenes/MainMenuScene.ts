@@ -91,7 +91,7 @@ export default class MainMenuScene extends Phaser.Scene {
     private setupInputEvents() {
         this.input.on('pointerdown', () => {
             if (GameManager.getCurrentState() === GameState.READY) {
-                GameManager.updateGameState(GameState.PLAYING)
+                GameManager.updateGameState(GameState.PLAYING, this)
                 this.handleGameStart()
             }
         })
@@ -99,19 +99,16 @@ export default class MainMenuScene extends Phaser.Scene {
 
     private handlePauseButtonClick = () => {
         if (GameManager.getCurrentState() === GameState.PLAYING) {
-            GameManager.updateGameState(GameState.PAUSE)
-            this.scene.sleep().pause('game').launch('pause')
+            GameManager.updateGameState(GameState.PAUSE, this)
         }
     }
 
     private handleCustomizeButtonClick = () => {
-        GameManager.updateGameState(GameState.CUSTOMIZE)
-        this.scene.stop('game').stop('result').start('customize')
+        GameManager.updateGameState(GameState.CUSTOMIZE, this)
     }
 
     private handleSettingsButtonClick = () => {
-        GameManager.updateGameState(GameState.SETTINGS)
-        this.scene.stop('game').stop('result').start('settings')
+        GameManager.updateGameState(GameState.SETTINGS, this)
     }
 
     private handleGameStart() {

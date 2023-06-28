@@ -16,8 +16,7 @@ export default class PauseScene extends Phaser.Scene {
             texture: 'mainmenu-btn',
             scale: 0.4,
             pointerUpCallback: () => {
-                GameManager.updateGameState(GameState.READY)
-                this.scene.start('result').launch('game').launch('main-menu')
+                GameManager.updateGameState(GameState.READY, this)
             },
         })
 
@@ -28,8 +27,7 @@ export default class PauseScene extends Phaser.Scene {
             texture: 'customize-btn',
             scale: 0.4,
             pointerUpCallback: () => {
-                GameManager.updateGameState(GameState.CUSTOMIZE)
-                this.scene.launch('customize').sleep('pause')
+                GameManager.updateGameState(GameState.CUSTOMIZE, this)
             },
         })
 
@@ -40,8 +38,7 @@ export default class PauseScene extends Phaser.Scene {
             texture: 'settings-pause-btn',
             scale: 0.4,
             pointerUpCallback: () => {
-                GameManager.updateGameState(GameState.CUSTOMIZE)
-                this.scene.launch('settings').sleep('pause')
+                GameManager.updateGameState(GameState.SETTINGS, this)
             },
         })
 
@@ -52,8 +49,7 @@ export default class PauseScene extends Phaser.Scene {
             texture: 'resume-btn',
             scale: 0.4,
             pointerUpCallback: () => {
-                GameManager.updateGameState(GameState.PLAYING)
-                this.scene.stop().resume('game').wake('main-menu')
+                GameManager.updateGameState(GameState.PLAYING, this)
             },
         })
     }

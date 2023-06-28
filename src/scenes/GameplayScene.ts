@@ -11,6 +11,8 @@ import PopUpManager from '../manager/PopUpManager'
 import MiniWall from '../objects/MiniWall'
 import { GameState } from '../GameState'
 import GameManager from '../manager/GameManager'
+import Storage from '../Storage'
+import { STORAGE_KEY } from '../constant/StorageKey'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -74,9 +76,12 @@ export default class GameplayScene extends Phaser.Scene {
         this.dieSound = this.sound.add('die')
         this.wallHitSound = this.sound.add('wall-hit')
         this.starSound = this.sound.add('star')
+
         for (let i = 1; i <= 10; i++) {
             this.pointSounds[i - 1] = this.sound.add(i.toString())
         }
+
+        this.sound.setMute(Storage.getString(STORAGE_KEY.SOUND) === 'false')
 
         SkinManager.init()
         PopUpManager.init(this)
@@ -117,7 +122,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.physics.add.existing(this.deadZone)
         this.physics.add.overlap(this.deadZone, this.ball, () => {
             if (GameManager.getCurrentState() === GameState.PLAYING) {
-                GameManager.updateGameState(GameState.GAME_OVER)
+                GameManager.updateGameState(GameState.GAME_OVER, this)
                 this.dieSound.play()
                 this.camera.stopFollow()
             }

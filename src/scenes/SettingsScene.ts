@@ -31,20 +31,12 @@ export default class SettingsScene extends Phaser.Scene {
             scale: 0.3,
             pointerUpCallback: () => {
                 const previousState = GameManager.getPreviousState()
-
-                switch (previousState) {
-                    case GameState.READY:
-                        GameManager.updateGameState(GameState.READY)
-                        this.scene.start('result').launch('game').launch('main-menu')
-                        break
-                    case GameState.PAUSE:
-                        GameManager.updateGameState(GameState.PAUSE)
-                        this.scene.stop().wake('pause')
-                        break
-                    case GameState.GAME_OVER:
-                        GameManager.updateGameState(GameState.GAME_OVER)
-                        this.scene.stop().wake('result')
-                        break
+                if (
+                    previousState === GameState.READY ||
+                    previousState === GameState.PAUSE ||
+                    previousState === GameState.GAME_OVER
+                ) {
+                    GameManager.updateGameState(previousState, this)
                 }
             },
         })
@@ -106,6 +98,15 @@ export default class SettingsScene extends Phaser.Scene {
             pointerUpCallback: () => {
                 switchButton.toggle()
                 Storage.setString(key, `${switchButton.getActive()}`)
+                switch (key) {
+                    case STORAGE_KEY.SOUND:
+                        this.scene.get('game').sound.setMute(!switchButton.getActive())
+                        break
+                    case STORAGE_KEY.VIBRATION:
+                        break
+                    case STORAGE_KEY.NIGHT_MODE:
+                        break
+                }
             },
         }).setOrigin(0)
 

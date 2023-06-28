@@ -37,8 +37,7 @@ export default class ResultScene extends Phaser.Scene {
             texture: 'reset-btn',
             scale: 0.4,
             pointerUpCallback: () => {
-                GameManager.updateGameState(GameState.READY)
-                this.scene.start('result').launch('game').launch('main-menu')
+                GameManager.updateGameState(GameState.READY, this)
             },
         }).setScale(0)
 
@@ -49,8 +48,7 @@ export default class ResultScene extends Phaser.Scene {
             texture: 'settings-btn',
             scale: 0.4,
             pointerUpCallback: () => {
-                GameManager.updateGameState(GameState.SETTINGS)
-                this.scene.launch('settings').sleep('result')
+                GameManager.updateGameState(GameState.SETTINGS, this)
             },
         }).setScale(0)
     }

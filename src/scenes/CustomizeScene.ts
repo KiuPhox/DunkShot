@@ -28,15 +28,11 @@ export default class CustomizeScene extends Phaser.Scene {
             texture: 'back-btn',
             scale: 0.3,
             pointerUpCallback: () => {
-                switch (GameManager.getPreviousState()) {
-                    case GameState.READY:
-                        GameManager.updateGameState(GameState.READY)
-                        this.scene.start('result').launch('game').launch('main-menu')
-                        break
-                    case GameState.PAUSE:
-                        GameManager.updateGameState(GameState.PAUSE)
-                        this.scene.stop().wake('pause')
-                        break
+                if (
+                    GameManager.getPreviousState() === GameState.READY ||
+                    GameManager.getPreviousState() === GameState.PAUSE
+                ) {
+                    GameManager.updateGameState(GameManager.getPreviousState(), this)
                 }
             },
         })
