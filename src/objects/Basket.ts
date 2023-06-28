@@ -13,6 +13,8 @@ const CIRC_POSITION = [
     [-45, 25],
 ]
 
+const MAX_SHOOT_SPEED = 1800
+
 export default class Basket extends Phaser.GameObjects.Container {
     private centerCirc: Phaser.Physics.Arcade.Sprite
     private otherCirc: Phaser.Physics.Arcade.Sprite[] = []
@@ -214,8 +216,16 @@ export default class Basket extends Phaser.GameObjects.Container {
             (this.dragStartPos.y - this.dragPos.y) * 7
         )
 
+        const shootSpeed = Math.min(this.shootVelocity.length(), MAX_SHOOT_SPEED)
+
+        this.shootVelocity = new Phaser.Math.Vector2(
+            shootSpeed * Math.cos(this.shootVelocity.angle()),
+            shootSpeed * Math.sin(this.shootVelocity.angle())
+        )
+
         if (this.shootVelocity.length() > 10) {
             this.rotation = this.shootVelocity.angle() + Math.PI / 2
+
             Phaser.Math.RotateAroundDistance(this.ball, this.x, this.y, 0, 2)
         }
     }
