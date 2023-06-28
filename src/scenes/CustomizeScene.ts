@@ -11,6 +11,8 @@ const COLUMNS = 19
 export default class CustomizeScene extends Phaser.Scene {
     private skins: Button[] = []
 
+    private selectedCirc: Phaser.GameObjects.Ellipse
+
     private isPointerDown: boolean
     private lastPointerPos: Phaser.Math.Vector2
 
@@ -24,6 +26,11 @@ export default class CustomizeScene extends Phaser.Scene {
     create() {
         this.createBackButton()
         this.createSkinButtons()
+
+        this.selectedCirc = this.add.ellipse(200, 200, 130, 130, 0xffd93d).setDepth(-4)
+
+        this.selectedCirc.x = this.skins[SkinManager.getCurrentSkin()].x
+        this.selectedCirc.y = this.skins[SkinManager.getCurrentSkin()].y
 
         this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             this.isPointerDown = true
@@ -83,7 +90,10 @@ export default class CustomizeScene extends Phaser.Scene {
                                 b.setTexture('ball', i)
                             }
                         } else {
+                            console.log('a')
                             SkinManager.changeSkin(i)
+                            this.selectedCirc.x = this.skins[i].x
+                            this.selectedCirc.y = this.skins[i].y
                         }
                     },
                 })
@@ -99,6 +109,8 @@ export default class CustomizeScene extends Phaser.Scene {
                         scale: buttonScale,
                         pointerDownCallback: () => {
                             SkinManager.changeSkin(i)
+                            this.selectedCirc.x = this.skins[i].x
+                            this.selectedCirc.y = this.skins[i].y
                         },
                     })
                 )
