@@ -25,11 +25,13 @@ export default class CustomizeScene extends Phaser.Scene {
         this.createBackButton()
         this.createSkinButtons()
 
-        this.input.on('pointerdown', () => {
+        this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             this.isPointerDown = true
+            this.lastPointerPos.x = pointer.x
+            this.lastPointerPos.y = pointer.y
         })
 
-        this.input.on('pointerup', () => {
+        this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
             this.isPointerDown = false
         })
         this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
