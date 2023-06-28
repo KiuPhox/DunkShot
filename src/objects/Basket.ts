@@ -62,7 +62,7 @@ export default class Basket extends Phaser.GameObjects.Container {
             .setDepth(-3)
         this.basketBottomSprite = scene.add.sprite(0, 0, 'basket', 1).setScale(0.4)
         this.basketEffectSprite = scene.add.sprite(0, 0, 'e3').setScale(0.4).setAlpha(0)
-        this.netSprite = scene.add.sprite(0, -5, 'net').setScale(0.4).setOrigin(0.5, 0)
+        this.netSprite = scene.add.sprite(0, 0, 'net').setScale(0.4).setOrigin(0.5, 0)
 
         this.centerCirc = scene.physics.add
             .sprite(0, 15, '')
@@ -196,6 +196,14 @@ export default class Basket extends Phaser.GameObjects.Container {
             if (this.hasBall && this.shootVelocity.length() > 100) {
                 this.hasBall = false
 
+                this.otherCirc[0].y = 50
+                scene.add.tween({
+                    targets: this.netSprite,
+                    scaleY: 0.4,
+                    duration: 300,
+                    ease: 'Back.out',
+                })
+
                 this.ball.shoot(this.shootVelocity)
                 scene.dotLine.clearTrajectoryLine()
                 this.changeBasketTexture(0)
@@ -225,7 +233,14 @@ export default class Basket extends Phaser.GameObjects.Container {
 
         if (this.shootVelocity.length() > 10) {
             this.rotation = this.shootVelocity.angle() + Math.PI / 2
-            // Phaser.Math.RotateAroundDistance(this.ball, this.x, this.y, 0, 2)
+            this.netSprite.scaleY = (shootSpeed / MAX_SHOOT_SPEED) * 0.2 + 0.4
+            this.otherCirc[0].y = (shootSpeed / MAX_SHOOT_SPEED) * 20 + 50
+            this.ball.x =
+                -Math.cos(this.shootVelocity.angle()) * ((shootSpeed / MAX_SHOOT_SPEED) * 20 + 13) +
+                this.x
+            this.ball.y =
+                -Math.sin(this.shootVelocity.angle()) * ((shootSpeed / MAX_SHOOT_SPEED) * 20 + 13) +
+                this.y
         }
     }
 
@@ -246,15 +261,14 @@ export default class Basket extends Phaser.GameObjects.Container {
 
         this.scene.add.tween({
             targets: this.ball,
+            x: { value: this.x, duration: 200 },
             y: { value: this.y + 25, duration: 100 },
-            yolo: true,
             ease: 'Quad.out',
         })
 
         this.scene.add.tween({
             targets: this.otherCirc[0],
             y: { value: this.otherCirc[0].y + 15, duration: 100, yoyo: true },
-            yolo: true,
             ease: 'Quad.out',
         })
 
