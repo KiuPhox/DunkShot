@@ -43,7 +43,10 @@ export default class CustomizeScene extends Phaser.Scene {
         })
         this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
             if (this.isPointerDown) {
-                this.cameras.main.scrollY += this.lastPointerPos.y - pointer.y
+                for (let i = 0; i < this.skins.length; i++) {
+                    this.skins[i].y -= this.lastPointerPos.y - pointer.y
+                }
+                this.selectedCirc.y -= this.lastPointerPos.y - pointer.y
             }
 
             this.lastPointerPos.x = pointer.x
