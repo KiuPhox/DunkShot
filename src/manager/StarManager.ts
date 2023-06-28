@@ -30,7 +30,10 @@ export default class StarManager {
     public static updateStar(star: number) {
         this.curStar = star
 
-        if (GameManager.getPreviousState() === GameState.PAUSE) {
+        if (
+            GameManager.getPreviousState() === GameState.PAUSE ||
+            GameManager.getCurrentState() === GameState.PLAYING
+        ) {
             this.curStarText.setText(star.toString())
         }
 
