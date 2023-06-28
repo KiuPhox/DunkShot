@@ -103,8 +103,8 @@ export default class GameplayScene extends Phaser.Scene {
         })
             .setDepth(1)
             .setName('Ball')
-            .setCircle(116)
-            .setScale(0.27)
+            .setCircle(115)
+            .setScale(0.3)
             .setDepth(0)
             .setGravityY(1200)
             .setFriction(0)
@@ -233,14 +233,14 @@ export default class GameplayScene extends Phaser.Scene {
 
             // Bounce
             if (this.bounceCount > 1) {
-                PopUpManager.create({ text: `Bank shot x${this.bounceCount}`, color: 0x30a2ff })
+                PopUpManager.create({ text: `Bounce x${this.bounceCount}`, color: 0x30a2ff })
             } else if (this.bounceCount === 1) {
-                PopUpManager.create({ text: `Bank shot`, color: 0x30a2ff })
+                PopUpManager.create({ text: `Bounce`, color: 0x30a2ff })
             }
 
             // Air
             if (this.previousCombo > 0 && combo > this.previousCombo) {
-                PopUpManager.create({ text: `Airball`, color: 0xfb8b25 })
+                PopUpManager.create({ text: `Perfect`, color: 0xfb8b25 })
             }
 
             this.previousCombo = combo

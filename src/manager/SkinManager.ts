@@ -1,5 +1,5 @@
 import Storage from '../Storage'
-import { SPECIAL_COLOR } from '../constant/SkinColor'
+import { SPECIAL_EFFECTS } from '../constant/Skin'
 import { STORAGE_KEY } from '../constant/StorageKey'
 
 export default class SkinManager {
@@ -31,7 +31,7 @@ export default class SkinManager {
     }
 
     public static getCurrentSkinColors(): number[] {
-        return SPECIAL_COLOR[this.currentSkin]
+        return SPECIAL_EFFECTS[this.currentSkin].colors
     }
 
     public static getCurrentSkin(): number {

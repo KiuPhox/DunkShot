@@ -6,18 +6,40 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
 import StarManager from '../manager/StarManager'
 
 const ROWS = 4
-const COLUMNS = 4
+const COLUMNS = 19
 
 export default class CustomizeScene extends Phaser.Scene {
     private skins: Button[] = []
 
+    private isPointerDown: boolean
+    private lastPointerPos: Phaser.Math.Vector2
+
     constructor() {
         super('customize')
+
+        this.isPointerDown = false
+        this.lastPointerPos = new Phaser.Math.Vector2(0, 0)
     }
 
     create() {
         this.createBackButton()
         this.createSkinButtons()
+
+        this.input.on('pointerdown', () => {
+            this.isPointerDown = true
+        })
+
+        this.input.on('pointerup', () => {
+            this.isPointerDown = false
+        })
+        this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+            if (this.isPointerDown) {
+                this.cameras.main.scrollY += this.lastPointerPos.y - pointer.y
+            }
+
+            this.lastPointerPos.x = pointer.x
+            this.lastPointerPos.y = pointer.y
+        })
     }
 
     private createBackButton() {
@@ -81,12 +103,12 @@ export default class CustomizeScene extends Phaser.Scene {
             }
 
             Phaser.Actions.GridAlign(this.skins, {
-                width: 4,
-                height: 4,
+                width: ROWS,
+                height: COLUMNS,
                 cellWidth: CANVAS_WIDTH / 4.5,
                 cellHeight: CANVAS_WIDTH / 4.5,
                 x: 0,
-                y: CANVAS_HEIGHT / 4,
+                y: 0,
             })
         }
     }

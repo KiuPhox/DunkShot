@@ -1,4 +1,4 @@
-import { SPECIAL_COLOR } from '../constant/SkinColor'
+import { SPECIAL_EFFECTS } from '../constant/Skin'
 import SkinManager from '../manager/SkinManager'
 import GameplayScene from '../scenes/GameplayScene'
 import { IBall } from '../types/ball'
@@ -57,9 +57,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
             if (this.combo === 4) {
                 this.specialParticle.start()
             }
-            const rgb = Phaser.Display.Color.IntegerToRGB(
-                SPECIAL_COLOR[SkinManager.getCurrentSkin()][0]
-            )
+            const rgb = Phaser.Display.Color.IntegerToRGB(SkinManager.getCurrentSkinColors()[0])
             this._scene.cameras.main.flash(200, rgb.r, rgb.g, rgb.b)
             this._scene.cameras.main.shake(200, 0.003)
         }
@@ -72,16 +70,21 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     }
 
     private addSpecialParticle(): void {
-        this.specialParticle = this._scene.add.particles(150, 450, 'special', {
-            color: SPECIAL_COLOR[SkinManager.getCurrentSkin()],
-            colorEase: 'quad.out',
-            lifespan: 700,
-            angle: { min: 0, max: 360 },
-            rotate: { min: 0, max: 360 },
-            scale: { start: 0.35, end: 0 },
-            speed: { min: 10, max: 30 },
-            frequency: 60,
-        })
+        this.specialParticle = this._scene.add.particles(
+            150,
+            450,
+            SPECIAL_EFFECTS[SkinManager.getCurrentSkin()].texure,
+            {
+                color: SkinManager.getCurrentSkinColors(),
+                colorEase: 'quad.out',
+                lifespan: 700,
+                angle: { min: 0, max: 360 },
+                rotate: { min: 0, max: 360 },
+                scale: { start: 0.35, end: 0 },
+                speed: { min: 10, max: 30 },
+                frequency: 50,
+            }
+        )
 
         this.specialParticle.startFollow(this, -150, -450)
         this.specialParticle.setDepth(-4)

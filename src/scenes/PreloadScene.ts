@@ -29,9 +29,15 @@ export default class PreloadScene extends Phaser.Scene {
             console.log('Loading complete')
         })
 
-        this.load.spritesheet('ball', 'assets/textures/ball-sheet.png', {
-            frameWidth: 232,
+        this.load.spritesheet('ball', 'assets/textures/ball-atlas.png', {
+            frameWidth: 200,
         })
+
+        this.load.atlas(
+            'balls',
+            'assets/textures/ball-sheet.png',
+            'assets/textures/balls/ball-atlas.json'
+        )
 
         this.load.spritesheet('basket', 'assets/textures/basket-sheet.png', {
             frameWidth: 354,
@@ -71,7 +77,9 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('e3', 'assets/textures/e3.png')
         this.load.image('e4', 'assets/textures/e4.png')
         this.load.image('circle', 'assets/textures/circle.png')
-        this.load.image('special', 'assets/textures/special.png')
+        this.load.image('shape1', 'assets/textures/shapes/shape1.png')
+        this.load.image('shape2', 'assets/textures/shapes/shape2.png')
+        this.load.image('shape3', 'assets/textures/shapes/shape3.png')
 
         this.load.bitmapFont(
             'objet',

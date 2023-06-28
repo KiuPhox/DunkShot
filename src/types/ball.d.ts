@@ -3,5 +3,5 @@ export type IBall = {
     x: number
     y: number
     texture: string
-    frame?: number
+    frame?: number | string
 }
