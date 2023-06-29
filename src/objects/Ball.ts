@@ -2,6 +2,7 @@ import { SPECIAL_EFFECTS } from '../constant/Skin'
 import SkinManager from '../manager/SkinManager'
 import GameplayScene from '../scenes/GameplayScene'
 import { IBall } from '../types/ball'
+import { Color } from '../utils/Color'
 
 const ROTATE_SPEED = 0.00003
 
@@ -49,14 +50,18 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         this.combo++
 
         if (this.combo === 3) {
-            this.smokeParticle.start()
+            this.smokeParticle.destroy()
+            this.addSmokeParticle()
         }
 
         if (this.combo >= 4) {
             if (this.combo === 4) {
+                this.smokeParticle.destroy()
+                this.addSmokeParticle()
                 this.specialParticle.start()
             }
-            const rgb = Phaser.Display.Color.IntegerToRGB(SkinManager.getCurrentSkinColors()[0])
+            const rgb = Color.HexToRRB(SkinManager.getCurrentSkinColors()[0])
+
             this._scene.cameras.main.flash(200, rgb.r, rgb.g, rgb.b)
             this._scene.cameras.main.shake(200, 0.003)
         }
@@ -91,8 +96,19 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     }
 
     private addSmokeParticle(): void {
+        const hex = SkinManager.getCurrentSkinColors()[2]
+        const rgb = Color.HexToRRB(hex)
+        const colors =
+            this.combo === 3
+                ? [0xffffff, 0xf0f0f0, 0x888888]
+                : [
+                      Color.RGBtoHex(Color.Shade(rgb, 0.4)),
+                      Color.RGBtoHex(Color.Shade(rgb, 0.5)),
+                      Color.RGBtoHex(Color.Shade(rgb, 0.6)),
+                  ]
+
         this.smokeParticle = this._scene.add.particles(150, 450, 'circle', {
-            color: [0xffffff, 0xf0f0f0, 0x888888],
+            color: colors,
             alpha: { start: 0.8, end: 0.1, ease: 'sine.out' },
             colorEase: 'quad.out',
             lifespan: 500,
@@ -109,7 +125,13 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     private onSkinChanged = (skinFrame: number) => {
         this.setFrame(skinFrame)
         this.specialParticle.destroy()
+        this.smokeParticle.destroy()
+        this.addSmokeParticle()
         this.addSpecialParticle()
+
+        if (this.combo < 3) {
+            this.smokeParticle.stop()
+        }
 
         if (this.combo < 4) {
             this.specialParticle.stop()
