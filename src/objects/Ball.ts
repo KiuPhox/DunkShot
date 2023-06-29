@@ -3,7 +3,7 @@ import SkinManager from '../manager/SkinManager'
 import GameplayScene from '../scenes/GameplayScene'
 import { IBall } from '../types/ball'
 
-const ROTATE_SPEED = 0.02
+const ROTATE_SPEED = 0.00003
 
 export default class Ball extends Phaser.Physics.Arcade.Sprite {
     private _scene: Phaser.Scene
@@ -120,9 +120,9 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         if (this.body) {
             const velocityX = this.body.velocity.x
             if (velocityX > 10) {
-                this.rotation += ROTATE_SPEED * delta
+                this.rotation += ROTATE_SPEED * Math.max(600, this.body.velocity.length()) * delta
             } else if (velocityX < -10) {
-                this.rotation -= ROTATE_SPEED * delta
+                this.rotation -= ROTATE_SPEED * Math.max(600, this.body.velocity.length()) * delta
             }
         }
     }
