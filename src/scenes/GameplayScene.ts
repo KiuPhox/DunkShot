@@ -231,7 +231,9 @@ export default class GameplayScene extends Phaser.Scene {
                 this.comboHitSound.play()
             }
 
-            this.curScore += combo
+            const score = combo * (this.bounceCount > 0 ? 2 : 1)
+
+            this.curScore += score
             this.pointSounds[combo - 1].play()
 
             ScoreManager.updateScore(this.curScore)
@@ -253,7 +255,7 @@ export default class GameplayScene extends Phaser.Scene {
             this.previousCombo = combo
 
             // Score
-            PopUpManager.create({ text: `+${combo}`, color: 0xd0532a })
+            PopUpManager.create({ text: `+${score}`, color: 0xd0532a })
 
             PopUpManager.playTweenQueue(basket.x, basket.y - 50)
         }
