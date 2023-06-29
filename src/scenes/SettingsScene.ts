@@ -1,8 +1,9 @@
 import { GameState } from '../GameState'
 import Storage from '../Storage'
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constant/CanvasSize'
-import { STORAGE_KEY } from '../constant/StorageKey'
+import { SETTINGS } from '../constant/Settings'
 import GameManager from '../manager/GameManager'
+import PlayerDataManager from '../manager/PlayerDataManager'
 import Button from '../objects/Button/Button'
 import SwitchButton from '../objects/Button/SwitchButton'
 
@@ -69,23 +70,23 @@ export default class SettingsScene extends Phaser.Scene {
         this.soundBtn = this.createSwitchButton(
             CANVAS_WIDTH * 0.7,
             CANVAS_HEIGHT * 0.3,
-            STORAGE_KEY.SOUND
-        ).setActive(Storage.getString(STORAGE_KEY.SOUND) === 'true')
+            SETTINGS.SOUND
+        ).setActive(PlayerDataManager.getPlayerData().settings.sound)
 
         this.vibrationBtn = this.createSwitchButton(
             CANVAS_WIDTH * 0.7,
             CANVAS_HEIGHT * 0.4,
-            STORAGE_KEY.VIBRATION
-        ).setActive(Storage.getString(STORAGE_KEY.VIBRATION) === 'true')
+            SETTINGS.VIBRATION
+        ).setActive(PlayerDataManager.getPlayerData().settings.vibration)
 
         this.nightModeBtn = this.createSwitchButton(
             CANVAS_WIDTH * 0.7,
             CANVAS_HEIGHT * 0.5,
-            STORAGE_KEY.NIGHT_MODE
-        ).setActive(Storage.getString(STORAGE_KEY.NIGHT_MODE) === 'true')
+            SETTINGS.NIGHT_MODE
+        ).setActive(PlayerDataManager.getPlayerData().settings.nightMode)
     }
 
-    private createSwitchButton(x: number, y: number, key: STORAGE_KEY): SwitchButton {
+    private createSwitchButton(x: number, y: number, key: SETTINGS): SwitchButton {
         const switchButton = new SwitchButton({
             scene: this,
             x: x,
@@ -97,16 +98,7 @@ export default class SettingsScene extends Phaser.Scene {
             scale: 0.5,
             pointerUpCallback: () => {
                 switchButton.toggle()
-                Storage.setString(key, `${switchButton.getActive()}`)
-                switch (key) {
-                    case STORAGE_KEY.SOUND:
-                        this.scene.get('game').sound.setMute(!switchButton.getActive())
-                        break
-                    case STORAGE_KEY.VIBRATION:
-                        break
-                    case STORAGE_KEY.NIGHT_MODE:
-                        break
-                }
+                PlayerDataManager.setSettings(key, switchButton.getActive())
             },
         }).setOrigin(0)
 

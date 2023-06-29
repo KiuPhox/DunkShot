@@ -1,6 +1,5 @@
-import Storage from '../Storage'
 import { SPECIAL_EFFECTS } from '../constant/Skin'
-import { STORAGE_KEY } from '../constant/StorageKey'
+import PlayerDataManager from './PlayerDataManager'
 
 export default class SkinManager {
     private static currentSkin: number
@@ -10,9 +9,8 @@ export default class SkinManager {
 
     public static init(): void {
         this.emitter = new Phaser.Events.EventEmitter()
-
-        this.currentSkin = Storage.getInt(STORAGE_KEY.CURRENT_SKIN)
-        this.unlockedSkins = Storage.getArray(STORAGE_KEY.UNLOCKED_SKIN)
+        this.currentSkin = PlayerDataManager.getCurrentSkin()
+        this.unlockedSkins = PlayerDataManager.getUnlockedSkins()
 
         if (this.unlockedSkins.length === 0) {
             this.unlockedSkins = [0]
@@ -21,12 +19,19 @@ export default class SkinManager {
 
     public static unlockSkin(skin: number): void {
         this.unlockedSkins.push(skin)
-        Storage.setArray(STORAGE_KEY.UNLOCKED_SKIN, this.unlockedSkins)
+
+        const playerData = PlayerDataManager.getPlayerData()
+        playerData.skins.unlocked = this.unlockedSkins
+        PlayerDataManager.savePlayerData(playerData)
     }
 
     public static changeSkin(skinIndex: number): void {
         this.currentSkin = skinIndex
-        Storage.setNumber(STORAGE_KEY.CURRENT_SKIN, skinIndex)
+
+        const playerData = PlayerDataManager.getPlayerData()
+        playerData.skins.current = skinIndex
+        PlayerDataManager.savePlayerData(playerData)
+
         this.emitter.emit('skin-changed', skinIndex)
     }
 

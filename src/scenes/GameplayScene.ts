@@ -6,14 +6,18 @@ import ScoreManager from '../manager/ScoreManager'
 import SkinManager from '../manager/SkinManager'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
 import { Random } from '../utils/Random'
-import { MINI_WALL_CHANCES, MOVEABLE_BASKET_CHANCES, STAR_CHANCES } from '../constant/Level'
+import {
+    BOUNCER_CHANCES,
+    MINI_WALL_CHANCES,
+    MOVEABLE_BASKET_CHANCES,
+    STAR_CHANCES,
+} from '../constant/Level'
 import PopUpManager from '../manager/PopUpManager'
 import MiniWall from '../objects/MiniWall'
 import { GameState } from '../GameState'
 import GameManager from '../manager/GameManager'
-import Storage from '../Storage'
-import { STORAGE_KEY } from '../constant/StorageKey'
 import Bouncer from '../objects/Bouncer'
+import PlayerDataManager from '../manager/PlayerDataManager'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -89,7 +93,7 @@ export default class GameplayScene extends Phaser.Scene {
             this.pointSounds[i - 1] = this.sound.add(i.toString())
         }
 
-        this.sound.setMute(Storage.getString(STORAGE_KEY.SOUND) === 'false')
+        this.sound.setMute(!PlayerDataManager.getPlayerData().settings.sound)
 
         SkinManager.init()
         PopUpManager.init(this)
@@ -164,6 +168,13 @@ export default class GameplayScene extends Phaser.Scene {
                     .setScale(0.5, 0.1)
                     .setFlipX(wallHitEffect.x > CANVAS_WIDTH / 2)
 
+                if (this.ball.body) {
+                    this.ball.setVelocity(
+                        this.ball.body.velocity.x * 1.1,
+                        this.ball.body.velocity.y * 1.1
+                    )
+                }
+
                 this.add.tween({
                     targets: wallHitEffect,
                     alpha: { value: 1, duration: 100, yoyo: true },
@@ -196,11 +207,6 @@ export default class GameplayScene extends Phaser.Scene {
         this.add.existing(this.baskets[1])
     }
 
-    private configureCamera(): void {
-        this.input.dragDistanceThreshold = 10
-        this.camera.startFollow(this.ball, false, 0, 0.01, -CANVAS_WIDTH / 4, CANVAS_HEIGHT / 4)
-    }
-
     private createObstacles(): void {
         this.miniWall = new MiniWall({ scene: this, x: 300, y: 100, ball: this.ball })
             .setActive(false)
@@ -212,53 +218,63 @@ export default class GameplayScene extends Phaser.Scene {
             .setCircle(100)
     }
 
+    private configureCamera(): void {
+        this.input.dragDistanceThreshold = 10
+        this.camera.startFollow(this.ball, false, 0, 0.01, -CANVAS_WIDTH / 4, CANVAS_HEIGHT / 4)
+    }
+
     private handleBallTouch = (basket: Basket) => {
-        if (basket === this.targetBasket) {
-            this.dotLine.clearNormalLine()
+        if (basket !== this.targetBasket) {
+            this.bounceCount = 0
+            return
+        }
 
-            this.generateNextBasket(basket)
+        this.dotLine.clearNormalLine()
+        this.generateNextBasket(basket)
 
-            this.draggingZone.y = this.targetBasket.y
-            this.deadZone.y = basket.y + 450
-            this.walls.forEach((wall) => (wall.y = this.targetBasket.y))
+        this.draggingZone.y = this.targetBasket.y
+        this.deadZone.y = basket.y + 450
+        this.walls.forEach((wall) => (wall.y = this.targetBasket.y))
 
-            this.ball.increaseCombo()
-            const combo = this.ball.getCombo()
+        this.ball.increaseCombo()
+        const combo = this.ball.getCombo()
 
+        if (combo >= 4) {
             if (combo === 4) {
                 this.comboStartSound.play()
-            } else if (combo > 4) {
+            } else {
                 this.comboHitSound.play()
             }
-
-            const score = combo * (this.bounceCount > 0 ? 2 : 1)
-
-            this.curScore += score
-            this.pointSounds[combo - 1].play()
-
-            ScoreManager.updateScore(this.curScore)
-
-            // Pop Up
-
-            // Bounce
-            if (this.bounceCount > 1) {
-                PopUpManager.create({ text: `Bounce x${this.bounceCount}`, color: 0x30a2ff })
-            } else if (this.bounceCount === 1) {
-                PopUpManager.create({ text: `Bounce`, color: 0x30a2ff })
-            }
-
-            // Air
-            if (this.previousCombo > 0 && combo > this.previousCombo) {
-                PopUpManager.create({ text: `Perfect`, color: 0xfb8b25 })
-            }
-
-            this.previousCombo = combo
-
-            // Score
-            PopUpManager.create({ text: `+${score}`, color: 0xd0532a })
-
-            PopUpManager.playTweenQueue(basket.x, basket.y - 50)
         }
+
+        const score = Math.min(combo, 10) * (this.bounceCount > 0 ? 2 : 1)
+        this.curScore += score
+        this.pointSounds[Math.min(combo, 10) - 1].play()
+        ScoreManager.updateScore(this.curScore)
+
+        // Bounce
+        if (this.bounceCount > 0) {
+            PopUpManager.create({
+                text: `Bounce${this.bounceCount > 1 ? ' x' + this.bounceCount : ''}`,
+                color: 0x30a2ff,
+            })
+        }
+
+        // Perfect
+        if (this.previousCombo > 0 && combo > this.previousCombo) {
+            PopUpManager.create({
+                text: `Perfect${combo - 1 > 1 ? ' x' + (combo - 1) : ''}`,
+                color: 0xfb8b25,
+            })
+        }
+
+        this.previousCombo = combo
+
+        // Score
+        PopUpManager.create({ text: `+${score}`, color: 0xd0532a })
+
+        PopUpManager.playTweenQueue(basket.x, basket.y - 50)
+
         this.bounceCount = 0
     }
 
@@ -286,6 +302,7 @@ export default class GameplayScene extends Phaser.Scene {
         }
 
         this.miniWall.setActive(false).setScale(0)
+        this.bouncer.setActive(false).setScale(0)
 
         if (Random.Percent(MOVEABLE_BASKET_CHANCES)) {
             this.targetBasket.setMoveable(true)
@@ -298,6 +315,16 @@ export default class GameplayScene extends Phaser.Scene {
                 ease: 'Back.out',
             })
             this.miniWall.x = this.targetBasket.x + (Random.Percent(50) ? 100 : -100)
+        } else if (Random.Percent(BOUNCER_CHANCES)) {
+            this.bouncer.setActive(true).y = this.targetBasket.y - 200
+            this.bouncer.x = this.targetBasket.x
+            this.add.tween({
+                targets: this.bouncer,
+                scale: 0.35,
+                duration: 300,
+                ease: 'Back.out',
+            })
+            this.targetBasket.rotation = 0
         }
 
         // There's a bug on mobile when set this scale to zero

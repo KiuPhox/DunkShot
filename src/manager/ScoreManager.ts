@@ -1,6 +1,5 @@
-import Storage from '../Storage'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
-import { STORAGE_KEY } from '../constant/StorageKey'
+import PlayerDataManager from './PlayerDataManager'
 
 export default class ScoreManager {
     public static curScoreText: Phaser.GameObjects.BitmapText
@@ -20,9 +19,7 @@ export default class ScoreManager {
 
     private init(): void {
         ScoreManager.curScore = 0
-        ScoreManager.highScore = 0
-
-        ScoreManager.highScore = Storage.getInt(STORAGE_KEY.HIGH_SCORE)
+        ScoreManager.highScore = PlayerDataManager.getHighScore()
     }
 
     private createCurrentScoreText(scene: Phaser.Scene): void {
@@ -48,7 +45,7 @@ export default class ScoreManager {
                 CANVAS_WIDTH * 0.5,
                 CANVAS_HEIGHT * 0.07,
                 'objet',
-                Storage.getString(STORAGE_KEY.HIGH_SCORE),
+                PlayerDataManager.getHighScore().toString(),
                 90
             )
             .setTint(0xfb8b25)
@@ -62,7 +59,11 @@ export default class ScoreManager {
 
         if (this.curScore > this.highScore) {
             this.highScore = this.curScore
-            Storage.setNumber(STORAGE_KEY.HIGH_SCORE, this.highScore)
+
+            const playerData = PlayerDataManager.getPlayerData()
+            playerData.highScore = this.curScore
+            PlayerDataManager.savePlayerData(playerData)
+
             this.highScoreText.setText(this.highScore.toString())
         }
         this.curScoreText.setText(this.curScore.toString())

@@ -46,13 +46,12 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     }
 
     public increaseCombo(): void {
-        if (this.combo < 10) {
-            this.combo++
-        }
+        this.combo++
 
         if (this.combo === 3) {
             this.smokeParticle.start()
         }
+
         if (this.combo >= 4) {
             if (this.combo === 4) {
                 this.specialParticle.start()

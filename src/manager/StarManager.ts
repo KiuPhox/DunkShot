@@ -1,8 +1,7 @@
 import { GameState } from '../GameState'
-import Storage from '../Storage'
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constant/CanvasSize'
-import { STORAGE_KEY } from '../constant/StorageKey'
 import GameManager from './GameManager'
+import PlayerDataManager from './PlayerDataManager'
 
 export default class StarManager {
     public static curStarText: Phaser.GameObjects.BitmapText
@@ -10,14 +9,14 @@ export default class StarManager {
     private static curStar: number
 
     constructor(scene: Phaser.Scene) {
-        StarManager.curStar = Storage.getInt(STORAGE_KEY.STAR)
+        StarManager.curStar = PlayerDataManager.getStars()
 
         StarManager.curStarText = scene.add
             .bitmapText(
                 CANVAS_WIDTH * 0.88,
                 CANVAS_HEIGHT * 0.05,
                 'objet',
-                Storage.getString(STORAGE_KEY.STAR),
+                StarManager.curStar.toString(),
                 36
             )
             .setTint(0xfb8b25)
@@ -37,7 +36,9 @@ export default class StarManager {
             this.curStarText.setText(star.toString())
         }
 
-        Storage.setNumber(STORAGE_KEY.STAR, star)
+        const playerData = PlayerDataManager.getPlayerData()
+        playerData.stars = star
+        PlayerDataManager.savePlayerData(playerData)
     }
 
     public static increaseStar() {

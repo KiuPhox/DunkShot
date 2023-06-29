@@ -2,7 +2,7 @@ import GameplayScene from '../scenes/GameplayScene'
 import { IObstacle } from '../types/miniwall'
 import Ball from './Ball'
 
-const BOUNCE_FORCE = 2.5
+const BOUNCE_FORCE = 2
 
 export default class Bouncer extends Phaser.Physics.Arcade.Sprite {
     private ball: Ball
