@@ -44,10 +44,16 @@ export default class PreloadScene extends Phaser.Scene {
             frameHeight: 1960 / 6,
         })
 
+        this.load.spritesheet('tail', 'assets/textures/tails-atlas.png', {
+            frameWidth: 261,
+            frameHeight: 261,
+        })
+
         this.load.image('net', 'assets/textures/net.png')
         this.load.image('title', 'assets/textures/title.png')
         this.load.image('star', 'assets/textures/star.png')
         this.load.image('mini-wall', 'assets/textures/miniwall.png')
+        this.load.image('bouncer', 'assets/textures/bouncer.png')
         this.load.image('item', 'assets/textures/item.png')
 
         // Buttons
@@ -72,9 +78,6 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('e3', 'assets/textures/e3.png')
         this.load.image('e4', 'assets/textures/e4.png')
         this.load.image('circle', 'assets/textures/circle.png')
-        this.load.image('shape1', 'assets/textures/shapes/shape1.png')
-        this.load.image('shape2', 'assets/textures/shapes/shape2.png')
-        this.load.image('shape3', 'assets/textures/shapes/shape3.png')
 
         this.load.bitmapFont(
             'objet',

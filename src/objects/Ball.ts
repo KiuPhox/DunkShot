@@ -83,6 +83,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
                 scale: { start: 0.35, end: 0 },
                 speed: { min: 10, max: 30 },
                 frequency: 40,
+                frame: SPECIAL_EFFECTS[SkinManager.getCurrentSkin()].frame,
             }
         )
 

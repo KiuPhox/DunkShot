@@ -13,6 +13,7 @@ import { GameState } from '../GameState'
 import GameManager from '../manager/GameManager'
 import Storage from '../Storage'
 import { STORAGE_KEY } from '../constant/StorageKey'
+import Bouncer from '../objects/Bouncer'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -45,6 +46,7 @@ export default class GameplayScene extends Phaser.Scene {
     private previousCombo: number
 
     private miniWall: MiniWall
+    private bouncer: Bouncer
 
     constructor() {
         super('game')
@@ -62,7 +64,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.createDeadZone()
         this.createWalls()
         this.createBaskets()
-        this.createMiniWall()
+        this.createObstacles()
 
         this.configureCamera()
     }
@@ -199,10 +201,15 @@ export default class GameplayScene extends Phaser.Scene {
         this.camera.startFollow(this.ball, false, 0, 0.01, -CANVAS_WIDTH / 4, CANVAS_HEIGHT / 4)
     }
 
-    private createMiniWall(): void {
+    private createObstacles(): void {
         this.miniWall = new MiniWall({ scene: this, x: 300, y: 100, ball: this.ball })
             .setActive(false)
             .setScale(0)
+
+        this.bouncer = new Bouncer({ scene: this, x: 300, y: 100, ball: this.ball })
+            .setActive(false)
+            .setScale(0)
+            .setCircle(100)
     }
 
     private handleBallTouch = (basket: Basket) => {

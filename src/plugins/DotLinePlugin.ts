@@ -44,7 +44,8 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
     public drawTrajectoryLine(
         position: Phaser.Math.Vector2,
         velocity: Phaser.Math.Vector2,
-        gravity: number
+        gravity: number,
+        alpha: number
     ): void {
         this.trajectoryLineGraphics.clear()
 
@@ -55,7 +56,7 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
             if (x < 0) x = -x
             else if (x > CANVAS_WIDTH) x = CANVAS_WIDTH - (x - CANVAS_WIDTH)
 
-            this.trajectoryLineGraphics.fillStyle(0xf2a63b, 1)
+            this.trajectoryLineGraphics.fillStyle(0xf2a63b, alpha)
             this.trajectoryLineGraphics.setDepth(-2)
             this.trajectoryLineGraphics.fillCircle(x, y, FIRST_SIZE / (i + 1) + LAST_SIZE)
         }

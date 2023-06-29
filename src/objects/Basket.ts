@@ -122,7 +122,7 @@ export default class Basket extends Phaser.GameObjects.Container {
             this.moveTween = this.scene.add.tween({
                 targets: this,
                 x: this.x + dist,
-                ease: 'Sine.easeInOut',
+                ease: 'Sine.inout',
                 duration: 2000,
                 yoyo: true,
                 repeat: -1,
@@ -131,7 +131,7 @@ export default class Basket extends Phaser.GameObjects.Container {
             this.moveTween = this.scene.add.tween({
                 targets: this,
                 y: this.y + dist,
-                ease: 'Sine.easeInOut',
+                ease: 'Sine.inout',
                 duration: 2000,
                 yoyo: true,
                 repeat: -1,
@@ -182,13 +182,7 @@ export default class Basket extends Phaser.GameObjects.Container {
 
         scene.input.on('drag', (pointer: PointerEvent) => {
             if (this.hasBall && this.dragStartPos) {
-                this.handleDragMovement(pointer)
-
-                scene.dotLine.drawTrajectoryLine(
-                    new Phaser.Math.Vector2(this.ball.x, this.ball.y),
-                    this.shootVelocity,
-                    2000
-                )
+                this.handleDragMovement(pointer, scene)
             }
         })
 
@@ -214,7 +208,7 @@ export default class Basket extends Phaser.GameObjects.Container {
         })
     }
 
-    private handleDragMovement(pointer: PointerEvent): void {
+    private handleDragMovement(pointer: PointerEvent, scene: GameplayScene): void {
         this.ball.setGravityY(0)
         this.ball.setVelocity(0)
         this.dragPos = new Phaser.Math.Vector2(pointer.x, pointer.y)
@@ -231,16 +225,25 @@ export default class Basket extends Phaser.GameObjects.Container {
             shootSpeed * Math.sin(this.shootVelocity.angle())
         )
 
-        if (this.shootVelocity.length() > 10) {
+        if (this.shootVelocity.length() > 100) {
             this.rotation = this.shootVelocity.angle() + Math.PI / 2
-            this.netSprite.scaleY = (shootSpeed / MAX_SHOOT_SPEED) * 0.2 + 0.4
-            this.otherCirc[0].y = (shootSpeed / MAX_SHOOT_SPEED) * 20 + 50
+            this.netSprite.scaleY = (shootSpeed / MAX_SHOOT_SPEED) * 0.25 + 0.4
+            this.otherCirc[0].y = (shootSpeed / MAX_SHOOT_SPEED) * 25 + 50
             this.ball.x =
-                -Math.cos(this.shootVelocity.angle()) * ((shootSpeed / MAX_SHOOT_SPEED) * 20 + 13) +
+                -Math.cos(this.shootVelocity.angle()) * ((shootSpeed / MAX_SHOOT_SPEED) * 25 + 13) +
                 this.x
             this.ball.y =
-                -Math.sin(this.shootVelocity.angle()) * ((shootSpeed / MAX_SHOOT_SPEED) * 20 + 13) +
+                -Math.sin(this.shootVelocity.angle()) * ((shootSpeed / MAX_SHOOT_SPEED) * 25 + 13) +
                 this.y
+
+            if (this.shootVelocity.length() > 500) {
+                scene.dotLine.drawTrajectoryLine(
+                    new Phaser.Math.Vector2(this.ball.x, this.ball.y),
+                    this.shootVelocity,
+                    2000,
+                    Math.min((this.shootVelocity.length() / MAX_SHOOT_SPEED) * 2, 1)
+                )
+            }
         }
     }
 

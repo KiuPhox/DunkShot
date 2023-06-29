@@ -1,6 +1,6 @@
 import Ball from '../objects/Ball'
 
-export type IMiniWall = {
+export type IObstacle = {
     scene: Phaser.Scene
     x: number
     y: number

@@ -1,12 +1,12 @@
 import GameplayScene from '../scenes/GameplayScene'
-import { IMiniWall } from '../types/miniwall'
+import { IObstacle } from '../types/miniwall'
 import Ball from './Ball'
 
 export default class MiniWall extends Phaser.GameObjects.NineSlice {
     private ball: Ball
     private physic: Phaser.Physics.Arcade.Body
 
-    constructor(w: IMiniWall) {
+    constructor(w: IObstacle) {
         super(w.scene, w.x, w.y, 'mini-wall', 0, 25, 309, 10, 10, 100, 100)
 
         this.ball = w.ball
