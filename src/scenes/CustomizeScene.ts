@@ -4,6 +4,7 @@ import Button from '../objects/Button/Button'
 import SkinManager from '../manager/SkinManager'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
 import StarManager from '../manager/StarManager'
+import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
 
 const ROWS = 4
 const COLUMNS = 29
@@ -16,6 +17,8 @@ export default class CustomizeScene extends Phaser.Scene {
     private isPointerDown: boolean
     private lastPointerPos: Phaser.Math.Vector2
 
+    private rexUI: RexUIPlugin
+
     constructor() {
         super('customize')
 
@@ -25,61 +28,67 @@ export default class CustomizeScene extends Phaser.Scene {
 
     create() {
         this.createBackButton()
-        this.createSkinButtons()
+        this.createSkinsPanel()
 
         this.selectedCirc = this.add.ellipse(200, 200, 140, 140, 0xffd93d).setDepth(-4)
+    }
+    private createSkinsPanel(): void {
+        const scrollablePanel = this.rexUI.add
+            .scrollablePanel({
+                x: CANVAS_WIDTH / 2,
+                y: CANVAS_HEIGHT / 2,
+                width: CANVAS_WIDTH,
+                height: CANVAS_HEIGHT - 100,
+                background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff, 0),
+                scrollMode: 0,
+                panel: {
+                    child: this.createGrid(this),
+                },
+                mouseWheelScroller: {
+                    focus: false,
+                    speed: 0.1,
+                },
+                space: {
+                    left: 10,
+                    right: 10,
+                    top: 10,
+                    bottom: 10,
+                },
+            })
+            .layout()
 
-        this.selectedCirc.x = this.skins[SkinManager.getCurrentSkin()].x
-        this.selectedCirc.y = this.skins[SkinManager.getCurrentSkin()].y
+        scrollablePanel.childOY +=
+            scrollablePanel.centerY - this.skins[SkinManager.getCurrentSkin()].y
 
-        this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-            this.isPointerDown = true
-            this.lastPointerPos.x = pointer.x
-            this.lastPointerPos.y = pointer.y
-        })
-
-        this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-            this.isPointerDown = false
-        })
-        this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-            if (this.isPointerDown) {
-                for (let i = 0; i < this.skins.length; i++) {
-                    this.skins[i].y -= this.lastPointerPos.y - pointer.y
-                }
-                this.selectedCirc.y -= this.lastPointerPos.y - pointer.y
+        scrollablePanel.setChildrenInteractive({}).on('child.click', (child: Button) => {
+            if (child.pointerDownCallback) {
+                child.pointerDownCallback()
             }
-
-            this.lastPointerPos.x = pointer.x
-            this.lastPointerPos.y = pointer.y
         })
     }
 
-    private createBackButton() {
-        const backBtn = new Button({
-            scene: this,
-            x: CANVAS_WIDTH * 0.06,
-            y: CANVAS_HEIGHT * 0.035,
-            texture: 'back-btn',
-            scale: 0.3,
-            pointerUpCallback: () => {
-                if (
-                    GameManager.getPreviousState() === GameState.READY ||
-                    GameManager.getPreviousState() === GameState.PAUSE
-                ) {
-                    GameManager.updateGameState(GameManager.getPreviousState(), this)
-                }
-            },
-        })
-    }
-
-    private createSkinButtons() {
+    private createGrid(scene: CustomizeScene) {
         const buttonScale = 0.56
         const unlockedSkins = SkinManager.getUnlockedSkins()
 
         this.skins = []
+
+        const sizer = scene.rexUI.add.fixWidthSizer({
+            space: {
+                left: 3,
+                right: 3,
+                top: 3,
+                bottom: 3,
+                item: 8,
+                line: 8,
+            },
+            align: 'center',
+        })
+
         for (let i = 0; i < ROWS * COLUMNS; i++) {
+            let b: Button
             if (unlockedSkins.indexOf(i) === -1) {
-                const b = new Button({
+                b = new Button({
                     scene: this,
                     x: 0,
                     y: 0,
@@ -103,7 +112,7 @@ export default class CustomizeScene extends Phaser.Scene {
                 this.skins.push(b)
             } else {
                 this.skins.push(
-                    new Button({
+                    (b = new Button({
                         scene: this,
                         x: 0,
                         y: 0,
@@ -115,18 +124,36 @@ export default class CustomizeScene extends Phaser.Scene {
                             this.selectedCirc.x = this.skins[i].x
                             this.selectedCirc.y = this.skins[i].y
                         },
-                    })
+                    }))
                 )
             }
 
-            Phaser.Actions.GridAlign(this.skins, {
-                width: ROWS,
-                height: COLUMNS,
-                cellWidth: CANVAS_WIDTH / 4.5,
-                cellHeight: CANVAS_WIDTH / 4.5,
-                x: 0,
-                y: 0,
-            })
+            sizer.add(b)
         }
+
+        return sizer
+    }
+
+    private createBackButton() {
+        const backBtn = new Button({
+            scene: this,
+            x: CANVAS_WIDTH * 0.06,
+            y: CANVAS_HEIGHT * 0.035,
+            texture: 'back-btn',
+            scale: 0.3,
+            pointerUpCallback: () => {
+                if (
+                    GameManager.getPreviousState() === GameState.READY ||
+                    GameManager.getPreviousState() === GameState.PAUSE
+                ) {
+                    GameManager.updateGameState(GameManager.getPreviousState(), this)
+                }
+            },
+        })
+    }
+
+    update(): void {
+        this.selectedCirc.x = this.skins[SkinManager.getCurrentSkin()].x
+        this.selectedCirc.y = this.skins[SkinManager.getCurrentSkin()].y
     }
 }

@@ -8,6 +8,7 @@ import PauseScene from './scenes/PauseScene'
 import CustomizeScene from './scenes/CustomizeScene'
 import SettingsScene from './scenes/SettingsScene'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from './constant/CanvasSize'
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
 
 const config = {
     type: Phaser.WEBGL,
@@ -33,6 +34,11 @@ const config = {
                 plugin: DotLinePlugin,
                 start: true,
                 mapping: 'dotLine',
+            },
+            {
+                key: 'rexUI',
+                plugin: UIPlugin,
+                mapping: 'rexUI',
             },
         ],
     },
