@@ -46,7 +46,7 @@ export default class CustomizeScene extends Phaser.Scene {
                 },
                 mouseWheelScroller: {
                     focus: false,
-                    speed: 0.1,
+                    speed: 0.5,
                 },
                 space: {
                     left: 10,
