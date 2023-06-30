@@ -38,9 +38,9 @@ export default class CustomizeScene extends Phaser.Scene {
                 x: CANVAS_WIDTH / 2,
                 y: CANVAS_HEIGHT / 2,
                 width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT - 100,
+                height: CANVAS_HEIGHT - 120,
                 background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff, 0),
-                scrollMode: 0,
+                scrollMode: 'v',
                 panel: {
                     child: this.createGrid(this),
                 },
@@ -57,8 +57,18 @@ export default class CustomizeScene extends Phaser.Scene {
             })
             .layout()
 
-        scrollablePanel.childOY +=
-            scrollablePanel.centerY - this.skins[SkinManager.getCurrentSkin()].y
+        this.tweens.addCounter({
+            from: scrollablePanel.childOY,
+            to:
+                scrollablePanel.childOY +
+                scrollablePanel.centerY -
+                this.skins[SkinManager.getCurrentSkin()].y,
+            duration: 500,
+            ease: 'Quad.out',
+            onUpdate: function (tween: Phaser.Tweens.Tween) {
+                scrollablePanel.childOY = tween.getValue()
+            },
+        })
 
         scrollablePanel.setChildrenInteractive({}).on('child.click', (child: Button) => {
             if (child.pointerDownCallback) {
