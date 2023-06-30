@@ -9,7 +9,7 @@ export default class MainMenuScene extends Phaser.Scene {
     private customizeBtn: Button
     private settingsBtn: Button
 
-    private title: Phaser.GameObjects.Image
+    private logo: Phaser.GameObjects.Image
     private help: Phaser.GameObjects.Sprite
 
     constructor() {
@@ -18,7 +18,7 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     create() {
-        this.createTitle()
+        this.createLogo()
         this.createHelpAnimation()
         this.createPauseButton()
         this.createSettingsButton()
@@ -27,13 +27,11 @@ export default class MainMenuScene extends Phaser.Scene {
         new StarManager(this)
     }
 
-    private createTitle() {
-        this.title = this.add
-            .image(CANVAS_WIDTH * 0.5, -CANVAS_HEIGHT * 0.25, 'title')
-            .setScale(0.5)
+    private createLogo() {
+        this.logo = this.add.image(CANVAS_WIDTH * 0.5, -CANVAS_HEIGHT * 0.25, 'logo').setScale(0.85)
 
         this.tweens.add({
-            targets: this.title,
+            targets: this.logo,
             y: { value: CANVAS_HEIGHT * 0.25, duration: 500 },
             ease: 'Quad.out',
         })
@@ -113,7 +111,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
     private handleGameStart() {
         this.tweens.add({
-            targets: [this.title, this.help, this.customizeBtn, this.settingsBtn],
+            targets: [this.logo, this.help, this.customizeBtn, this.settingsBtn],
             alpha: { value: 0, duration: 500 },
             ease: 'Quad.out',
         })

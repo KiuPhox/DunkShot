@@ -30,7 +30,7 @@ export default class CustomizeScene extends Phaser.Scene {
         this.createBackButton()
         this.createSkinsPanel()
 
-        this.selectedCirc = this.add.ellipse(200, 200, 140, 140, 0xffd93d).setDepth(-4)
+        this.selectedCirc = this.add.ellipse(200, 200, 140, 140, 0xffd93d).setDepth(-3)
     }
     private createSkinsPanel(): void {
         const scrollablePanel = this.rexUI.add
@@ -39,7 +39,7 @@ export default class CustomizeScene extends Phaser.Scene {
                 y: CANVAS_HEIGHT / 2,
                 width: CANVAS_WIDTH,
                 height: CANVAS_HEIGHT - 120,
-                background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff, 0),
+                background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xe5e5e5).setDepth(-4),
                 scrollMode: 'v',
                 panel: {
                     child: this.createGrid(this),

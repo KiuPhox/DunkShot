@@ -33,7 +33,7 @@ export const SPECIAL_EFFECTS = [
     { texure: 'tail', frame: '59', colors: [0xffbe0f, 0xfa1e0e, 0x8c0000] },
     { texure: 'tail', frame: '59', colors: [0x4e9f3d, 0x1e5128, 0x191a19] },
     { texure: 'tail', frame: '58', colors: [0xf9fd50, 0x85ef47, 0x00bd56] },
-    { texure: 'tail', frame: '59', colors: [0xfef9a7, 0xfac213, 0xf77e21] },
+    { texure: 'tail', frame: '5', colors: [0xf9fd50, 0x85ef47, 0x00bd56] },
     { texure: 'tail', frame: '55', colors: [0xfbd6d2, 0xce49bf, 0xa63ec5] },
     { texure: 'tail', frame: '59', colors: [0xff97c1, 0xff5858, 0xe0144c, 0x9a1663] },
     { texure: 'tail', frame: '59', colors: [0x38e54d, 0x54b435, 0x379237] },

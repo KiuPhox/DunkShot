@@ -1,4 +1,5 @@
 import { SPECIAL_EFFECTS } from '../constant/Skin'
+import PlayerDataManager from '../manager/PlayerDataManager'
 import SkinManager from '../manager/SkinManager'
 import GameplayScene from '../scenes/GameplayScene'
 import { IBall } from '../types/ball'
@@ -11,6 +12,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
 
     private smokeParticle: Phaser.GameObjects.Particles.ParticleEmitter
     private specialParticle: Phaser.GameObjects.Particles.ParticleEmitter
+    private fireDustParticle: Phaser.GameObjects.Particles.ParticleEmitter
 
     private combo: number
 
@@ -22,6 +24,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         // Effect
         this.addSmokeParticle()
         this.addSpecialParticle()
+        this.addFireDustParticle()
 
         this.resetCombo()
 
@@ -58,8 +61,12 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
             if (this.combo === 4) {
                 this.smokeParticle.destroy()
                 this.addSmokeParticle()
+                this.fireDustParticle.start()
                 this.specialParticle.start()
             }
+
+            if (PlayerDataManager.getPlayerData().settings.vibration) window.navigator.vibrate(300)
+
             const rgb = Color.HexToRRB(SkinManager.getCurrentSkinColors()[0])
 
             this._scene.cameras.main.flash(200, rgb.r, rgb.g, rgb.b)
@@ -75,8 +82,8 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
 
     private addSpecialParticle(): void {
         this.specialParticle = this._scene.add.particles(
-            150,
-            450,
+            0,
+            0,
             SPECIAL_EFFECTS[SkinManager.getCurrentSkin()].texure,
             {
                 color: SkinManager.getCurrentSkinColors(),
@@ -91,8 +98,26 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
             }
         )
 
-        this.specialParticle.startFollow(this, -150, -450)
+        this.specialParticle.startFollow(this)
         this.specialParticle.setDepth(-4)
+    }
+
+    private addFireDustParticle(): void {
+        const colors = [0xfff323, 0xffca03, 0xff5403]
+        this.fireDustParticle = this._scene.add.particles(0, 0, 'circle', {
+            color: colors,
+            alpha: { start: 1, end: 0, ease: 'Quad.in' },
+            angle: { min: -135, max: -45 },
+            colorEase: 'quad.out',
+            lifespan: 600,
+            scale: { start: 0.3, end: 0.5, ease: 'Quad.in' },
+            speed: { min: 100, max: 150 },
+            duration: 500,
+            frequency: 80,
+        })
+
+        this.fireDustParticle.stop()
+        this.fireDustParticle.startFollow(this, 0, -20)
     }
 
     private addSmokeParticle(): void {
@@ -107,18 +132,18 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
                       Color.RGBtoHex(Color.Shade(rgb, 0.6)),
                   ]
 
-        this.smokeParticle = this._scene.add.particles(150, 450, 'circle', {
+        this.smokeParticle = this._scene.add.particles(0, 0, 'circle', {
             color: colors,
-            alpha: { start: 0.8, end: 0.1, ease: 'sine.out' },
+            alpha: { start: 0.8, end: 0, ease: 'sine.out' },
             colorEase: 'quad.out',
-            lifespan: 500,
+            lifespan: 1000,
             angle: { min: 0, max: 360 },
             rotate: { min: 0, max: 360 },
-            scale: 0.8,
+            scale: { start: 0.6, end: 0.8, ease: 'quad.out' },
             speed: { min: 50, max: 60 },
             frequency: 60,
         })
-        this.smokeParticle.startFollow(this, -150, -450)
+        this.smokeParticle.startFollow(this)
         this.smokeParticle.setDepth(-5)
     }
 

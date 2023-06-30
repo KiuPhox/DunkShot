@@ -50,7 +50,7 @@ export default class PreloadScene extends Phaser.Scene {
         })
 
         this.load.image('net', 'assets/textures/net.png')
-        this.load.image('title', 'assets/textures/title.png')
+        this.load.image('logo', 'assets/textures/logo.png')
         this.load.image('star', 'assets/textures/star.png')
         this.load.image('mini-wall', 'assets/textures/miniwall.png')
         this.load.image('bouncer', 'assets/textures/bouncer.png')

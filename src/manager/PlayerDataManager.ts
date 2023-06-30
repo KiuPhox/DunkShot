@@ -8,7 +8,7 @@ const INITIAL_PLAYER_DATA: PlayerData = {
     stars: 0,
     settings: {
         sound: true,
-        vibration: true,
+        vibration: false,
         nightMode: false,
     },
     skins: {
