@@ -45,6 +45,7 @@ export default class Basket extends Phaser.GameObjects.Container {
     constructor(scene: GameplayScene, x: number, y: number, player: Ball) {
         super(scene, x, y)
 
+        scene.add.existing(this)
         this.ball = player
 
         this.createBasketObjects(scene)

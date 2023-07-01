@@ -10,6 +10,7 @@ import {
     BOUNCER_CHANCES,
     MINI_WALL_CHANCES,
     MOVEABLE_BASKET_CHANCES,
+    SHIELD_CHANCES,
     STAR_CHANCES,
 } from '../constant/Level'
 import PopUpManager from '../manager/PopUpManager'
@@ -18,6 +19,7 @@ import { GameState } from '../GameState'
 import GameManager from '../manager/GameManager'
 import Bouncer from '../objects/Bouncer'
 import PlayerDataManager from '../manager/PlayerDataManager'
+import Shield from '../objects/Shield'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -51,6 +53,7 @@ export default class GameplayScene extends Phaser.Scene {
 
     private miniWall: MiniWall
     private bouncer: Bouncer
+    private shield: Shield
 
     constructor() {
         super('game')
@@ -202,9 +205,6 @@ export default class GameplayScene extends Phaser.Scene {
         })
 
         this.targetBasket = this.baskets[1]
-
-        this.add.existing(this.baskets[0])
-        this.add.existing(this.baskets[1])
     }
 
     private createObstacles(): void {
@@ -216,6 +216,8 @@ export default class GameplayScene extends Phaser.Scene {
             .setActive(false)
             .setScale(0)
             .setCircle(100)
+
+        this.shield = new Shield({ scene: this, x: CANVAS_WIDTH + 200, y: 500, ball: this.ball })
     }
 
     private configureCamera(): void {
@@ -303,6 +305,7 @@ export default class GameplayScene extends Phaser.Scene {
 
         this.miniWall.setActive(false).setScale(0)
         this.bouncer.setActive(false).setScale(0)
+        this.shield.setScale(0.001).setPosition(CANVAS_WIDTH + 200, 0)
 
         if (Random.Percent(MOVEABLE_BASKET_CHANCES)) {
             this.targetBasket.setMoveable(true)
@@ -325,6 +328,16 @@ export default class GameplayScene extends Phaser.Scene {
                 ease: 'Back.out',
             })
             this.targetBasket.rotation = 0
+        } else if (Random.Percent(SHIELD_CHANCES)) {
+            this.shield.setPosition(this.targetBasket.x, this.targetBasket.y)
+
+            this.add.tween({
+                targets: this.shield,
+                scale: 0.65,
+                duration: 300,
+                ease: 'Back.out',
+            })
+            this.targetBasket.rotation = 0
         }
 
         // There's a bug on mobile when set this scale to zero
@@ -342,5 +355,6 @@ export default class GameplayScene extends Phaser.Scene {
         this.ball.update(time, delta)
         this.baskets[0].update()
         this.baskets[1].update()
+        this.shield.update(time, delta)
     }
 }

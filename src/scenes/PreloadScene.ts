@@ -52,9 +52,14 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('net', 'assets/textures/net.png')
         this.load.image('logo', 'assets/textures/logo.png')
         this.load.image('star', 'assets/textures/star.png')
-        this.load.image('mini-wall', 'assets/textures/miniwall.png')
-        this.load.image('bouncer', 'assets/textures/bouncer.png')
-        this.load.image('item', 'assets/textures/item.png')
+        this.load.image('mini-wall', 'assets/textures/obstacles/miniwall.png')
+        this.load.image('bouncer', 'assets/textures/obstacles/bouncer.png')
+        this.load.image('shield', 'assets/textures/obstacles/shield_2.png')
+
+        // Shop
+        this.load.image('item', 'assets/textures/shop/item.png')
+        this.load.image('shop-line', 'assets/textures/shop/shop-line.png')
+        this.load.image('top-ornament', 'assets/textures/shop/top-ornament.png')
 
         // Buttons
         this.load.image('reset-btn', 'assets/textures/btnreset.png')

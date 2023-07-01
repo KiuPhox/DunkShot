@@ -1,5 +1,5 @@
 import GameplayScene from '../scenes/GameplayScene'
-import { IObstacle } from '../types/miniwall'
+import { IObstacle } from '../types/obstacle'
 import Ball from './Ball'
 
 const BOUNCE_FORCE = 2

@@ -5,6 +5,7 @@ import SkinManager from '../manager/SkinManager'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
 import StarManager from '../manager/StarManager'
 import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
+import ScrollablePanel from 'phaser3-rex-plugins/templates/ui/scrollablepanel/ScrollablePanel'
 
 const ROWS = 4
 const COLUMNS = 29
@@ -14,32 +15,35 @@ export default class CustomizeScene extends Phaser.Scene {
 
     private selectedCirc: Phaser.GameObjects.Ellipse
 
-    private isPointerDown: boolean
-    private lastPointerPos: Phaser.Math.Vector2
+    private skinsPanel: ScrollablePanel
 
     private rexUI: RexUIPlugin
 
     constructor() {
         super('customize')
-
-        this.isPointerDown = false
-        this.lastPointerPos = new Phaser.Math.Vector2(0, 0)
     }
 
     create() {
         this.createBackButton()
         this.createSkinsPanel()
 
-        this.selectedCirc = this.add.ellipse(200, 200, 140, 140, 0xffd93d).setDepth(-3)
+        this.add.image(CANVAS_WIDTH / 2, 20, 'top-ornament').setDepth(-2)
+        this.add
+            .image(CANVAS_WIDTH / 2, 200, 'shop-line')
+            .setScale(1.15, 1)
+            .setTint(0x8b8b8b)
+        this.add.rectangle(CANVAS_WIDTH / 2, 100, CANVAS_WIDTH, 200, 0xe5e5e5).setDepth(-3)
+        this.selectedCirc = this.add.ellipse(200, 200, 140, 140, 0xffd93d).setDepth(-4)
     }
+
     private createSkinsPanel(): void {
-        const scrollablePanel = this.rexUI.add
+        this.skinsPanel = this.rexUI.add
             .scrollablePanel({
                 x: CANVAS_WIDTH / 2,
-                y: CANVAS_HEIGHT / 2,
+                y: CANVAS_HEIGHT / 2 + 100,
                 width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT - 120,
-                background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xe5e5e5).setDepth(-4),
+                height: CANVAS_HEIGHT - 200,
+                background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xe5e5e5).setDepth(-5),
                 scrollMode: 'v',
                 panel: {
                     child: this.createGrid(this),
@@ -51,30 +55,32 @@ export default class CustomizeScene extends Phaser.Scene {
                 space: {
                     left: 10,
                     right: 10,
-                    top: 10,
-                    bottom: 10,
                 },
             })
             .layout()
 
+        const scroll = this.skinsPanel
+
         this.tweens.addCounter({
-            from: scrollablePanel.childOY,
+            from: this.skinsPanel.childOY,
             to:
-                scrollablePanel.childOY +
-                scrollablePanel.centerY -
+                this.skinsPanel.childOY +
+                this.skinsPanel.centerY -
                 this.skins[SkinManager.getCurrentSkin()].y,
             duration: 500,
             ease: 'Quad.out',
             onUpdate: function (tween: Phaser.Tweens.Tween) {
-                scrollablePanel.childOY = tween.getValue()
+                scroll.childOY = tween.getValue()
             },
         })
 
-        scrollablePanel.setChildrenInteractive({}).on('child.click', (child: Button) => {
+        this.skinsPanel.setChildrenInteractive({}).on('child.click', (child: Button) => {
             if (child.pointerDownCallback) {
                 child.pointerDownCallback()
             }
         })
+
+        this.skinsPanel.setVisible(false)
     }
 
     private createGrid(scene: CustomizeScene) {
@@ -87,10 +93,10 @@ export default class CustomizeScene extends Phaser.Scene {
             space: {
                 left: 3,
                 right: 3,
-                top: 3,
-                bottom: 3,
-                item: 8,
-                line: 8,
+                top: 20,
+                bottom: 20,
+                item: 16,
+                line: 16,
             },
             align: 'center',
         })
