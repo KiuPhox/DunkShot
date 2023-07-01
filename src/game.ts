@@ -14,7 +14,7 @@ const config = {
     type: Phaser.WEBGL,
 
     physics: {
-        default: 'arcade',
+        // default: 'arcade',
         arcade: {
             debug: true,
             gravity: { y: 0 },
