@@ -303,6 +303,20 @@ export default class GameplayScene extends Phaser.Scene {
             this.targetBasket.createStar(this)
         }
 
+        // There's a bug on mobile when set this scale to zero
+        this.targetBasket.scale = 0.01
+
+        this.add.tween({
+            targets: this.targetBasket,
+            scale: 1,
+            duration: 300,
+            ease: 'Back.out',
+        })
+
+        this.generateObstacles()
+    }
+
+    private generateObstacles(): void {
         this.miniWall.setActive(false).setScale(0)
         this.bouncer.setActive(false).setScale(0)
         this.shield.setScale(0.001).setPosition(CANVAS_WIDTH + 200, 0)
@@ -339,16 +353,6 @@ export default class GameplayScene extends Phaser.Scene {
             })
             this.targetBasket.rotation = 0
         }
-
-        // There's a bug on mobile when set this scale to zero
-        this.targetBasket.scale = 0.01
-
-        this.add.tween({
-            targets: this.targetBasket,
-            scale: 1,
-            duration: 300,
-            ease: 'Back.out',
-        })
     }
 
     update(time: number, delta: number): void {

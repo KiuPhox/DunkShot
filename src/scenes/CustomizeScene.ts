@@ -80,7 +80,7 @@ export default class CustomizeScene extends Phaser.Scene {
             }
         })
 
-        this.skinsPanel.setVisible(false)
+        // this.skinsPanel.setVisible(false)
     }
 
     private createGrid(scene: CustomizeScene) {
