@@ -22,7 +22,10 @@ const config = {
     },
     scale: {
         width: CANVAS_WIDTH,
-        height: CANVAS_HEIGHT,
+        height:
+            window.innerHeight > window.innerWidth
+                ? (CANVAS_WIDTH * window.innerHeight) / window.innerWidth
+                : CANVAS_HEIGHT,
         parent: 'phaser-game',
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
