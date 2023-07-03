@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
+import { CANVAS_WIDTH } from '../constant/CanvasSize'
 
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -10,7 +10,7 @@ export default class PreloadScene extends Phaser.Scene {
         const progress = this.add.graphics()
 
         const progressText = this.add
-            .text(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.45, '0%', {
+            .text(CANVAS_WIDTH * 0.5, this.scale.height * 0.45, '0%', {
                 fontFamily: 'AkzidenzGrotesk',
                 fontSize: '36px',
                 color: '#f2a63b',
@@ -20,7 +20,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.on('progress', (value: number) => {
             progress.clear()
             progress.fillStyle(0xf2a63b, 1)
-            progress.fillRect(0, CANVAS_HEIGHT * 0.5, CANVAS_WIDTH * value, 30)
+            progress.fillRect(0, this.scale.height * 0.5, CANVAS_WIDTH * value, 30)
             progressText.setText(Math.round(value * 100).toString() + '%')
         })
 

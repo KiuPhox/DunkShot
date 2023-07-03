@@ -1,7 +1,7 @@
 import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
 import Button from '../objects/Button/Button'
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
+import { CANVAS_WIDTH } from '../constant/CanvasSize'
 
 export default class PauseScene extends Phaser.Scene {
     constructor() {
@@ -12,7 +12,7 @@ export default class PauseScene extends Phaser.Scene {
         const mainmenuBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.5,
-            y: CANVAS_HEIGHT * 0.35,
+            y: this.scale.height * 0.35,
             texture: 'mainmenu-btn',
             scale: 0.4,
             pointerUpCallback: () => {
@@ -23,7 +23,7 @@ export default class PauseScene extends Phaser.Scene {
         const customizeBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.5,
-            y: CANVAS_HEIGHT * 0.45,
+            y: this.scale.height * 0.45,
             texture: 'customize-btn',
             scale: 0.4,
             pointerUpCallback: () => {
@@ -34,7 +34,7 @@ export default class PauseScene extends Phaser.Scene {
         const settingsBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.5,
-            y: CANVAS_HEIGHT * 0.55,
+            y: this.scale.height * 0.55,
             texture: 'settings-pause-btn',
             scale: 0.4,
             pointerUpCallback: () => {
@@ -45,7 +45,7 @@ export default class PauseScene extends Phaser.Scene {
         const resumeBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.5,
-            y: CANVAS_HEIGHT * 0.65,
+            y: this.scale.height * 0.65,
             texture: 'resume-btn',
             scale: 0.4,
             pointerUpCallback: () => {

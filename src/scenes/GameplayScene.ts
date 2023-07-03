@@ -4,7 +4,7 @@ import DotLinePlugin from '../plugins/DotLinePlugin'
 import Ball from '../objects/Ball'
 import ScoreManager from '../manager/ScoreManager'
 import SkinManager from '../manager/SkinManager'
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
+import { CANVAS_WIDTH } from '../constant/CanvasSize'
 import { Random } from '../utils/Random'
 import {
     BOUNCER_CHANCES,
@@ -108,7 +108,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.ball = new Ball({
             scene: this,
             x: CANVAS_WIDTH * 0.25,
-            y: CANVAS_HEIGHT * 0.25,
+            y: this.scale.height * 0.25,
             texture: 'ball',
             frame: SkinManager.getCurrentSkin(),
         })
@@ -123,16 +123,23 @@ export default class GameplayScene extends Phaser.Scene {
 
     private createDraggingZone(): void {
         this.draggingZone = this.add
-            .rectangle(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.5, CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0)
+            .rectangle(
+                CANVAS_WIDTH * 0.5,
+                this.scale.height * 0.5,
+                CANVAS_WIDTH,
+                this.scale.height,
+                0,
+                0
+            )
             .setInteractive({ draggable: true })
     }
 
     private createDeadZone(): void {
         this.deadZone = this.add.rectangle(
             CANVAS_WIDTH * 0.5,
-            CANVAS_HEIGHT,
+            this.scale.height,
             CANVAS_WIDTH,
-            CANVAS_HEIGHT * 0.2,
+            this.scale.height * 0.2,
             0,
             0
         )
@@ -142,7 +149,7 @@ export default class GameplayScene extends Phaser.Scene {
             if (GameManager.getCurrentState() === GameState.PLAYING) {
                 if (this.curScore === 0) {
                     this.ball
-                        .setPosition(CANVAS_WIDTH * 0.25, CANVAS_HEIGHT * 0.25)
+                        .setPosition(CANVAS_WIDTH * 0.25, this.scale.height * 0.25)
                         .setVelocity(0)
                         .setRotation(0)
                     this.add.tween({
@@ -163,12 +170,12 @@ export default class GameplayScene extends Phaser.Scene {
         const wallHitEffect = this.add.image(0, 0, 'e4').setAlpha(0).setScale(0.5)
 
         const wallPositions = [
-            { x: 0, y: CANVAS_HEIGHT * 0.5, origin: { x: 1, y: 0.5 } },
-            { x: CANVAS_WIDTH, y: CANVAS_HEIGHT * 0.5, origin: { x: 0, y: 0.5 } },
+            { x: 0, y: this.scale.height * 0.5, origin: { x: 1, y: 0.5 } },
+            { x: CANVAS_WIDTH, y: this.scale.height * 0.5, origin: { x: 0, y: 0.5 } },
         ]
         this.walls = wallPositions.map((position) =>
             this.add
-                .rectangle(position.x, position.y, 50, CANVAS_HEIGHT * 3, 0xc9c9c9)
+                .rectangle(position.x, position.y, 50, this.scale.height * 3, 0xc9c9c9)
                 .setOrigin(position.origin.x, position.origin.y)
         )
 
@@ -237,7 +244,7 @@ export default class GameplayScene extends Phaser.Scene {
 
     private configureCamera(): void {
         this.input.dragDistanceThreshold = 10
-        this.camera.startFollow(this.ball, false, 0, 0.01, -CANVAS_WIDTH / 4, CANVAS_HEIGHT / 4)
+        this.camera.startFollow(this.ball, false, 0, 0.01, -CANVAS_WIDTH / 4, this.scale.height / 4)
     }
 
     private handleBallTouch = (basket: Basket) => {

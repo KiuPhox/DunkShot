@@ -1,7 +1,7 @@
 import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
 import Button from '../objects/Button/Button'
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constant/CanvasSize'
+import { CANVAS_WIDTH } from '../constant/CanvasSize'
 import StarManager from '../manager/StarManager'
 
 export default class MainMenuScene extends Phaser.Scene {
@@ -28,17 +28,21 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     private createLogo() {
-        this.logo = this.add.image(CANVAS_WIDTH * 0.5, -CANVAS_HEIGHT * 0.25, 'logo').setScale(0.85)
+        this.logo = this.add
+            .image(CANVAS_WIDTH * 0.5, -this.scale.height * 0.25, 'logo')
+            .setScale(0.85)
 
         this.tweens.add({
             targets: this.logo,
-            y: { value: CANVAS_HEIGHT * 0.25, duration: 500 },
+            y: { value: this.scale.height * 0.25, duration: 500 },
             ease: 'Quad.out',
         })
     }
 
     private createHelpAnimation() {
-        this.help = this.add.sprite(CANVAS_WIDTH * 0.2, CANVAS_HEIGHT * 0.88, 'help').setScale(0.6)
+        this.help = this.add
+            .sprite(CANVAS_WIDTH * 0.2, this.scale.height * 0.88, 'help')
+            .setScale(0.6)
 
         this.help.anims.create({
             key: 'idle',
@@ -57,7 +61,7 @@ export default class MainMenuScene extends Phaser.Scene {
         this.pauseBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.06,
-            y: CANVAS_HEIGHT * 0.035,
+            y: this.scale.height * 0.035,
             texture: 'pause-btn',
             scale: 0.25,
             pointerUpCallback: this.handlePauseButtonClick,
@@ -68,7 +72,7 @@ export default class MainMenuScene extends Phaser.Scene {
         this.settingsBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.06,
-            y: CANVAS_HEIGHT * 0.035,
+            y: this.scale.height * 0.035,
             texture: 'settings-mainmenu-btn',
             scale: 1,
             pointerDownCallback: this.handleSettingsButtonClick,
@@ -79,7 +83,7 @@ export default class MainMenuScene extends Phaser.Scene {
         this.customizeBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.7,
-            y: CANVAS_HEIGHT * 0.85,
+            y: this.scale.height * 0.85,
             texture: 'customize-mainmenu-btn',
             scale: 0.4,
             pointerDownCallback: this.handleCustomizeButtonClick,

@@ -2,7 +2,7 @@ import GameManager from '../manager/GameManager'
 import { GameState } from '../GameState'
 import Button from '../objects/Button/Button'
 import SkinManager from '../manager/SkinManager'
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
+import { CANVAS_WIDTH } from '../constant/CanvasSize'
 import StarManager from '../manager/StarManager'
 import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
 import ScrollablePanel from 'phaser3-rex-plugins/templates/ui/scrollablepanel/ScrollablePanel'
@@ -40,9 +40,9 @@ export default class CustomizeScene extends Phaser.Scene {
         this.skinsPanel = this.rexUI.add
             .scrollablePanel({
                 x: CANVAS_WIDTH / 2,
-                y: CANVAS_HEIGHT / 2 + 100,
+                y: this.scale.height / 2 + 100,
                 width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT - 200,
+                height: this.scale.height - 200,
                 background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xe5e5e5).setDepth(-5),
                 scrollMode: 'v',
                 panel: {
@@ -154,7 +154,7 @@ export default class CustomizeScene extends Phaser.Scene {
         const backBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.06,
-            y: CANVAS_HEIGHT * 0.035,
+            y: this.scale.height * 0.035,
             texture: 'back-btn',
             scale: 0.3,
             pointerUpCallback: () => {

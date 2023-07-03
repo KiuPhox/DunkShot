@@ -1,4 +1,4 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
+import { CANVAS_WIDTH } from '../constant/CanvasSize'
 import PlayerDataManager from './PlayerDataManager'
 
 export default class ScoreManager {
@@ -24,7 +24,7 @@ export default class ScoreManager {
 
     private createCurrentScoreText(scene: Phaser.Scene): void {
         ScoreManager.curScoreText = scene.add
-            .bitmapText(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.17, 'objet', '0', 180)
+            .bitmapText(CANVAS_WIDTH * 0.5, scene.scale.height * 0.17, 'objet', '0', 180)
             .setTint(0xc1c1c1)
             .setDepth(-3)
             .setOrigin(0.5)
@@ -32,7 +32,7 @@ export default class ScoreManager {
 
     private createBestScoreText(scene: Phaser.Scene): void {
         ScoreManager.bestScoreText = scene.add
-            .bitmapText(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.02, 'objet', 'Best Score', 40)
+            .bitmapText(CANVAS_WIDTH * 0.5, scene.scale.height * 0.02, 'objet', 'Best Score', 40)
             .setTint(0xfb8b25)
             .setDepth(-3)
             .setOrigin(0.5)
@@ -43,7 +43,7 @@ export default class ScoreManager {
         ScoreManager.highScoreText = scene.add
             .bitmapText(
                 CANVAS_WIDTH * 0.5,
-                CANVAS_HEIGHT * 0.07,
+                scene.scale.height * 0.07,
                 'objet',
                 PlayerDataManager.getHighScore().toString(),
                 90
