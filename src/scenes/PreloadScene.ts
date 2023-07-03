@@ -1,16 +1,16 @@
 import Phaser from 'phaser'
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../constant/CanvasSize'
 
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
-        super('preloader')
+        super('preload')
     }
 
     preload() {
-        const { width, height } = this.scale
         const progress = this.add.graphics()
 
         const progressText = this.add
-            .text(width * 0.5, height * 0.45, '0%', {
+            .text(CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.45, '0%', {
                 fontFamily: 'AkzidenzGrotesk',
                 fontSize: '36px',
                 color: '#f2a63b',
@@ -20,12 +20,13 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.on('progress', (value: number) => {
             progress.clear()
             progress.fillStyle(0xf2a63b, 1)
-            progress.fillRect(0, height * 0.5, width * value, 30)
+            progress.fillRect(0, CANVAS_HEIGHT * 0.5, CANVAS_WIDTH * value, 30)
             progressText.setText(Math.round(value * 100).toString() + '%')
         })
 
         this.load.on('complete', () => {
             progress.destroy()
+            this.scene.start('game').launch('result').launch('main-menu')
             console.log('Loading complete')
         })
 
@@ -93,10 +94,6 @@ export default class PreloadScene extends Phaser.Scene {
         this.loadAudio()
     }
 
-    create() {
-        this.scene.start('game').launch('result').launch('main-menu')
-    }
-
     private loadAudio(): void {
         for (let i = 1; i <= 10; i++) {
             this.load.audio(i.toString(), `assets/audios/notes/${i}.mp3`)
@@ -107,8 +104,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.audio('combo-start', `assets/audios/combo-start.mp3`)
         this.load.audio('combo-shoot', `assets/audios/combo-shoot.mp3`)
         this.load.audio('combo-hit', `assets/audios/combo-hit.mp3`)
-        this.load.audio('shoot', `assets/audios/shoot.ogg`)
-        this.load.audio('kick', `assets/audios/kick.ogg`)
-        this.load.audio('die', `assets/audios/die.ogg`)
+        this.load.audio('release', `assets/audios/release.mp3`)
+        this.load.audio('game-over', `assets/audios/game-over.mp3`)
     }
 }

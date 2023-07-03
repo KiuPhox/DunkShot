@@ -37,9 +37,8 @@ export default class GameplayScene extends Phaser.Scene {
 
     public dotLine: DotLinePlugin
 
-    public shootSound: Phaser.Sound.BaseSound
-    public kickSound: Phaser.Sound.BaseSound
-    public dieSound: Phaser.Sound.BaseSound
+    public releaseSound: Phaser.Sound.BaseSound
+    public gameOverSound: Phaser.Sound.BaseSound
     public pointSounds: Phaser.Sound.BaseSound[] = []
     public wallHitSound: Phaser.Sound.BaseSound
     public starSound: Phaser.Sound.BaseSound
@@ -83,9 +82,12 @@ export default class GameplayScene extends Phaser.Scene {
         this.camera = this.cameras.main
         this.dotLine.init()
 
-        this.shootSound = this.sound.add('shoot')
-        this.kickSound = this.sound.add('kick')
-        this.dieSound = this.sound.add('die')
+        this.releaseSound = this.sound.add('release')
+        this.gameOverSound = this.sound.add('game-over')
+        this.gameOverSound.addMarker({
+            name: 'a',
+            start: 0.4,
+        })
         this.wallHitSound = this.sound.add('wall-hit')
         this.starSound = this.sound.add('star')
         this.comboHitSound = this.sound.add('combo-hit')
@@ -136,10 +138,23 @@ export default class GameplayScene extends Phaser.Scene {
         )
         this.physics.add.existing(this.deadZone)
         this.physics.add.overlap(this.deadZone, this.ball, () => {
+            this.gameOverSound.play('a')
             if (GameManager.getCurrentState() === GameState.PLAYING) {
-                GameManager.updateGameState(GameState.GAME_OVER, this)
-                this.dieSound.play()
-                this.camera.stopFollow()
+                if (this.curScore === 0) {
+                    this.ball
+                        .setPosition(CANVAS_WIDTH * 0.25, CANVAS_HEIGHT * 0.25)
+                        .setVelocity(0)
+                        .setRotation(0)
+                    this.add.tween({
+                        targets: this.baskets[0],
+                        rotation: 0,
+                        duration: 300,
+                        ease: 'Back.out',
+                    })
+                } else {
+                    GameManager.updateGameState(GameState.GAME_OVER, this)
+                    this.camera.stopFollow()
+                }
             }
         })
     }

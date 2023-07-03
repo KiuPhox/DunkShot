@@ -31,11 +31,12 @@ export default class Basket extends Phaser.GameObjects.Container {
     // Texture
     private basketTopSprite: Phaser.GameObjects.Sprite
     private basketBottomSprite: Phaser.GameObjects.Sprite
-    private basketEffectSprite: Phaser.GameObjects.Sprite
     private netSprite: Phaser.GameObjects.Sprite
 
     // Effect
     public emitter: Phaser.Events.EventEmitter = new Phaser.Events.EventEmitter()
+    private basketEffectSprite: Phaser.GameObjects.Sprite
+    private basketShootEffectSprite: Phaser.GameObjects.Sprite
 
     // Tween
     private moveTween: Phaser.Tweens.Tween

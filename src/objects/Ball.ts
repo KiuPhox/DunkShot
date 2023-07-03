@@ -38,7 +38,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         this.setVelocity(velocity.x, velocity.y)
         this.setBounce(0.7)
         this.setGravityY(2000)
-        ;(this._scene as GameplayScene).shootSound.play()
+        ;(this._scene as GameplayScene).releaseSound.play()
 
         if (this.combo > 3) {
             (this._scene as GameplayScene).comboShootSound.play()
