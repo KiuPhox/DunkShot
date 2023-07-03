@@ -75,6 +75,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('customize-btn', 'assets/textures/btncustomize.png')
         this.load.image('back-btn', 'assets/textures/btnback.png')
         this.load.image('cleardata-btn', 'assets/textures/btncleardata.png')
+        this.load.image('unlimited-btn', 'assets/textures/btnunlimited.png')
         this.load.spritesheet('rounded-btn', 'assets/textures/btnrounded-sheet.png', {
             frameHeight: 122,
             frameWidth: 224,

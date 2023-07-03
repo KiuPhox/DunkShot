@@ -1,9 +1,10 @@
 import { GameState } from '../GameState'
 import Storage from '../Storage'
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constant/CanvasSize'
+import { CANVAS_WIDTH } from '../constant/CanvasSize'
 import { SETTINGS } from '../constant/Settings'
 import GameManager from '../manager/GameManager'
 import PlayerDataManager from '../manager/PlayerDataManager'
+import StarManager from '../manager/StarManager'
 import Button from '../objects/Button/Button'
 import SwitchButton from '../objects/Button/SwitchButton'
 
@@ -21,13 +22,14 @@ export default class SettingsScene extends Phaser.Scene {
         this.createTexts()
         this.createSwitchButtons()
         this.createClearDataButton()
+        this.createUnlimitedButton()
     }
 
     private createBackButton() {
         const backBtn = new Button({
             scene: this,
             x: CANVAS_WIDTH * 0.06,
-            y: CANVAS_HEIGHT * 0.035,
+            y: this.scale.height * 0.035,
             texture: 'back-btn',
             scale: 0.3,
             pointerUpCallback: () => {
@@ -44,9 +46,9 @@ export default class SettingsScene extends Phaser.Scene {
     }
 
     private createTexts() {
-        this.addText(CANVAS_WIDTH * 0.1, CANVAS_HEIGHT * 0.3, 'SOUNDS')
-        this.addText(CANVAS_WIDTH * 0.1, CANVAS_HEIGHT * 0.4, 'VIBRATION')
-        this.addText(CANVAS_WIDTH * 0.1, CANVAS_HEIGHT * 0.5, 'NIGHT MODE')
+        this.addText(CANVAS_WIDTH * 0.1, this.scale.height * 0.3, 'SOUNDS')
+        this.addText(CANVAS_WIDTH * 0.1, this.scale.height * 0.4, 'VIBRATION')
+        this.addText(CANVAS_WIDTH * 0.1, this.scale.height * 0.5, 'NIGHT MODE')
     }
 
     private addText(x: number, y: number, text: string) {
@@ -56,8 +58,8 @@ export default class SettingsScene extends Phaser.Scene {
     private createClearDataButton(): void {
         new Button({
             scene: this,
-            x: CANVAS_HEIGHT * 0.3,
-            y: CANVAS_HEIGHT * 0.7,
+            x: this.scale.height * 0.3,
+            y: this.scale.height * 0.7,
             texture: 'cleardata-btn',
             scale: 0.5,
             pointerUpCallback: () => {
@@ -66,22 +68,35 @@ export default class SettingsScene extends Phaser.Scene {
         })
     }
 
+    private createUnlimitedButton(): void {
+        new Button({
+            scene: this,
+            x: this.scale.height * 0.3,
+            y: this.scale.height * 0.8,
+            texture: 'unlimited-btn',
+            scale: 0.5,
+            pointerUpCallback: () => {
+                StarManager.updateStar(99999)
+            },
+        })
+    }
+
     private createSwitchButtons(): void {
         this.soundBtn = this.createSwitchButton(
             CANVAS_WIDTH * 0.7,
-            CANVAS_HEIGHT * 0.3,
+            this.scale.height * 0.3,
             SETTINGS.SOUND
         ).setActive(PlayerDataManager.getPlayerData().settings.sound)
 
         this.vibrationBtn = this.createSwitchButton(
             CANVAS_WIDTH * 0.7,
-            CANVAS_HEIGHT * 0.4,
+            this.scale.height * 0.4,
             SETTINGS.VIBRATION
         ).setActive(PlayerDataManager.getPlayerData().settings.vibration)
 
         this.nightModeBtn = this.createSwitchButton(
             CANVAS_WIDTH * 0.7,
-            CANVAS_HEIGHT * 0.5,
+            this.scale.height * 0.5,
             SETTINGS.NIGHT_MODE
         ).setActive(PlayerDataManager.getPlayerData().settings.nightMode)
     }
