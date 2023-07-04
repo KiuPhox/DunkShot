@@ -24,7 +24,7 @@ export default class ScoreManager {
 
     private createCurrentScoreText(scene: Phaser.Scene): void {
         ScoreManager.curScoreText = scene.add
-            .bitmapText(CANVAS_WIDTH * 0.5, scene.scale.height * 0.17, 'objet', '0', 180)
+            .bitmapText(CANVAS_WIDTH * 0.5, scene.scale.height * 0.17, 'triomphe', '0', 180)
             .setTint(0xc1c1c1)
             .setDepth(-3)
             .setOrigin(0.5)
@@ -32,7 +32,7 @@ export default class ScoreManager {
 
     private createBestScoreText(scene: Phaser.Scene): void {
         ScoreManager.bestScoreText = scene.add
-            .bitmapText(CANVAS_WIDTH * 0.5, scene.scale.height * 0.02, 'objet', 'Best Score', 40)
+            .bitmapText(CANVAS_WIDTH * 0.5, scene.scale.height * 0.02, 'triomphe', 'Best Score', 40)
             .setTint(0xfb8b25)
             .setDepth(-3)
             .setOrigin(0.5)
@@ -44,7 +44,7 @@ export default class ScoreManager {
             .bitmapText(
                 CANVAS_WIDTH * 0.5,
                 scene.scale.height * 0.07,
-                'objet',
+                'triomphe',
                 PlayerDataManager.getHighScore().toString(),
                 90
             )

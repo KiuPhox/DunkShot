@@ -1,4 +1,5 @@
 import Storage from '../Storage'
+import { CHALLENGES } from '../constant/Challenges'
 import { SETTINGS } from '../constant/Settings'
 import { STORAGE_KEY } from '../constant/StorageKey'
 import { PlayerData } from '../types/player-data'
@@ -14,6 +15,12 @@ const INITIAL_PLAYER_DATA: PlayerData = {
     skins: {
         current: 0,
         unlocked: [0],
+    },
+    challenges: {
+        time: 0,
+        score: 0,
+        bounce: 0,
+        noAim: 0,
     },
 }
 
@@ -67,5 +74,41 @@ export default class PlayerDataManager {
         }
 
         this.savePlayerData(playerData)
+    }
+
+    public static setChallengeLevel(challenge: CHALLENGES, value: number): void {
+        const playerData = this.getPlayerData()
+
+        switch (challenge) {
+            case CHALLENGES.TIME:
+                playerData.challenges.time = value
+                break
+            case CHALLENGES.SCORE:
+                playerData.challenges.score = value
+                break
+            case CHALLENGES.BOUNCE:
+                playerData.challenges.bounce = value
+                break
+            case CHALLENGES.NO_AIM:
+                playerData.challenges.noAim = value
+                break
+        }
+
+        this.savePlayerData(playerData)
+    }
+
+    public static getChallengeLevel(challenge: CHALLENGES): number {
+        const playerData = this.getPlayerData()
+
+        switch (challenge) {
+            case CHALLENGES.TIME:
+                return playerData.challenges.time
+            case CHALLENGES.SCORE:
+                return playerData.challenges.score
+            case CHALLENGES.BOUNCE:
+                return playerData.challenges.bounce
+            case CHALLENGES.NO_AIM:
+                return playerData.challenges.noAim
+        }
     }
 }

@@ -33,6 +33,8 @@ export default class GameManager {
             case GameState.SETTINGS:
                 this.handleSettingsState(scene)
                 break
+            case GameState.CHALLENGES_SELECTION:
+                this.handleChallengesSelectionState(scene)
         }
 
         this.emitter.emit('game-state-changed', this.currentState)
@@ -79,6 +81,12 @@ export default class GameManager {
             scene.scene.stop('game').stop('result').start('settings')
         } else if (this.previousState === GameState.PAUSE) {
             scene.scene.launch('settings').sleep('pause')
+        }
+    }
+
+    private static handleChallengesSelectionState(scene: Phaser.Scene) {
+        if (this.previousState === GameState.READY) {
+            scene.scene.stop('game').stop('result').start('challenges-selection')
         }
     }
 

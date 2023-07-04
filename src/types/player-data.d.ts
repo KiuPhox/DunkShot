@@ -10,4 +10,10 @@ export interface PlayerData {
         vibration: boolean
         nightMode: boolean
     }
+    challenges: {
+        time: number
+        score: number
+        bounce: number
+        noAim: number
+    }
 }

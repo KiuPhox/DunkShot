@@ -7,6 +7,7 @@ import ResultScene from './scenes/ResultScene'
 import PauseScene from './scenes/PauseScene'
 import CustomizeScene from './scenes/CustomizeScene'
 import SettingsScene from './scenes/SettingsScene'
+import ChallengesSelectionScene from './scenes/ChallengesSelectionScene'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from './constant/CanvasSize'
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
 
@@ -53,6 +54,7 @@ const config = {
         ResultScene,
         MainMenuScene,
         CustomizeScene,
+        ChallengesSelectionScene,
         SettingsScene,
         PauseScene,
     ],

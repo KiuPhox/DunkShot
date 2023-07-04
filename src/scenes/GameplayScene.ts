@@ -217,7 +217,7 @@ export default class GameplayScene extends Phaser.Scene {
 
     private createBaskets(): void {
         this.baskets[0] = new Basket(this, CANVAS_WIDTH * 0.25, 400, this.ball)
-        this.baskets[1] = new Basket(this, CANVAS_WIDTH * 0.8, 350, this.ball)
+        this.baskets[1] = new Basket(this, CANVAS_WIDTH * 0.75, 300, this.ball)
 
         this.ball.y = this.baskets[0].y
 

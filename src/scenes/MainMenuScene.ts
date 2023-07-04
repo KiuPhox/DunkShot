@@ -7,6 +7,7 @@ import StarManager from '../manager/StarManager'
 export default class MainMenuScene extends Phaser.Scene {
     private pauseBtn: Button
     private customizeBtn: Button
+    private challengesBtn: Button
     private settingsBtn: Button
 
     private logo: Phaser.GameObjects.Image
@@ -23,6 +24,7 @@ export default class MainMenuScene extends Phaser.Scene {
         this.createPauseButton()
         this.createSettingsButton()
         this.createCustomizeButton()
+        this.createChallengesButton()
         this.setupInputEvents()
         new StarManager(this)
     }
@@ -82,11 +84,22 @@ export default class MainMenuScene extends Phaser.Scene {
     private createCustomizeButton() {
         this.customizeBtn = new Button({
             scene: this,
-            x: CANVAS_WIDTH * 0.7,
+            x: CANVAS_WIDTH * 0.55,
             y: this.scale.height * 0.85,
             texture: 'customize-mainmenu-btn',
-            scale: 0.4,
+            scale: 0.75,
             pointerDownCallback: this.handleCustomizeButtonClick,
+        })
+    }
+
+    private createChallengesButton() {
+        this.challengesBtn = new Button({
+            scene: this,
+            x: CANVAS_WIDTH * 0.8,
+            y: this.scale.height * 0.85,
+            texture: 'challenges-btn',
+            scale: 0.75,
+            pointerDownCallback: this.handleChallengesButtonClick,
         })
     }
 
@@ -109,13 +122,23 @@ export default class MainMenuScene extends Phaser.Scene {
         GameManager.updateGameState(GameState.CUSTOMIZE, this)
     }
 
+    private handleChallengesButtonClick = () => {
+        GameManager.updateGameState(GameState.CHALLENGES_SELECTION, this)
+    }
+
     private handleSettingsButtonClick = () => {
         GameManager.updateGameState(GameState.SETTINGS, this)
     }
 
     private handleGameStart() {
         this.tweens.add({
-            targets: [this.logo, this.help, this.customizeBtn, this.settingsBtn],
+            targets: [
+                this.logo,
+                this.help,
+                this.customizeBtn,
+                this.settingsBtn,
+                this.challengesBtn,
+            ],
             alpha: { value: 0, duration: 500 },
             ease: 'Quad.out',
         })

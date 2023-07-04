@@ -15,7 +15,7 @@ export default class StarManager {
             .bitmapText(
                 CANVAS_WIDTH * 0.88,
                 scene.scale.height * 0.05,
-                'objet',
+                'triomphe',
                 StarManager.curStar.toString(),
                 36
             )

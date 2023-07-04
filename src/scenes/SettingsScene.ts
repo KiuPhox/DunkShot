@@ -52,7 +52,7 @@ export default class SettingsScene extends Phaser.Scene {
     }
 
     private addText(x: number, y: number, text: string) {
-        this.add.bitmapText(x, y, 'objet', text, 50).setTint(0xc1c1c1).setDepth(-3)
+        this.add.bitmapText(x, y, 'triomphe', text, 50).setTint(0xc1c1c1).setDepth(-3)
     }
 
     private createClearDataButton(): void {

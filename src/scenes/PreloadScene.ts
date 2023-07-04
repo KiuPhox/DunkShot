@@ -73,6 +73,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('mainmenu-btn', 'assets/textures/btnmainmenu.png')
         this.load.image('customize-mainmenu-btn', 'assets/textures/btncustomize-mainmenu.png')
         this.load.image('customize-btn', 'assets/textures/btncustomize.png')
+        this.load.image('challenges-btn', 'assets/textures/btnchallenges.png')
         this.load.image('back-btn', 'assets/textures/btnback.png')
         this.load.image('cleardata-btn', 'assets/textures/btncleardata.png')
         this.load.image('unlimited-btn', 'assets/textures/btnunlimited.png')
@@ -81,16 +82,17 @@ export default class PreloadScene extends Phaser.Scene {
             frameWidth: 224,
         })
 
+        this.load.image('time', 'assets/textures/challenges/time.png')
+        this.load.image('score', 'assets/textures/challenges/score.png')
+        this.load.image('bounce', 'assets/textures/challenges/bounce.png')
+        this.load.image('no-aim', 'assets/textures/challenges/no-aim.png')
+
         // Effects
         this.load.image('e3', 'assets/textures/e3.png')
         this.load.image('e4', 'assets/textures/e4.png')
         this.load.image('circle', 'assets/textures/circle.png')
 
-        this.load.bitmapFont(
-            'objet',
-            'assets/fonts/objet-extrabold.png',
-            'assets/fonts/objet-extrabold.xml'
-        )
+        this.load.bitmapFont('triomphe', 'assets/fonts/triomphe.png', 'assets/fonts/triomphe.xml')
 
         this.loadAudio()
     }

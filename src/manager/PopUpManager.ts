@@ -10,7 +10,7 @@ export default class PopUpManager {
         PopUpManager.scene = scene
 
         PopUpManager.popUpText = scene.add
-            .bitmapText(0, 0, 'objet', '', 40)
+            .bitmapText(0, 0, 'triomphe', '', 40)
             .setTint(0xfb8b25)
             .setDepth(-3)
             .setOrigin(0.5)
