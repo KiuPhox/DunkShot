@@ -1,6 +1,8 @@
 import { GameState } from '../GameState'
 import { CANVAS_WIDTH } from '../constant/CanvasSize'
+import { CHALLENGES, CHALLENGES_LEVEL_COUNT } from '../constant/Challenges'
 import GameManager from '../manager/GameManager'
+import PlayerDataManager from '../manager/PlayerDataManager'
 import Button from '../objects/Button/Button'
 import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
 
@@ -35,18 +37,27 @@ export default class ChallengesSelectionScene extends Phaser.Scene {
             },
         }
 
-        const challenge_names = ['time', 'score', 'bounce', 'no-aim']
+        const challenges: CHALLENGES[] = [
+            CHALLENGES.TIME,
+            CHALLENGES.SCORE,
+            CHALLENGES.BOUNCE,
+            CHALLENGES.NO_AIM,
+        ]
 
-        for (const name of challenge_names) {
+        for (const challenge of challenges) {
             sizer.add(
                 new Button({
                     x: 0,
                     y: 0,
                     scene: this,
-                    texture: name,
+                    texture: challenge,
                     scale: 0.8,
                     pointerUpCallback: () => {
-                        //
+                        const level = PlayerDataManager.getChallengeLevel(challenge) + 1
+                        if (level <= CHALLENGES_LEVEL_COUNT[challenge]) {
+                            this.registry.set('challenge', challenge + '-' + level)
+                            GameManager.updateGameState(GameState.CHALLENGES_GAMEPLAY, this)
+                        }
                     },
                 }),
                 config

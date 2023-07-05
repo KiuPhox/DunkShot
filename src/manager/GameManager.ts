@@ -35,9 +35,13 @@ export default class GameManager {
                 break
             case GameState.CHALLENGES_SELECTION:
                 this.handleChallengesSelectionState(scene)
+                break
+            case GameState.CHALLENGES_GAMEPLAY:
+                this.handleChallengesGamePlayState(scene)
+                break
         }
 
-        this.emitter.emit('game-state-changed', this.currentState)
+        this.emitter.emit('game-state-changed', this.currentState, this.previousState)
     }
 
     private static handleReadyState(scene: Phaser.Scene): void {
@@ -62,7 +66,10 @@ export default class GameManager {
             this.previousState === GameState.SETTINGS
         ) {
             scene.scene.stop().wake('pause')
-        } else if (this.previousState === GameState.PLAYING) {
+        } else if (
+            this.previousState === GameState.PLAYING ||
+            this.previousState === GameState.CHALLENGES_GAMEPLAY
+        ) {
             scene.scene.sleep().pause('game').launch('pause')
         }
     }
@@ -88,6 +95,10 @@ export default class GameManager {
         if (this.previousState === GameState.READY) {
             scene.scene.stop('game').stop('result').start('challenges-selection')
         }
+    }
+
+    private static handleChallengesGamePlayState(scene: Phaser.Scene) {
+        scene.scene.start('result').launch('game').launch('main-menu')
     }
 
     public static getCurrentState(): GameState {

@@ -20,7 +20,7 @@ const INITIAL_PLAYER_DATA: PlayerData = {
         time: 0,
         score: 0,
         bounce: 0,
-        noAim: 0,
+        'no-aim': 0,
     },
 }
 
@@ -90,7 +90,7 @@ export default class PlayerDataManager {
                 playerData.challenges.bounce = value
                 break
             case CHALLENGES.NO_AIM:
-                playerData.challenges.noAim = value
+                playerData.challenges['no-aim'] = value
                 break
         }
 
@@ -108,7 +108,7 @@ export default class PlayerDataManager {
             case CHALLENGES.BOUNCE:
                 return playerData.challenges.bounce
             case CHALLENGES.NO_AIM:
-                return playerData.challenges.noAim
+                return playerData.challenges['no-aim']
         }
     }
 }

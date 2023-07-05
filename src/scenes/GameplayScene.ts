@@ -23,6 +23,7 @@ import Shield from '../objects/Shield'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
+    private ballSpawnPos: Phaser.Math.Vector2
     private math: Phaser.Math.RandomDataGenerator = new Phaser.Math.RandomDataGenerator()
 
     private camera: Phaser.Cameras.Scene2D.Camera
@@ -54,6 +55,8 @@ export default class GameplayScene extends Phaser.Scene {
     private bouncer: Bouncer
     private shield: Shield
 
+    private fakeBall: Phaser.GameObjects.Arc
+
     constructor() {
         super('game')
     }
@@ -66,11 +69,21 @@ export default class GameplayScene extends Phaser.Scene {
         this.initializeVariables()
 
         this.createBall()
+
+        this.createObstacles()
         this.createDraggingZone()
         this.createDeadZone()
         this.createWalls()
-        this.createBaskets()
-        this.createObstacles()
+
+        if (GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY) {
+            this.loadChallengeLevel(this.registry.get('challenge'))
+        } else {
+            this.createBaskets()
+        }
+
+        this.baskets.forEach((basket) => {
+            basket.emitter.on('onHasBall', this.handleBallTouch)
+        })
 
         this.configureCamera()
     }
@@ -107,8 +120,8 @@ export default class GameplayScene extends Phaser.Scene {
     private createBall(): void {
         this.ball = new Ball({
             scene: this,
-            x: CANVAS_WIDTH * 0.25,
-            y: this.scale.height * 0.25,
+            x: CANVAS_WIDTH * 0.26,
+            y: this.scale.height * 0.75,
             texture: 'ball',
             frame: SkinManager.getCurrentSkin(),
         })
@@ -119,6 +132,9 @@ export default class GameplayScene extends Phaser.Scene {
             .setDepth(0)
             .setGravityY(1200)
             .setFriction(0)
+
+        this.ballSpawnPos = new Phaser.Math.Vector2(this.ball.x, this.ball.y)
+        this.fakeBall = this.add.circle(CANVAS_WIDTH / 2, this.ball.y, 0)
     }
 
     private createDraggingZone(): void {
@@ -139,17 +155,20 @@ export default class GameplayScene extends Phaser.Scene {
             CANVAS_WIDTH * 0.5,
             this.scale.height,
             CANVAS_WIDTH,
-            this.scale.height * 0.2,
+            0,
             0,
             0
         )
         this.physics.add.existing(this.deadZone)
         this.physics.add.overlap(this.deadZone, this.ball, () => {
             this.gameOverSound.play('a')
-            if (GameManager.getCurrentState() === GameState.PLAYING) {
+            if (
+                GameManager.getCurrentState() === GameState.PLAYING ||
+                GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY
+            ) {
                 if (this.curScore === 0) {
                     this.ball
-                        .setPosition(CANVAS_WIDTH * 0.25, this.scale.height * 0.25)
+                        .setPosition(this.ballSpawnPos.x, this.ballSpawnPos.y - 200)
                         .setVelocity(0)
                         .setRotation(0)
                     this.add.tween({
@@ -216,16 +235,12 @@ export default class GameplayScene extends Phaser.Scene {
     }
 
     private createBaskets(): void {
-        this.baskets[0] = new Basket(this, CANVAS_WIDTH * 0.25, 400, this.ball)
-        this.baskets[1] = new Basket(this, CANVAS_WIDTH * 0.75, 300, this.ball)
+        this.baskets[0] = new Basket(this, CANVAS_WIDTH * 0.26, this.scale.height * 0.73, this.ball)
+        this.baskets[1] = new Basket(this, CANVAS_WIDTH * 0.75, this.scale.height * 0.63, this.ball)
 
         this.ball.y = this.baskets[0].y
-
-        this.baskets.forEach((basket) => {
-            basket.emitter.on('onHasBall', this.handleBallTouch)
-            this.add.existing(basket)
-        })
-
+        this.baskets[0].hadBall = true
+        this.baskets[0].changeBasketTexture(1)
         this.targetBasket = this.baskets[1]
     }
 
@@ -242,21 +257,73 @@ export default class GameplayScene extends Phaser.Scene {
         this.shield = new Shield({ scene: this, x: CANVAS_WIDTH + 200, y: 500, ball: this.ball })
     }
 
+    private loadChallengeLevel(name: string) {
+        const map = this.make.tilemap({ key: name })
+        const objects = map.getObjectLayer('objects')?.objects as any[]
+        const height = this.scale.height
+        const offset = height - map.height * map.tileHeight
+
+        objects.forEach((object) => {
+            const x = object.x + object.width / 2
+            const y = offset + object.y
+            const rotation = Phaser.Math.DegToRad(object.rotation)
+
+            if (object.type === 'basket') {
+                const basket = new Basket(this, x, y, this.ball)
+                basket.rotation = rotation
+                basket.setMoveable(object.properties[0].value, object.properties[1].value)
+                this.baskets.push(basket)
+
+                if (object.name === 'targetbasket') {
+                    this.targetBasket = basket
+                } else if (object.name === 'initialbasket') {
+                    basket.hadBall = true
+                    basket.changeBasketTexture(1)
+                }
+            } else if (object.type === 'bouncer') {
+                const bouncer = new Bouncer({
+                    scene: this,
+                    x: x,
+                    y: y,
+                    ball: this.ball,
+                }).setActive(true)
+                bouncer.rotation = rotation
+            } else if (object.type === 'ball') {
+                this.ball.x = x
+                this.fakeBall.y = y
+                this.ball.y = y
+                this.ballSpawnPos = new Phaser.Math.Vector2(this.ball.x, this.ball.y)
+            }
+        })
+    }
+
     private configureCamera(): void {
         this.input.dragDistanceThreshold = 10
-        this.camera.startFollow(this.ball, false, 0, 0.01, -CANVAS_WIDTH / 4, this.scale.height / 4)
+        this.camera.scrollY = this.fakeBall.y - this.scale.height * 0.75
+        this.camera.startFollow(this.fakeBall, false, 0, 0.01, 0, this.scale.height * 0.25)
     }
 
     private handleBallTouch = (basket: Basket) => {
-        if (basket !== this.targetBasket) {
+        if (basket.hadBall) {
             this.bounceCount = 0
             return
         }
-
         this.dotLine.clearNormalLine()
-        this.generateNextBasket(basket)
 
-        this.draggingZone.y = this.targetBasket.y
+        if (GameManager.getCurrentState() === GameState.PLAYING) {
+            this.generateNextBasket(basket)
+        } else if (
+            this.targetBasket === basket &&
+            GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY
+        ) {
+            const lastIndex = this.registry.get('challenge').lastIndexOf('-')
+            const challenge = this.registry.get('challenge').slice(0, lastIndex)
+            const level = parseInt(this.registry.get('challenge').slice(lastIndex + 1))
+
+            PlayerDataManager.setChallengeLevel(challenge, level)
+            console.log('Complete challenge')
+        }
+
         this.deadZone.y = basket.y + 450
         this.walls.forEach((wall) => (wall.y = this.targetBasket.y))
 
@@ -308,6 +375,8 @@ export default class GameplayScene extends Phaser.Scene {
 
         // Swap target basket
         this.targetBasket = nextTargetBasket
+        this.targetBasket.changeBasketTexture(0)
+        this.targetBasket.hadBall = false
 
         this.targetBasket.y = this.math.integerInRange(basket.y - 450, basket.y - 150)
 
@@ -344,7 +413,16 @@ export default class GameplayScene extends Phaser.Scene {
         this.shield.setScale(0.001).setPosition(CANVAS_WIDTH + 200, 0)
 
         if (Random.Percent(MOVEABLE_BASKET_CHANCES)) {
-            this.targetBasket.setMoveable(true)
+            const isHorizontal = Random.Percent(50)
+            const dist =
+                this.targetBasket.x > CANVAS_WIDTH / 2
+                    ? Random.Float(-300, -200)
+                    : Random.Float(200, 300)
+            if (isHorizontal) {
+                this.targetBasket.setMoveable('right', dist)
+            } else {
+                this.targetBasket.setMoveable('up', dist)
+            }
         } else if (Random.Percent(MINI_WALL_CHANCES)) {
             this.miniWall.setActive(true).y = this.targetBasket.y - 50
             this.add.tween({
@@ -379,8 +457,18 @@ export default class GameplayScene extends Phaser.Scene {
 
     update(time: number, delta: number): void {
         this.ball.update(time, delta)
-        this.baskets[0].update()
-        this.baskets[1].update()
+
+        for (const basket of this.baskets) {
+            basket.update()
+        }
         this.shield.update(time, delta)
+        this.draggingZone.y = this.ball.y
+        this.fakeBall.y = this.ball.y
+
+        // if (this.physics.collide(this.ball, this.bouncer)) {
+        //     this.bouncer.setScale(0.4)
+        // } else {
+        //     this.bouncer.setScale(0.35)
+        // }
     }
 }

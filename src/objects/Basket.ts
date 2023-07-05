@@ -1,6 +1,6 @@
-import { CANVAS_WIDTH } from '../constant/CanvasSize'
+import { GameState } from '../GameState'
+import GameManager from '../manager/GameManager'
 import GameplayScene from '../scenes/GameplayScene'
-import { Random } from '../utils/Random'
 import Ball from './Ball'
 import Star from './Star'
 
@@ -20,6 +20,7 @@ export default class Basket extends Phaser.GameObjects.Container {
     private otherCirc: Phaser.Physics.Arcade.Sprite[] = []
 
     private hasBall = false
+    public hadBall = false
 
     private dragStartPos: Phaser.Math.Vector2
     private dragPos: Phaser.Math.Vector2
@@ -113,51 +114,71 @@ export default class Basket extends Phaser.GameObjects.Container {
         this.star.isActive = true
     }
 
-    public setMoveable(moveable: boolean): void {
+    public setMoveable(direction: string, distance: number): void {
         if (this.moveTween) this.moveTween.destroy()
 
-        const dist = this.x > CANVAS_WIDTH / 2 ? Random.Float(-300, -200) : Random.Float(200, 300)
-
-        const isHorizontal = Random.Percent(50)
-
-        if (isHorizontal) {
-            this.moveTween = this.scene.add.tween({
-                targets: this,
-                x: this.x + dist,
-                ease: 'Sine.inout',
-                duration: 2000,
-                yoyo: true,
-                repeat: -1,
-            })
-        } else {
-            this.moveTween = this.scene.add.tween({
-                targets: this,
-                y: this.y + dist,
-                ease: 'Sine.inout',
-                duration: 2000,
-                yoyo: true,
-                repeat: -1,
-            })
+        const config: Phaser.Types.Tweens.TweenBuilderConfig = {
+            targets: this,
+            ease: 'Sine.inout',
+            duration: 2000,
+            yoyo: true,
+            repeat: -1,
         }
 
-        if (moveable) {
-            if (isHorizontal) {
-                (this.scene as GameplayScene).dotLine.drawLine(
-                    new Phaser.Math.Vector2(this.x, this.y),
-                    new Phaser.Math.Vector2(this.x + dist, this.y),
-                    8
-                )
-            } else {
-                (this.scene as GameplayScene).dotLine.drawLine(
-                    new Phaser.Math.Vector2(this.x, this.y),
-                    new Phaser.Math.Vector2(this.x, this.y + dist),
-                    8
-                )
+        const endPoint = new Phaser.Math.Vector2(0, 0)
+
+        // if (isHorizontal) {
+        //     this.moveTween = this.scene.add.tween({
+        //         targets: this,
+        //         x: this.x + dist,
+        //         ease: 'Sine.inout',
+        //         duration: 2000,
+        //         yoyo: true,
+        //         repeat: -1,
+        //     })
+        // } else {
+        //     this.moveTween = this.scene.add.tween({
+        //         targets: this,
+        //         y: this.y + dist,
+        //         ease: 'Sine.inout',
+        //         duration: 2000,
+        //         yoyo: true,
+        //         repeat: -1,
+        //     })
+        // }
+
+        if (direction !== 'none') {
+            switch (direction) {
+                case 'right':
+                    config.x = this.x + distance
+                    endPoint.x = this.x + distance
+                    endPoint.y = this.y
+                    break
+                case 'left':
+                    config.x = this.x - distance
+                    endPoint.x = this.x - distance
+                    endPoint.y = this.y
+                    break
+                case 'up':
+                    config.y = this.y - distance
+                    endPoint.x = this.x
+                    endPoint.y = this.y - distance
+                    break
+                case 'down':
+                    config.y = this.y + distance
+                    endPoint.x = this.x
+                    endPoint.y = this.y + distance
+                    break
             }
 
+            this.moveTween = this.scene.add.tween(config)
+            ;(this.scene as GameplayScene).dotLine.drawLine(
+                new Phaser.Math.Vector2(this.x, this.y),
+                endPoint,
+                8
+            )
+
             this.moveTween.play()
-        } else {
-            this.moveTween.pause()
         }
     }
 
@@ -168,9 +189,14 @@ export default class Basket extends Phaser.GameObjects.Container {
                 this.hasBall = true
                 this.ball.setBounce(0)
                 this.emitter.emit('onHasBall', this)
-                this.changeBasketTexture(1)
+
+                if (!this.hadBall) {
+                    this.hadBall = true
+                    this.changeBasketTexture(1)
+                }
+
                 this.animateBasketEffect()
-                this.setMoveable(false)
+                this.setMoveable('none', 0)
             }
         })
     }
@@ -202,10 +228,19 @@ export default class Basket extends Phaser.GameObjects.Container {
 
                 this.ball.shoot(this.shootVelocity)
                 scene.dotLine.clearTrajectoryLine()
-                this.changeBasketTexture(0)
                 this.scene.time.delayedCall(300, () => {
                     this.isAvaliable = true
                 })
+
+                if (GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY) {
+                    scene.add.tween({
+                        targets: this,
+                        rotation: 0,
+                        duration: 300,
+                        ease: 'Back.out',
+                        delay: 150,
+                    })
+                }
             }
         })
     }
@@ -285,7 +320,7 @@ export default class Basket extends Phaser.GameObjects.Container {
         })
     }
 
-    private changeBasketTexture(frame: number): void {
+    public changeBasketTexture(frame: number): void {
         this.basketTopSprite.setTexture('basket', frame * 2)
         this.basketBottomSprite.setTexture('basket', frame * 2 + 1)
     }

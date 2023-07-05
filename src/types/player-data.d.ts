@@ -14,6 +14,6 @@ export interface PlayerData {
         time: number
         score: number
         bounce: number
-        noAim: number
+        'no-aim': number
     }
 }

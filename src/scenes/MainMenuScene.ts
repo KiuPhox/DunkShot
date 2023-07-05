@@ -27,6 +27,10 @@ export default class MainMenuScene extends Phaser.Scene {
         this.createChallengesButton()
         this.setupInputEvents()
         new StarManager(this)
+
+        if (GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY) {
+            this.handleGameStart()
+        }
     }
 
     private createLogo() {
@@ -113,7 +117,10 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     private handlePauseButtonClick = () => {
-        if (GameManager.getCurrentState() === GameState.PLAYING) {
+        if (
+            GameManager.getCurrentState() === GameState.PLAYING ||
+            GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY
+        ) {
             GameManager.updateGameState(GameState.PAUSE, this)
         }
     }

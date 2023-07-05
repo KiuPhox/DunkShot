@@ -71,8 +71,8 @@ export default class ResultScene extends Phaser.Scene {
         })
     }
 
-    private onGameStateChanged = (gameState: GameState) => {
-        if (gameState === GameState.GAME_OVER) {
+    private onGameStateChanged = (currentState: GameState) => {
+        if (currentState === GameState.GAME_OVER) {
             this.showResult()
         }
     }

@@ -95,6 +95,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.bitmapFont('triomphe', 'assets/fonts/triomphe.png', 'assets/fonts/triomphe.xml')
 
         this.loadAudio()
+        this.loadChallengeLevels()
     }
 
     private loadAudio(): void {
@@ -109,5 +110,13 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.audio('combo-hit', `assets/audios/combo-hit.mp3`)
         this.load.audio('release', `assets/audios/release.mp3`)
         this.load.audio('game-over', `assets/audios/game-over.mp3`)
+    }
+
+    private loadChallengeLevels(): void {
+        this.load.tilemapTiledJSON('no-aim-1', 'assets/challenges/no-aim/1.json')
+
+        for (let i = 1; i <= 2; i++) {
+            this.load.tilemapTiledJSON(`time-${i}`, `assets/challenges/time/${i}.json`)
+        }
     }
 }
