@@ -8,6 +8,8 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
     private trajectoryLineGraphics: Phaser.GameObjects.Graphics
     private normalLineGraphics: Phaser.GameObjects.Graphics
 
+    private trajectoryDrawable: boolean
+
     constructor(
         scene: Phaser.Scene,
         pluginManger: Phaser.Plugins.PluginManager,
@@ -20,6 +22,7 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
         if (this.scene) {
             this.trajectoryLineGraphics = this.scene.add.graphics()
             this.normalLineGraphics = this.scene.add.graphics()
+            this.trajectoryDrawable = true
         }
     }
 
@@ -48,6 +51,8 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
         alpha: number
     ): void {
         this.trajectoryLineGraphics.clear()
+
+        if (!this.trajectoryDrawable) return
 
         for (let i = 0; i <= INITIAL_DOT_COUNT; i++) {
             const t = i / 20

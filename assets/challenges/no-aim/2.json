@@ -8,15 +8,15 @@
          "name":"objects",
          "objects":[
                 {
-                 "height":74.6667,
+                 "height":100,
                  "id":18,
                  "name":"ball",
                  "rotation":0,
                  "type":"ball",
                  "visible":true,
-                 "width":74.6667,
-                 "x":130.606043939394,
-                 "y":1629.03028636363
+                 "width":100,
+                 "x":130,
+                 "y":1531.03028636363
                 }, 
                 {
                  "height":100,
@@ -26,7 +26,7 @@
                         {
                          "name":"direction",
                          "type":"string",
-                         "value":"none"
+                         "value":"right"
                         }, 
                         {
                          "name":"distance",
@@ -37,11 +37,11 @@
                  "type":"basket",
                  "visible":true,
                  "width":100,
-                 "x":390.363636363636,
-                 "y":1287.81818181818
+                 "x":250,
+                 "y":1200
                 }, 
                 {
-                 "height":74.6667,
+                 "height":100,
                  "id":29,
                  "name":"initialbasket",
                  "properties":[
@@ -58,12 +58,12 @@
                  "rotation":0,
                  "type":"basket",
                  "visible":true,
-                 "width":74.6667,
-                 "x":130.939377272727,
-                 "y":1660.36361969697
+                 "width":100,
+                 "x":130,
+                 "y":1600
                 }, 
                 {
-                 "height":74.6667,
+                 "height":100,
                  "id":30,
                  "name":"targetbasket",
                  "properties":[
@@ -80,9 +80,9 @@
                  "rotation":0,
                  "type":"basket",
                  "visible":true,
-                 "width":74.6667,
-                 "x":359.636346969697,
-                 "y":666.696953030303
+                 "width":100,
+                 "x":100,
+                 "y":400
                 }, 
                 {
                  "height":100,
@@ -92,7 +92,7 @@
                         {
                          "name":"direction",
                          "type":"string",
-                         "value":"none"
+                         "value":"right"
                         }, 
                         {
                          "name":"distance",
@@ -103,8 +103,8 @@
                  "type":"basket",
                  "visible":true,
                  "width":100,
-                 "x":107.515151515152,
-                 "y":995.636363636363
+                 "x":100,
+                 "y":800
                 }],
          "opacity":1,
          "properties":[

@@ -20,10 +20,14 @@ import GameManager from '../manager/GameManager'
 import Bouncer from '../objects/Bouncer'
 import PlayerDataManager from '../manager/PlayerDataManager'
 import Shield from '../objects/Shield'
+import Timer from '../objects/Challenges/Timer'
+import SoundManager from '../manager/SoundManager'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
+    private fakeBall: Phaser.GameObjects.Arc
     private ballSpawnPos: Phaser.Math.Vector2
+    private lives: number
     private math: Phaser.Math.RandomDataGenerator = new Phaser.Math.RandomDataGenerator()
 
     private camera: Phaser.Cameras.Scene2D.Camera
@@ -38,15 +42,6 @@ export default class GameplayScene extends Phaser.Scene {
 
     public dotLine: DotLinePlugin
 
-    public releaseSound: Phaser.Sound.BaseSound
-    public gameOverSound: Phaser.Sound.BaseSound
-    public pointSounds: Phaser.Sound.BaseSound[] = []
-    public wallHitSound: Phaser.Sound.BaseSound
-    public starSound: Phaser.Sound.BaseSound
-    public comboHitSound: Phaser.Sound.BaseSound
-    public comboStartSound: Phaser.Sound.BaseSound
-    public comboShootSound: Phaser.Sound.BaseSound
-
     private curScore: number
     public bounceCount: number
     private previousCombo: number
@@ -55,7 +50,9 @@ export default class GameplayScene extends Phaser.Scene {
     private bouncer: Bouncer
     private shield: Shield
 
-    private fakeBall: Phaser.GameObjects.Arc
+    // Challenge
+    private timer: Timer
+    private goal: number
 
     constructor() {
         super('game')
@@ -69,13 +66,23 @@ export default class GameplayScene extends Phaser.Scene {
         this.initializeVariables()
 
         this.createBall()
-
         this.createObstacles()
         this.createDraggingZone()
         this.createDeadZone()
         this.createWalls()
 
+        this.timer = new Timer(-1, false, () => {
+            GameManager.updateGameState(GameState.GAME_OVER, this)
+            this.camera.stopFollow()
+        })
+
+        this.lives = 0
+
         if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) {
+            const { name } = this.registry.get('challenge')
+            if (name === 'no-aim') {
+                this.lives = 3
+            }
             this.loadChallengeLevel(this.registry.get('challenge'))
         } else {
             this.createBaskets()
@@ -83,6 +90,7 @@ export default class GameplayScene extends Phaser.Scene {
 
         this.baskets.forEach((basket) => {
             basket.emitter.on('onHasBall', this.handleBallTouch)
+            basket.emitter.on('onDragEnd', this.handleBasketDragEnd)
         })
 
         this.configureCamera()
@@ -94,22 +102,6 @@ export default class GameplayScene extends Phaser.Scene {
         this.previousCombo = 0
         this.camera = this.cameras.main
         this.dotLine.init()
-
-        this.releaseSound = this.sound.add('release')
-        this.gameOverSound = this.sound.add('game-over')
-        this.gameOverSound.addMarker({
-            name: 'a',
-            start: 0.4,
-        })
-        this.wallHitSound = this.sound.add('wall-hit')
-        this.starSound = this.sound.add('star')
-        this.comboHitSound = this.sound.add('combo-hit')
-        this.comboShootSound = this.sound.add('combo-shoot')
-        this.comboStartSound = this.sound.add('combo-start')
-
-        for (let i = 1; i <= 10; i++) {
-            this.pointSounds[i - 1] = this.sound.add(i.toString())
-        }
 
         this.sound.setMute(!PlayerDataManager.getPlayerData().settings.sound)
 
@@ -161,12 +153,26 @@ export default class GameplayScene extends Phaser.Scene {
         )
         this.physics.add.existing(this.deadZone)
         this.physics.add.overlap(this.deadZone, this.ball, () => {
-            this.gameOverSound.play('a')
+            SoundManager.playGameOverSound(this)
             if (
                 GameManager.getCurrentState() === GameState.PLAYING ||
                 GameManager.getCurrentState() === GameState.CHALLENGE_PLAYING
             ) {
                 if (this.curScore === 0) {
+                    this.ball
+                        .setPosition(this.ballSpawnPos.x, this.ballSpawnPos.y - 200)
+                        .setVelocity(0)
+                        .setRotation(0)
+                    this.add.tween({
+                        targets: this.baskets[0],
+                        rotation: 0,
+                        duration: 300,
+                        ease: 'Back.out',
+                    })
+                    this.timer.reset()
+                    this.timer.setActive(false)
+                } else if (this.lives > 1) {
+                    this.lives = this.lives - 1
                     this.ball
                         .setPosition(this.ballSpawnPos.x, this.ballSpawnPos.y - 200)
                         .setVelocity(0)
@@ -202,7 +208,7 @@ export default class GameplayScene extends Phaser.Scene {
             this.physics.add.existing(wall)
             ;(wall.body as Phaser.Physics.Arcade.Body).setImmovable(true).moves = false
             this.physics.add.collider(this.ball, wall, () => {
-                this.wallHitSound.play()
+                SoundManager.playWallHitSound(this)
                 wallHitEffect.x = this.ball.x
                 wallHitEffect.y = this.ball.y
 
@@ -235,8 +241,8 @@ export default class GameplayScene extends Phaser.Scene {
     }
 
     private createBaskets(): void {
-        this.baskets[0] = new Basket(this, CANVAS_WIDTH * 0.26, this.scale.height * 0.73, this.ball)
-        this.baskets[1] = new Basket(this, CANVAS_WIDTH * 0.75, this.scale.height * 0.63, this.ball)
+        this.baskets[0] = new Basket(this, this.ball, CANVAS_WIDTH * 0.26, this.scale.height * 0.73)
+        this.baskets[1] = new Basket(this, this.ball, CANVAS_WIDTH * 0.75, this.scale.height * 0.63)
 
         this.ball.y = this.baskets[0].y
         this.baskets[0].hadBall = true
@@ -258,9 +264,18 @@ export default class GameplayScene extends Phaser.Scene {
 
     private loadChallengeLevel(challenge: any) {
         const map = this.make.tilemap({ key: `${challenge.name}-${challenge.level}` })
-        const objects = map.getObjectLayer('objects')?.objects as any[]
+        const objectLayer = map.getObjectLayer('objects')
+
+        if (!objectLayer) return
+
+        const objects = objectLayer.objects as any[]
         const height = this.scale.height
         const offset = height - map.height * map.tileHeight
+
+        if (challenge.name === 'time') {
+            this.timer.setDuration((objectLayer.properties as any)[0].value)
+            this.registry.set('goal', this.timer.current.toFixed(2))
+        }
 
         objects.forEach((object) => {
             const x = object.x + object.width / 2
@@ -268,7 +283,7 @@ export default class GameplayScene extends Phaser.Scene {
             const rotation = Phaser.Math.DegToRad(object.rotation)
 
             if (object.type === 'basket') {
-                const basket = new Basket(this, x, y, this.ball)
+                const basket = new Basket(this, this.ball, x, y)
                 basket.rotation = rotation
                 basket.setMoveable(object.properties[0].value, object.properties[1].value)
                 this.baskets.push(basket)
@@ -280,13 +295,19 @@ export default class GameplayScene extends Phaser.Scene {
                     basket.changeBasketTexture(1)
                 }
             } else if (object.type === 'bouncer') {
-                const bouncer = new Bouncer({
+                new Bouncer({
                     scene: this,
                     x: x,
                     y: y,
                     ball: this.ball,
                 }).setActive(true)
-                bouncer.rotation = rotation
+            } else if (object.type === 'miniwall') {
+                new MiniWall({
+                    scene: this,
+                    x: x,
+                    y: y,
+                    ball: this.ball,
+                }).setActive(true)
             } else if (object.type === 'ball') {
                 this.ball.x = x
                 this.fakeBall.y = y
@@ -307,6 +328,8 @@ export default class GameplayScene extends Phaser.Scene {
             this.bounceCount = 0
             return
         }
+
+        this.ballSpawnPos = new Phaser.Math.Vector2(basket.x, basket.y)
         this.dotLine.clearNormalLine()
 
         if (GameManager.getCurrentState() === GameState.PLAYING) {
@@ -319,6 +342,7 @@ export default class GameplayScene extends Phaser.Scene {
             const { name, level } = this.registry.get('challenge')
 
             PlayerDataManager.setChallengeLevel(name, level)
+            this.timer.setActive(false)
             GameManager.updateGameState(GameState.CHALLENGE_COMPLETE, this)
         }
 
@@ -330,15 +354,15 @@ export default class GameplayScene extends Phaser.Scene {
 
         if (combo >= 4) {
             if (combo === 4) {
-                this.comboStartSound.play()
+                SoundManager.playComboStartSound(this)
             } else {
-                this.comboHitSound.play()
+                SoundManager.playComboHitSound(this)
             }
         }
 
         const score = Math.min(combo, 10) * (this.bounceCount > 0 ? 2 : 1)
         this.curScore += score
-        this.pointSounds[Math.min(combo, 10) - 1].play()
+        SoundManager.playNoteSound(this, Math.min(combo, 10) - 1)
         ScoreManager.updateScore(this.curScore)
 
         // Bounce
@@ -365,6 +389,15 @@ export default class GameplayScene extends Phaser.Scene {
         PopUpManager.playTweenQueue(basket.x, basket.y - 50)
 
         this.bounceCount = 0
+    }
+
+    private handleBasketDragEnd = (basket: Basket) => {
+        if (
+            GameManager.getCurrentState() === GameState.CHALLENGE_PLAYING &&
+            this.registry.get('challenge').name === 'time'
+        ) {
+            this.timer.setActive(true)
+        }
     }
 
     private generateNextBasket(basket: Basket): void {
@@ -463,10 +496,6 @@ export default class GameplayScene extends Phaser.Scene {
         this.draggingZone.y = this.ball.y
         this.fakeBall.y = this.ball.y
 
-        // if (this.physics.collide(this.ball, this.bouncer)) {
-        //     this.bouncer.setScale(0.4)
-        // } else {
-        //     this.bouncer.setScale(0.35)
-        // }
+        this.timer.tick(delta)
     }
 }

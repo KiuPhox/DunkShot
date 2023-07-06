@@ -1,5 +1,5 @@
+import SoundManager from '../manager/SoundManager'
 import StarManager from '../manager/StarManager'
-import GameplayScene from '../scenes/GameScene'
 import { IStar } from '../types/star'
 import Ball from './Ball'
 
@@ -18,7 +18,7 @@ export default class Star extends Phaser.Physics.Arcade.Sprite {
             this.scene.physics.add.overlap(this.ball, this, () => {
                 if (this.isActive) {
                     this.isActive = false
-                    ;(this.scene as GameplayScene).starSound.play()
+                    SoundManager.playStarSound(this.scene)
 
                     StarManager.increaseStar()
 

@@ -78,7 +78,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('back-btn', 'assets/textures/btnback.png')
         this.load.image('cleardata-btn', 'assets/textures/btncleardata.png')
         this.load.image('unlimited-btn', 'assets/textures/btnunlimited.png')
-        this.load.image('blue-btn', 'assets/textures/btnblue.png')
+
         this.load.spritesheet('rounded-btn', 'assets/textures/btnrounded-sheet.png', {
             frameHeight: 122,
             frameWidth: 224,
@@ -89,6 +89,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('bounce', 'assets/textures/challenges/bounce.png')
         this.load.image('no-aim', 'assets/textures/challenges/no-aim.png')
         this.load.image('challenge-popup', 'assets/textures/challenges/popup.png')
+        this.load.image('challenge-btn', 'assets/textures/challenges/btn.png')
+        this.load.image('challenge-popup-bg', 'assets/textures/challenges/bg.png')
 
         // Effects
         this.load.image('e3', 'assets/textures/e3.png')

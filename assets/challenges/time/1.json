@@ -139,15 +139,32 @@
                  "width":74.6667,
                  "x":259.999983333333,
                  "y":1009.33331666667
+                }, 
+                {
+                 "height":74.6667,
+                 "id":27,
+                 "name":"miniwall",
+                 "rotation":0,
+                 "type":"miniwall",
+                 "visible":true,
+                 "width":74.6667,
+                 "x":142.66665,
+                 "y":1168.66665
                 }],
          "opacity":1,
+         "properties":[
+                {
+                 "name":"goal",
+                 "type":"int",
+                 "value":5
+                }],
          "type":"objectgroup",
          "visible":true,
          "x":0,
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":26,
+ "nextobjectid":28,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.1",

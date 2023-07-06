@@ -11,6 +11,7 @@ export default class GameManager {
     }
 
     public static updateGameState(gameState: GameState, scene: Phaser.Scene): void {
+        if (this.currentState === gameState) return
         this.previousState = this.currentState
         this.currentState = gameState
 

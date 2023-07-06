@@ -8,14 +8,14 @@
          "name":"objects",
          "objects":[
                 {
-                 "height":74.6667,
+                 "height":100,
                  "id":18,
                  "name":"ball",
                  "rotation":0,
                  "type":"ball",
                  "visible":true,
-                 "width":74.6667,
-                 "x":130.606043939394,
+                 "width":100,
+                 "x":250,
                  "y":1629.03028636363
                 }, 
                 {
@@ -37,11 +37,11 @@
                  "type":"basket",
                  "visible":true,
                  "width":100,
-                 "x":390.363636363636,
-                 "y":1287.81818181818
+                 "x":250,
+                 "y":1200
                 }, 
                 {
-                 "height":74.6667,
+                 "height":100,
                  "id":29,
                  "name":"initialbasket",
                  "properties":[
@@ -58,12 +58,12 @@
                  "rotation":0,
                  "type":"basket",
                  "visible":true,
-                 "width":74.6667,
-                 "x":130.939377272727,
-                 "y":1660.36361969697
+                 "width":100,
+                 "x":250,
+                 "y":1700
                 }, 
                 {
-                 "height":74.6667,
+                 "height":100,
                  "id":30,
                  "name":"targetbasket",
                  "properties":[
@@ -80,9 +80,9 @@
                  "rotation":0,
                  "type":"basket",
                  "visible":true,
-                 "width":74.6667,
-                 "x":359.636346969697,
-                 "y":666.696953030303
+                 "width":100,
+                 "x":250,
+                 "y":200
                 }, 
                 {
                  "height":100,
@@ -103,8 +103,42 @@
                  "type":"basket",
                  "visible":true,
                  "width":100,
-                 "x":107.515151515152,
-                 "y":995.636363636363
+                 "x":250,
+                 "y":700
+                }, 
+                {
+                 "height":100,
+                 "id":34,
+                 "name":"miniwall",
+                 "rotation":0,
+                 "type":"miniwall",
+                 "visible":true,
+                 "width":100,
+                 "x":50,
+                 "y":1200
+                },
+            
+                {
+                 "height":100,
+                 "id":35,
+                 "name":"miniwall",
+                 "rotation":0,
+                 "type":"miniwall",
+                 "visible":true,
+                 "width":100,
+                 "x":450,
+                 "y":700
+                }, 
+                {
+                 "height":100,
+                 "id":36,
+                 "name":"miniwall",
+                 "rotation":0,
+                 "type":"miniwall",
+                 "visible":true,
+                 "width":100,
+                 "x":50,
+                 "y":200
                 }],
          "opacity":1,
          "properties":[
@@ -119,7 +153,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":34,
+ "nextobjectid":37,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.1",

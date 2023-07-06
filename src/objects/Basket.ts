@@ -44,7 +44,7 @@ export default class Basket extends Phaser.GameObjects.Container {
 
     public star: Star
 
-    constructor(scene: GameplayScene, x: number, y: number, player: Ball) {
+    constructor(scene: GameplayScene, player: Ball, x?: number, y?: number) {
         super(scene, x, y)
 
         scene.add.existing(this)
@@ -127,26 +127,6 @@ export default class Basket extends Phaser.GameObjects.Container {
 
         const endPoint = new Phaser.Math.Vector2(0, 0)
 
-        // if (isHorizontal) {
-        //     this.moveTween = this.scene.add.tween({
-        //         targets: this,
-        //         x: this.x + dist,
-        //         ease: 'Sine.inout',
-        //         duration: 2000,
-        //         yoyo: true,
-        //         repeat: -1,
-        //     })
-        // } else {
-        //     this.moveTween = this.scene.add.tween({
-        //         targets: this,
-        //         y: this.y + dist,
-        //         ease: 'Sine.inout',
-        //         duration: 2000,
-        //         yoyo: true,
-        //         repeat: -1,
-        //     })
-        // }
-
         if (direction !== 'none') {
             switch (direction) {
                 case 'right':
@@ -205,7 +185,8 @@ export default class Basket extends Phaser.GameObjects.Container {
         scene.input.on('dragstart', (pointer: PointerEvent) => {
             if (
                 GameManager.getCurrentState() === GameState.CHALLENGE_READY ||
-                GameManager.getCurrentState() === GameState.CHALLENGE_COMPLETE
+                GameManager.getCurrentState() === GameState.CHALLENGE_COMPLETE ||
+                GameManager.getCurrentState() === GameState.GAME_OVER
             )
                 return
             if (this.hasBall) {
@@ -217,13 +198,16 @@ export default class Basket extends Phaser.GameObjects.Container {
         })
 
         scene.input.on('drag', (pointer: PointerEvent) => {
+            if (GameManager.getCurrentState() === GameState.GAME_OVER) return
             if (this.hasBall && this.dragStartPos) {
                 this.handleDragMovement(pointer, scene)
             }
         })
 
         scene.input.on('dragend', () => {
+            if (GameManager.getCurrentState() === GameState.GAME_OVER) return
             if (this.hasBall && this.shootVelocity.length() > 100) {
+                this.emitter.emit('onDragEnd', this)
                 this.hasBall = false
 
                 this.otherCirc[0].y = 50
@@ -282,6 +266,11 @@ export default class Basket extends Phaser.GameObjects.Container {
                 this.y
 
             if (this.shootVelocity.length() > 500) {
+                if (
+                    GameManager.getCurrentState() === GameState.CHALLENGE_PLAYING &&
+                    this.scene.registry.get('challenge').name === 'no-aim'
+                )
+                    return
                 scene.dotLine.drawTrajectoryLine(
                     new Phaser.Math.Vector2(this.ball.x, this.ball.y),
                     this.shootVelocity,
