@@ -5,6 +5,8 @@ export enum GameState {
     PAUSE = 'pause',
     CUSTOMIZE = 'customize',
     CHALLENGES_SELECTION = 'challenges-selection',
-    CHALLENGES_GAMEPLAY = 'challenges-gameplay',
+    CHALLENGE_READY = 'challenge-ready',
+    CHALLENGE_PLAYING = 'challenge-playing',
+    CHALLENGE_COMPLETE = 'challenge-complete',
     SETTINGS = 'settings',
 }

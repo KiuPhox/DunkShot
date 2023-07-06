@@ -1,4 +1,4 @@
-import GameplayScene from '../scenes/GameplayScene'
+import GameplayScene from '../scenes/GameScene'
 import { IObstacle } from '../types/obstacle'
 import Ball from './Ball'
 
@@ -6,7 +6,6 @@ const BOUNCE_FORCE = 1.5
 
 export default class Bouncer extends Phaser.Physics.Arcade.Sprite {
     private ball: Ball
-    private scaleTween: Phaser.Tweens.Tween
     private defaultScale: number
 
     constructor(o: IObstacle) {
@@ -16,6 +15,7 @@ export default class Bouncer extends Phaser.Physics.Arcade.Sprite {
         this.scene.add.existing(this).setScale(0.35)
         this.scene.physics.add.existing(this, false)
         this.defaultScale = this.scale
+        this.setCircle(100)
 
         if (this.body) {
             this.body.immovable = true
@@ -31,7 +31,7 @@ export default class Bouncer extends Phaser.Physics.Arcade.Sprite {
                 )
 
                 this.scale = this.defaultScale
-                this.scaleTween = this.scene.add.tween({
+                this.scene.add.tween({
                     targets: this,
                     scale: this.defaultScale * 1.1,
                     duration: 50,

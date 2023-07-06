@@ -1,7 +1,7 @@
 import { SPECIAL_EFFECTS } from '../constant/Skin'
 import PlayerDataManager from '../manager/PlayerDataManager'
 import SkinManager from '../manager/SkinManager'
-import GameplayScene from '../scenes/GameplayScene'
+import GameplayScene from '../scenes/GameScene'
 import { IBall } from '../types/ball'
 import { Color } from '../utils/Color'
 

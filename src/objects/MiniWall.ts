@@ -1,4 +1,4 @@
-import GameplayScene from '../scenes/GameplayScene'
+import GameplayScene from '../scenes/GameScene'
 import { IObstacle } from '../types/obstacle'
 import Ball from './Ball'
 

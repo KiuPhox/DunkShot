@@ -13,13 +13,15 @@ import {
     SHIELD_CHANCES,
     STAR_CHANCES,
 } from '../constant/Level'
-import PopUpManager from '../manager/PopUpManager'
+import PopUpManager from '../manager/PopupManager'
 import MiniWall from '../objects/MiniWall'
 import { GameState } from '../GameState'
 import GameManager from '../manager/GameManager'
 import Bouncer from '../objects/Bouncer'
 import PlayerDataManager from '../manager/PlayerDataManager'
 import Shield from '../objects/Shield'
+import String from '../utils/String'
+import { CHALLENGES } from '../constant/Challenges'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -75,7 +77,7 @@ export default class GameplayScene extends Phaser.Scene {
         this.createDeadZone()
         this.createWalls()
 
-        if (GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY) {
+        if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) {
             this.loadChallengeLevel(this.registry.get('challenge'))
         } else {
             this.createBaskets()
@@ -164,7 +166,7 @@ export default class GameplayScene extends Phaser.Scene {
             this.gameOverSound.play('a')
             if (
                 GameManager.getCurrentState() === GameState.PLAYING ||
-                GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY
+                GameManager.getCurrentState() === GameState.CHALLENGE_PLAYING
             ) {
                 if (this.curScore === 0) {
                     this.ball
@@ -252,7 +254,6 @@ export default class GameplayScene extends Phaser.Scene {
         this.bouncer = new Bouncer({ scene: this, x: 300, y: 100, ball: this.ball })
             .setActive(false)
             .setScale(0)
-            .setCircle(100)
 
         this.shield = new Shield({ scene: this, x: CANVAS_WIDTH + 200, y: 500, ball: this.ball })
     }
@@ -314,14 +315,16 @@ export default class GameplayScene extends Phaser.Scene {
             this.generateNextBasket(basket)
         } else if (
             this.targetBasket === basket &&
-            GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY
+            (GameManager.getCurrentState() === GameState.CHALLENGE_PLAYING ||
+                GameManager.getCurrentState() === GameState.CHALLENGE_READY)
         ) {
-            const lastIndex = this.registry.get('challenge').lastIndexOf('-')
-            const challenge = this.registry.get('challenge').slice(0, lastIndex)
-            const level = parseInt(this.registry.get('challenge').slice(lastIndex + 1))
+            const split = String.lastSplit(this.registry.get('challenge'), '-')
+
+            const challenge = split[0] as CHALLENGES
+            const level = parseInt(split[1])
 
             PlayerDataManager.setChallengeLevel(challenge, level)
-            console.log('Complete challenge')
+            GameManager.updateGameState(GameState.CHALLENGE_COMPLETE, this)
         }
 
         this.deadZone.y = basket.y + 450

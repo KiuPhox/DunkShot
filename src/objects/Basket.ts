@@ -1,6 +1,6 @@
 import { GameState } from '../GameState'
 import GameManager from '../manager/GameManager'
-import GameplayScene from '../scenes/GameplayScene'
+import GameplayScene from '../scenes/GameScene'
 import Ball from './Ball'
 import Star from './Star'
 
@@ -203,8 +203,12 @@ export default class Basket extends Phaser.GameObjects.Container {
 
     private registerDragEvents(scene: GameplayScene): void {
         scene.input.on('dragstart', (pointer: PointerEvent) => {
+            if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) return
             if (this.hasBall) {
                 this.dragStartPos = new Phaser.Math.Vector2(pointer.x, pointer.y)
+            }
+            if (GameManager.getCurrentState() === GameState.READY) {
+                GameManager.updateGameState(GameState.PLAYING, this.scene)
             }
         })
 
@@ -232,7 +236,7 @@ export default class Basket extends Phaser.GameObjects.Container {
                     this.isAvaliable = true
                 })
 
-                if (GameManager.getCurrentState() === GameState.CHALLENGES_GAMEPLAY) {
+                if (GameManager.getCurrentState() === GameState.CHALLENGE_PLAYING) {
                     scene.add.tween({
                         targets: this,
                         rotation: 0,

@@ -11,3 +11,10 @@ export const CHALLENGES_LEVEL_COUNT = {
     bounce: 0,
     'no-aim': 1,
 }
+
+export const CHALLENGES_COLOR = {
+    time: 0x00bdff,
+    score: 0x37d133,
+    bounce: 0xf863fc,
+    'no-aim': 0xff766c,
+}

@@ -36,8 +36,14 @@ export default class GameManager {
             case GameState.CHALLENGES_SELECTION:
                 this.handleChallengesSelectionState(scene)
                 break
-            case GameState.CHALLENGES_GAMEPLAY:
-                this.handleChallengesGamePlayState(scene)
+            case GameState.CHALLENGE_READY:
+                this.handleChallengeReadyState(scene)
+                break
+            case GameState.CHALLENGE_PLAYING:
+                this.handleChallengePlayingState(scene)
+                break
+            case GameState.CHALLENGE_COMPLETE:
+                this.handleChallengeComplete(scene)
                 break
         }
 
@@ -45,12 +51,12 @@ export default class GameManager {
     }
 
     private static handleReadyState(scene: Phaser.Scene): void {
-        scene.scene.start('result').launch('game').launch('main-menu')
+        scene.scene.start('result').launch('game').launch('hud')
     }
 
     private static handlePlayingState(scene: Phaser.Scene): void {
         if (this.previousState === GameState.PAUSE) {
-            scene.scene.stop().resume('game').wake('main-menu')
+            scene.scene.stop().resume('game').wake('hud')
         }
     }
 
@@ -68,7 +74,7 @@ export default class GameManager {
             scene.scene.stop().wake('pause')
         } else if (
             this.previousState === GameState.PLAYING ||
-            this.previousState === GameState.CHALLENGES_GAMEPLAY
+            this.previousState === GameState.CHALLENGE_PLAYING
         ) {
             scene.scene.sleep().pause('game').launch('pause')
         }
@@ -92,13 +98,19 @@ export default class GameManager {
     }
 
     private static handleChallengesSelectionState(scene: Phaser.Scene) {
-        if (this.previousState === GameState.READY) {
-            scene.scene.stop('game').stop('result').start('challenges-selection')
-        }
+        scene.scene.stop('game').stop('result').start('challenges-selection')
     }
 
-    private static handleChallengesGamePlayState(scene: Phaser.Scene) {
-        scene.scene.start('result').launch('game').launch('main-menu')
+    private static handleChallengeReadyState(scene: Phaser.Scene) {
+        scene.scene.start('result').launch('game').launch('hud')
+    }
+
+    private static handleChallengePlayingState(scene: Phaser.Scene) {
+        //
+    }
+
+    private static handleChallengeComplete(scene: Phaser.Scene) {
+        //
     }
 
     public static getCurrentState(): GameState {

@@ -56,7 +56,7 @@ export default class ChallengesSelectionScene extends Phaser.Scene {
                         const level = PlayerDataManager.getChallengeLevel(challenge) + 1
                         if (level <= CHALLENGES_LEVEL_COUNT[challenge]) {
                             this.registry.set('challenge', challenge + '-' + level)
-                            GameManager.updateGameState(GameState.CHALLENGES_GAMEPLAY, this)
+                            GameManager.updateGameState(GameState.CHALLENGE_READY, this)
                         }
                     },
                 }),
@@ -82,12 +82,7 @@ export default class ChallengesSelectionScene extends Phaser.Scene {
             texture: 'back-btn',
             scale: 0.3,
             pointerUpCallback: () => {
-                if (
-                    GameManager.getPreviousState() === GameState.READY ||
-                    GameManager.getPreviousState() === GameState.PAUSE
-                ) {
-                    GameManager.updateGameState(GameManager.getPreviousState(), this)
-                }
+                GameManager.updateGameState(GameState.READY, this)
             },
         })
     }

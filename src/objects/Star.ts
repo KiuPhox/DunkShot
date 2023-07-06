@@ -1,5 +1,5 @@
 import StarManager from '../manager/StarManager'
-import GameplayScene from '../scenes/GameplayScene'
+import GameplayScene from '../scenes/GameScene'
 import { IStar } from '../types/star'
 import Ball from './Ball'
 
