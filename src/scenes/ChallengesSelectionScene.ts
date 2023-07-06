@@ -1,6 +1,6 @@
 import { GameState } from '../GameState'
 import { CANVAS_WIDTH } from '../constant/CanvasSize'
-import { CHALLENGES, CHALLENGES_LEVEL_COUNT } from '../constant/Challenges'
+import { CHALLENGES, CHALLENGES_CONFIG } from '../constant/Challenges'
 import GameManager from '../manager/GameManager'
 import PlayerDataManager from '../manager/PlayerDataManager'
 import Button from '../objects/Button/Button'
@@ -54,8 +54,8 @@ export default class ChallengesSelectionScene extends Phaser.Scene {
                     scale: 0.8,
                     pointerUpCallback: () => {
                         const level = PlayerDataManager.getChallengeLevel(challenge) + 1
-                        if (level <= CHALLENGES_LEVEL_COUNT[challenge]) {
-                            this.registry.set('challenge', challenge + '-' + level)
+                        if (level <= CHALLENGES_CONFIG[challenge].levels) {
+                            this.registry.set('challenge', { name: challenge, level: level })
                             GameManager.updateGameState(GameState.CHALLENGE_READY, this)
                         }
                     },

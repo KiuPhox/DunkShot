@@ -20,8 +20,6 @@ import GameManager from '../manager/GameManager'
 import Bouncer from '../objects/Bouncer'
 import PlayerDataManager from '../manager/PlayerDataManager'
 import Shield from '../objects/Shield'
-import String from '../utils/String'
-import { CHALLENGES } from '../constant/Challenges'
 
 export default class GameplayScene extends Phaser.Scene {
     private ball: Ball
@@ -258,8 +256,8 @@ export default class GameplayScene extends Phaser.Scene {
         this.shield = new Shield({ scene: this, x: CANVAS_WIDTH + 200, y: 500, ball: this.ball })
     }
 
-    private loadChallengeLevel(name: string) {
-        const map = this.make.tilemap({ key: name })
+    private loadChallengeLevel(challenge: any) {
+        const map = this.make.tilemap({ key: `${challenge.name}-${challenge.level}` })
         const objects = map.getObjectLayer('objects')?.objects as any[]
         const height = this.scale.height
         const offset = height - map.height * map.tileHeight
@@ -318,12 +316,9 @@ export default class GameplayScene extends Phaser.Scene {
             (GameManager.getCurrentState() === GameState.CHALLENGE_PLAYING ||
                 GameManager.getCurrentState() === GameState.CHALLENGE_READY)
         ) {
-            const split = String.lastSplit(this.registry.get('challenge'), '-')
+            const { name, level } = this.registry.get('challenge')
 
-            const challenge = split[0] as CHALLENGES
-            const level = parseInt(split[1])
-
-            PlayerDataManager.setChallengeLevel(challenge, level)
+            PlayerDataManager.setChallengeLevel(name, level)
             GameManager.updateGameState(GameState.CHALLENGE_COMPLETE, this)
         }
 

@@ -203,7 +203,11 @@ export default class Basket extends Phaser.GameObjects.Container {
 
     private registerDragEvents(scene: GameplayScene): void {
         scene.input.on('dragstart', (pointer: PointerEvent) => {
-            if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) return
+            if (
+                GameManager.getCurrentState() === GameState.CHALLENGE_READY ||
+                GameManager.getCurrentState() === GameState.CHALLENGE_COMPLETE
+            )
+                return
             if (this.hasBall) {
                 this.dragStartPos = new Phaser.Math.Vector2(pointer.x, pointer.y)
             }

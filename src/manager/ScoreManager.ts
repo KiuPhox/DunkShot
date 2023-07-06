@@ -1,4 +1,6 @@
+import { GameState } from '../GameState'
 import { CANVAS_WIDTH } from '../constant/CanvasSize'
+import GameManager from './GameManager'
 import PlayerDataManager from './PlayerDataManager'
 
 export default class ScoreManager {
@@ -15,6 +17,12 @@ export default class ScoreManager {
         this.createCurrentScoreText(scene)
         this.createBestScoreText(scene)
         this.createHighScoreText(scene)
+
+        if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) {
+            ScoreManager.curScoreText.alpha = 0
+            ScoreManager.highScoreText.alpha = 0
+            ScoreManager.bestScoreText.alpha = 0
+        }
     }
 
     private init(): void {

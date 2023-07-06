@@ -1,9 +1,8 @@
 import { GameState } from '../../../../GameState'
-import { CHALLENGES, CHALLENGES_COLOR } from '../../../../constant/Challenges'
+import { CHALLENGES, CHALLENGES_CONFIG } from '../../../../constant/Challenges'
 import GameManager from '../../../../manager/GameManager'
 import Button from '../../../../objects/Button/Button'
 import { IScreen } from '../../../../types/screen'
-import String from '../../../../utils/String'
 
 export default class ChallengePopup extends Phaser.GameObjects.Container {
     private challengePopUp: Phaser.GameObjects.Image
@@ -32,10 +31,10 @@ export default class ChallengePopup extends Phaser.GameObjects.Container {
                 duration: 300,
             })
 
-            const challenge = String.lastSplit(this.scene.registry.get('challenge'), '-')
+            const { name, level } = this.scene.registry.get('challenge')
 
-            this.title.setText(`CHALLENGE ${challenge[1]}`)
-            this.playButton.setTint(CHALLENGES_COLOR[challenge[0] as CHALLENGES])
+            this.title.setText(`CHALLENGE ${level}`)
+            this.playButton.setTint(CHALLENGES_CONFIG[name as CHALLENGES].color)
         }
 
         GameManager.emitter.on('game-state-changed', this.onGameStateChanged)

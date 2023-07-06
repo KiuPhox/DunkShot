@@ -110,7 +110,7 @@ export default class GameManager {
     }
 
     private static handleChallengeComplete(scene: Phaser.Scene) {
-        //
+        //throw new Error('Method not implemented.')
     }
 
     public static getCurrentState(): GameState {

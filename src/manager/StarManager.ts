@@ -23,9 +23,14 @@ export default class StarManager {
             .setDepth(-3)
             .setOrigin(0, 0.5)
 
-        scene.physics.add
+        const star = scene.physics.add
             .sprite(CANVAS_WIDTH * 0.83, scene.scale.height * 0.05, 'star')
             .setScale(0.3)
+
+        if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) {
+            StarManager.curStarText.alpha = 0
+            star.alpha = 0
+        }
     }
 
     public static updateStar(star: number) {

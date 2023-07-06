@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { CANVAS_WIDTH } from '../constant/CanvasSize'
-import { CHALLENGES, CHALLENGES_LEVEL_COUNT } from '../constant/Challenges'
+import { CHALLENGES, CHALLENGES_CONFIG } from '../constant/Challenges'
 
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -116,19 +116,19 @@ export default class PreloadScene extends Phaser.Scene {
     }
 
     private loadChallengeLevels(): void {
-        for (let i = 1; i <= CHALLENGES_LEVEL_COUNT[CHALLENGES.TIME]; i++) {
+        for (let i = 1; i <= CHALLENGES_CONFIG[CHALLENGES.TIME].levels; i++) {
             this.load.tilemapTiledJSON(`time-${i}`, `assets/challenges/time/${i}.json`)
         }
 
-        for (let i = 1; i <= CHALLENGES_LEVEL_COUNT[CHALLENGES.SCORE]; i++) {
+        for (let i = 1; i <= CHALLENGES_CONFIG[CHALLENGES.SCORE].levels; i++) {
             this.load.tilemapTiledJSON(`score-${i}`, `assets/challenges/score/${i}.json`)
         }
 
-        for (let i = 1; i <= CHALLENGES_LEVEL_COUNT[CHALLENGES.BOUNCE]; i++) {
+        for (let i = 1; i <= CHALLENGES_CONFIG[CHALLENGES.BOUNCE].levels; i++) {
             this.load.tilemapTiledJSON(`bounce-${i}`, `assets/challenges/bounce/${i}.json`)
         }
 
-        for (let i = 1; i <= CHALLENGES_LEVEL_COUNT[CHALLENGES.NO_AIM]; i++) {
+        for (let i = 1; i <= CHALLENGES_CONFIG[CHALLENGES.NO_AIM].levels; i++) {
             this.load.tilemapTiledJSON(`no-aim-${i}`, `assets/challenges/no-aim/${i}.json`)
         }
     }

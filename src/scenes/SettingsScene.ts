@@ -58,7 +58,7 @@ export default class SettingsScene extends Phaser.Scene {
     private createClearDataButton(): void {
         new Button({
             scene: this,
-            x: this.scale.height * 0.3,
+            x: CANVAS_WIDTH * 0.5,
             y: this.scale.height * 0.7,
             texture: 'cleardata-btn',
             scale: 0.5,
@@ -71,7 +71,7 @@ export default class SettingsScene extends Phaser.Scene {
     private createUnlimitedButton(): void {
         new Button({
             scene: this,
-            x: this.scale.height * 0.3,
+            x: CANVAS_WIDTH * 0.5,
             y: this.scale.height * 0.8,
             texture: 'unlimited-btn',
             scale: 0.5,
