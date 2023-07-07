@@ -1,36 +1,42 @@
 export default class SoundManager {
-    public static playReleaseSound(scene: Phaser.Scene) {
-        scene.sound.play('release')
+    private static scene: Phaser.Scene
+
+    public static init(scene: Phaser.Scene): void {
+        this.scene = scene
     }
 
-    public static playGameOverSound(scene: Phaser.Scene) {
-        scene.sound.play('game-over', {
+    public static playReleaseSound() {
+        this.scene.sound.play('release')
+    }
+
+    public static playGameOverSound() {
+        this.scene.sound.play('game-over', {
             name: 'a',
             start: 0.4,
         })
     }
 
-    public static playWallHitSound(scene: Phaser.Scene) {
-        scene.sound.play('wall-hit')
+    public static playWallHitSound() {
+        this.scene.sound.play('wall-hit')
     }
 
-    public static playStarSound(scene: Phaser.Scene) {
-        scene.sound.play('star')
+    public static playStarSound() {
+        this.scene.sound.play('star')
     }
 
-    public static playComboHitSound(scene: Phaser.Scene) {
-        scene.sound.play('combo-hit')
+    public static playComboHitSound() {
+        this.scene.sound.play('combo-hit')
     }
 
-    public static playComboShootSound(scene: Phaser.Scene) {
-        scene.sound.play('combo-shoot')
+    public static playComboShootSound() {
+        this.scene.sound.play('combo-shoot')
     }
 
-    public static playComboStartSound(scene: Phaser.Scene) {
-        scene.sound.play('combo-start')
+    public static playComboStartSound() {
+        this.scene.sound.play('combo-start')
     }
 
-    public static playNoteSound(scene: Phaser.Scene, note: number) {
-        scene.sound.play(`${note}`)
+    public static playNoteSound(note: number) {
+        this.scene.sound.play(`${note}`)
     }
 }

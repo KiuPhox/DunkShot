@@ -73,6 +73,7 @@ export default class HUDScene extends Phaser.Scene {
             this.result.setVisible(false)
         } else if (gameState === GameState.CHALLENGES_SELECTION) {
             this.challengeSelection.setVisible(true)
+            this.challengePopup.setVisible(false)
             this.score.setVisible(false)
             this.mainMenu.setVisible(false)
         } else if (gameState === GameState.CHALLENGE_READY) {

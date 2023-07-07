@@ -18,6 +18,16 @@ export default class SettingsScreen extends Phaser.GameObjects.Container {
         super(s.scene, s.x, s.y)
         s.scene.add.existing(this)
 
+        this.add(
+            this.scene.add.rectangle(
+                CANVAS_WIDTH / 2,
+                s.scene.scale.height / 2,
+                CANVAS_WIDTH,
+                s.scene.scale.height,
+                0xe5e5e5
+            )
+        )
+
         this.createBackButton()
         this.createTexts()
         this.createSwitchButtons()

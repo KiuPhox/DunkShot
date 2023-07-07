@@ -26,6 +26,16 @@ export default class CustomizeScreen extends Phaser.GameObjects.Container {
         super(s.scene, s.x, s.y)
         s.scene.add.existing(this)
 
+        this.add(
+            this.scene.add.rectangle(
+                CANVAS_WIDTH / 2,
+                s.scene.scale.height / 2,
+                CANVAS_WIDTH,
+                s.scene.scale.height,
+                0xe5e5e5
+            )
+        )
+
         this.rexUI = new RexUIPlugin(this.scene, this.scene.plugins, 'rexUI')
 
         this.selectedCirc = this.scene.add.ellipse(200, 200, 140, 140, 0xffd93d, 1)

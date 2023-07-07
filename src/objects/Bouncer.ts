@@ -1,4 +1,4 @@
-import GameplayScene from '../scenes/GameScene'
+import ProgressManager from '../manager/ProgressManager'
 import { IObstacle } from '../types/obstacle'
 import Ball from './Ball'
 
@@ -22,7 +22,7 @@ export default class Bouncer extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.scene.physics.add.collider(this.ball, this, () => {
-            (this.scene as GameplayScene).bounceCount++
+            ProgressManager.setBounce(ProgressManager.getBounce() + 1)
 
             if (this.ball.body) {
                 this.ball.setVelocity(

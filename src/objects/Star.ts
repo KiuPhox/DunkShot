@@ -18,7 +18,7 @@ export default class Star extends Phaser.Physics.Arcade.Sprite {
             this.scene.physics.add.overlap(this.ball, this, () => {
                 if (this.isActive) {
                     this.isActive = false
-                    SoundManager.playStarSound(this.scene)
+                    SoundManager.playStarSound()
 
                     StarManager.increaseStar()
 

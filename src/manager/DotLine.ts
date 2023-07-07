@@ -4,29 +4,18 @@ const INITIAL_DOT_COUNT = 10
 const FIRST_SIZE = 15
 const LAST_SIZE = 5
 
-export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
-    private trajectoryLineGraphics: Phaser.GameObjects.Graphics
-    private normalLineGraphics: Phaser.GameObjects.Graphics
+export default class DotLine {
+    private static trajectoryLineGraphics: Phaser.GameObjects.Graphics
+    private static normalLineGraphics: Phaser.GameObjects.Graphics
+    private static trajectoryDrawable: boolean
 
-    private trajectoryDrawable: boolean
-
-    constructor(
-        scene: Phaser.Scene,
-        pluginManger: Phaser.Plugins.PluginManager,
-        pluginKey: string
-    ) {
-        super(scene, pluginManger, pluginKey)
+    public static init(scene: Phaser.Scene): void {
+        this.trajectoryLineGraphics = scene.add.graphics()
+        this.normalLineGraphics = scene.add.graphics()
+        this.trajectoryDrawable = true
     }
 
-    public init(): void {
-        if (this.scene) {
-            this.trajectoryLineGraphics = this.scene.add.graphics()
-            this.normalLineGraphics = this.scene.add.graphics()
-            this.trajectoryDrawable = true
-        }
-    }
-
-    public drawLine(
+    public static drawLine(
         pointA: Phaser.Math.Vector2,
         pointB: Phaser.Math.Vector2,
         dotCount?: number
@@ -44,7 +33,7 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
         }
     }
 
-    public drawTrajectoryLine(
+    public static drawTrajectoryLine(
         position: Phaser.Math.Vector2,
         velocity: Phaser.Math.Vector2,
         gravity: number,
@@ -67,11 +56,11 @@ export default class DotLinePlugin extends Phaser.Plugins.ScenePlugin {
         }
     }
 
-    public clearTrajectoryLine(): void {
+    public static clearTrajectoryLine(): void {
         this.trajectoryLineGraphics.clear()
     }
 
-    public clearNormalLine(): void {
+    public static clearNormalLine(): void {
         this.normalLineGraphics.clear()
     }
 }

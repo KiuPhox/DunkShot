@@ -17,19 +17,29 @@ export default class ChallengeSelection extends Phaser.GameObjects.Container {
         super(s.scene, s.x, s.y)
         this.scene.add.existing(this)
 
+        this.add(
+            this.scene.add.rectangle(
+                CANVAS_WIDTH / 2,
+                s.scene.scale.height / 2,
+                CANVAS_WIDTH,
+                s.scene.scale.height,
+                0xe5e5e5
+            )
+        )
+
         this.rexUI = new RexUIPlugin(this.scene, this.scene.plugins, 'rexUI')
         this.createBackButton()
         this.createChallenges()
 
-        this.add(this.backBtn)
         this.add(this.sizer)
         this.add(this.scene.add.image(CANVAS_WIDTH / 2, 20, 'top-ornament').setDepth(-2))
+        this.add(this.backBtn)
     }
 
     private createChallenges(): void {
         this.sizer = this.rexUI.add.fixWidthSizer({
             x: CANVAS_WIDTH / 2,
-            y: this.scene.scale.height / 2 + 300,
+            y: this.scene.scale.height / 2 + 250,
             width: CANVAS_WIDTH / 5,
             height: this.scene.scale.height,
             space: {

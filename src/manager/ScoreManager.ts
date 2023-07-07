@@ -17,6 +17,10 @@ export default class ScoreManager {
         ScoreManager.highScore = PlayerDataManager.getHighScore()
     }
 
+    public static getScore(): number {
+        return this.curScore
+    }
+
     public static updateScore = (score: number) => {
         this.curScore = score
 

@@ -1,4 +1,4 @@
-import GameplayScene from '../scenes/GameScene'
+import ProgressManager from '../manager/ProgressManager'
 import { IObstacle } from '../types/obstacle'
 import Ball from './Ball'
 
@@ -20,7 +20,7 @@ export default class MiniWall extends Phaser.GameObjects.NineSlice {
         }
 
         this.scene.physics.add.collider(this.ball, this, () => {
-            (this.scene as GameplayScene).bounceCount++
+            ProgressManager.setBounce(ProgressManager.getBounce() + 1)
         })
     }
 

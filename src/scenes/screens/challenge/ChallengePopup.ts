@@ -30,7 +30,7 @@ export default class ChallengePopup extends Phaser.GameObjects.Container {
         this.add(this.title)
         this.add(this.description)
 
-        this.scale = 0.01
+        this.scale = 0
 
         if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) {
             this.scene.tweens.add({

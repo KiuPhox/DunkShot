@@ -7,6 +7,9 @@ import { GameState } from '../GameState'
 export default class BootScene extends Phaser.Scene {
     constructor() {
         super('preload')
+    }
+
+    init() {
         GameManager.init()
     }
 

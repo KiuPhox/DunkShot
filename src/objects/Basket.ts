@@ -1,6 +1,7 @@
 import { GameState } from '../GameState'
+import DotLine from '../manager/DotLine'
 import GameManager from '../manager/GameManager'
-import GameplayScene from '../scenes/GameScene'
+import ProgressManager from '../manager/ProgressManager'
 import Ball from './Ball'
 import Star from './Star'
 
@@ -30,7 +31,7 @@ export default class Basket extends Phaser.GameObjects.Container {
     private isAvaliable: boolean
 
     // Texture
-    private basketTopSprite: Phaser.GameObjects.Sprite
+    public basketTopSprite: Phaser.GameObjects.Sprite
     private basketBottomSprite: Phaser.GameObjects.Sprite
     private netSprite: Phaser.GameObjects.Sprite
 
@@ -44,7 +45,7 @@ export default class Basket extends Phaser.GameObjects.Container {
 
     public star: Star
 
-    constructor(scene: GameplayScene, player: Ball, x?: number, y?: number) {
+    constructor(scene: Phaser.Scene, player: Ball, x?: number, y?: number) {
         super(scene, x, y)
 
         scene.add.existing(this)
@@ -57,7 +58,7 @@ export default class Basket extends Phaser.GameObjects.Container {
         this.isAvaliable = true
     }
 
-    private createBasketObjects(scene: GameplayScene): void {
+    private createBasketObjects(scene: Phaser.Scene): void {
         this.basketTopSprite = scene.add
             .sprite(this.x, this.y, 'basket', 0)
             .setScale(0.4)
@@ -88,7 +89,7 @@ export default class Basket extends Phaser.GameObjects.Container {
             if (i === 1 || i === 2) {
                 scene.physics.add.collider(this.otherCirc[i], this.ball, () => {
                     if (!this.hasBall) {
-                        this.ball.resetCombo()
+                        ProgressManager.setCombo(0)
                     }
                 })
             } else {
@@ -104,7 +105,7 @@ export default class Basket extends Phaser.GameObjects.Container {
         scene.physics.add.existing(this.centerCirc)
     }
 
-    public createStar(scene: GameplayScene): void {
+    public createStar(scene: Phaser.Scene): void {
         if (!this.star) {
             this.star = new Star({ scene: scene, x: 0, y: -70, ball: this.ball }).setScale(0.3)
             this.add(this.star)
@@ -152,17 +153,13 @@ export default class Basket extends Phaser.GameObjects.Container {
             }
 
             this.moveTween = this.scene.add.tween(config)
-            ;(this.scene as GameplayScene).dotLine.drawLine(
-                new Phaser.Math.Vector2(this.x, this.y),
-                endPoint,
-                8
-            )
+            DotLine.drawLine(new Phaser.Math.Vector2(this.x, this.y), endPoint, 8)
 
             this.moveTween.play()
         }
     }
 
-    private registerOverlapEvent(scene: GameplayScene): void {
+    private registerOverlapEvent(scene: Phaser.Scene): void {
         scene.physics.add.overlap(this.centerCirc, this.ball, () => {
             if (!this.hasBall && this.isAvaliable) {
                 this.isAvaliable = false
@@ -181,7 +178,7 @@ export default class Basket extends Phaser.GameObjects.Container {
         })
     }
 
-    private registerDragEvents(scene: GameplayScene): void {
+    private registerDragEvents(scene: Phaser.Scene): void {
         scene.input.on('dragstart', (pointer: PointerEvent) => {
             if (
                 GameManager.getCurrentState() === GameState.CHALLENGE_READY ||
@@ -200,7 +197,7 @@ export default class Basket extends Phaser.GameObjects.Container {
         scene.input.on('drag', (pointer: PointerEvent) => {
             if (GameManager.getCurrentState() === GameState.GAME_OVER) return
             if (this.hasBall && this.dragStartPos) {
-                this.handleDragMovement(pointer, scene)
+                this.handleDragMovement(pointer)
             }
         })
 
@@ -219,7 +216,7 @@ export default class Basket extends Phaser.GameObjects.Container {
                 })
 
                 this.ball.shoot(this.shootVelocity)
-                scene.dotLine.clearTrajectoryLine()
+                DotLine.clearTrajectoryLine()
                 this.scene.time.delayedCall(300, () => {
                     this.isAvaliable = true
                 })
@@ -237,7 +234,7 @@ export default class Basket extends Phaser.GameObjects.Container {
         })
     }
 
-    private handleDragMovement(pointer: PointerEvent, scene: GameplayScene): void {
+    private handleDragMovement(pointer: PointerEvent): void {
         this.ball.setGravityY(0)
         this.ball.setVelocity(0)
         this.dragPos = new Phaser.Math.Vector2(pointer.x, pointer.y)
@@ -271,7 +268,7 @@ export default class Basket extends Phaser.GameObjects.Container {
                     this.scene.registry.get('challenge').name === 'no-aim'
                 )
                     return
-                scene.dotLine.drawTrajectoryLine(
+                DotLine.drawTrajectoryLine(
                     new Phaser.Math.Vector2(this.ball.x, this.ball.y),
                     this.shootVelocity,
                     2000,

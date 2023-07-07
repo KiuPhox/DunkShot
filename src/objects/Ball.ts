@@ -1,5 +1,6 @@
 import { SPECIAL_EFFECTS } from '../constant/Skin'
 import PlayerDataManager from '../manager/PlayerDataManager'
+import ProgressManager from '../manager/ProgressManager'
 import SkinManager from '../manager/SkinManager'
 import SoundManager from '../manager/SoundManager'
 import { IBall } from '../types/ball'
@@ -12,8 +13,6 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     private specialParticle: Phaser.GameObjects.Particles.ParticleEmitter
     private fireDustParticle: Phaser.GameObjects.Particles.ParticleEmitter
 
-    private combo: number
-
     constructor(b: IBall) {
         super(b.scene, b.x, b.y, b.texture, b.frame)
 
@@ -22,39 +21,39 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         this.addSpecialParticle()
         this.addFireDustParticle()
 
-        this.resetCombo()
+        this.smokeParticle.stop()
+        this.fireDustParticle.stop()
+        this.specialParticle.stop()
+
+        ProgressManager.setCombo(0)
 
         b.scene.add.existing(this)
         b.scene.physics.add.existing(this)
 
         SkinManager.emitter.on('skin-changed', this.onSkinChanged)
+        ProgressManager.emitter.on('combo-changed', this.onComboChanged)
     }
 
     public shoot(velocity: Phaser.Math.Vector2): void {
         this.setVelocity(velocity.x, velocity.y)
         this.setBounce(0.7)
         this.setGravityY(2000)
-        SoundManager.playReleaseSound(this.scene)
+        SoundManager.playReleaseSound()
 
-        if (this.combo > 3) {
-            SoundManager.playComboShootSound(this.scene)
+        if (ProgressManager.getCombo() > 3) {
+            SoundManager.playComboShootSound()
         }
     }
 
-    public getCombo(): number {
-        return this.combo
-    }
-
-    public increaseCombo(): void {
-        this.combo++
-
-        if (this.combo === 3) {
+    private onComboChanged = (combo: number) => {
+        if (combo === 0) {
+            this.specialParticle.stop()
+            this.smokeParticle.stop()
+        } else if (combo === 3) {
             this.smokeParticle.destroy()
             this.addSmokeParticle()
-        }
-
-        if (this.combo >= 4) {
-            if (this.combo === 4) {
+        } else if (combo >= 4) {
+            if (combo === 4) {
                 this.smokeParticle.destroy()
                 this.addSmokeParticle()
                 this.fireDustParticle.start()
@@ -68,12 +67,6 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
             this.scene.cameras.main.flash(200, rgb.r, rgb.g, rgb.b)
             this.scene.cameras.main.shake(200, 0.003)
         }
-    }
-
-    public resetCombo(): void {
-        this.combo = 0
-        this.specialParticle.stop()
-        this.smokeParticle.stop()
     }
 
     private addSpecialParticle(): void {
@@ -120,7 +113,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         const hex = SkinManager.getCurrentSkinColors()[2]
         const rgb = Color.HexToRRB(hex)
         const colors =
-            this.combo === 3
+            ProgressManager.getCombo() === 3
                 ? [0xffffff, 0xf0f0f0, 0x888888]
                 : [
                       Color.RGBtoHex(Color.Shade(rgb, 0.4)),
@@ -150,11 +143,11 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         this.addSmokeParticle()
         this.addSpecialParticle()
 
-        if (this.combo < 3) {
+        if (ProgressManager.getCombo() < 3) {
             this.smokeParticle.stop()
         }
 
-        if (this.combo < 4) {
+        if (ProgressManager.getCombo() < 4) {
             this.specialParticle.stop()
         }
     }
