@@ -1,4 +1,4 @@
-import ChallengeTopbar from '../../scenes/global-scene/screens/challenge/ChallengeTopBar'
+import ChallengeTopbar from '../../scenes/screens/challenge/ChallengeTopBar'
 
 export default class Timer {
     private duration: number
@@ -37,5 +37,6 @@ export default class Timer {
 
     public reset(): void {
         this.current = this.duration
+        ChallengeTopbar.setGoal(this.current.toFixed(2))
     }
 }

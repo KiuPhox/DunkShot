@@ -1,29 +1,37 @@
-import { GameState } from '../GameState'
-import { CANVAS_WIDTH } from '../constant/CanvasSize'
-import { CHALLENGES, CHALLENGES_CONFIG } from '../constant/Challenges'
-import GameManager from '../manager/GameManager'
-import PlayerDataManager from '../manager/PlayerDataManager'
-import Button from '../objects/Button/Button'
+import FixWidthSizer from 'phaser3-rex-plugins/templates/ui/fixwidthsizer/FixWidthSizer'
 import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
+import Button from '../../../objects/Button/Button'
+import { GameState } from '../../../GameState'
+import { CANVAS_WIDTH } from '../../../constant/CanvasSize'
+import { CHALLENGES, CHALLENGES_CONFIG } from '../../../constant/Challenges'
+import GameManager from '../../../manager/GameManager'
+import PlayerDataManager from '../../../manager/PlayerDataManager'
+import { IScreen } from '../../../types/screen'
 
-export default class ChallengesSelectionScene extends Phaser.Scene {
+export default class ChallengeSelection extends Phaser.GameObjects.Container {
     private rexUI: RexUIPlugin
+    private backBtn: Button
+    private sizer: FixWidthSizer
 
-    constructor() {
-        super('challenges-selection')
-    }
+    constructor(s: IScreen) {
+        super(s.scene, s.x, s.y)
+        this.scene.add.existing(this)
 
-    create() {
+        this.rexUI = new RexUIPlugin(this.scene, this.scene.plugins, 'rexUI')
         this.createBackButton()
         this.createChallenges()
-        this.add.image(CANVAS_WIDTH / 2, 20, 'top-ornament').setDepth(-2)
+
+        this.add(this.backBtn)
+        this.add(this.sizer)
+        this.add(this.scene.add.image(CANVAS_WIDTH / 2, 20, 'top-ornament').setDepth(-2))
     }
+
     private createChallenges(): void {
-        const sizer = this.rexUI.add.fixWidthSizer({
+        this.sizer = this.rexUI.add.fixWidthSizer({
             x: CANVAS_WIDTH / 2,
-            y: this.scale.height / 2 + 100,
+            y: this.scene.scale.height / 2 + 300,
             width: CANVAS_WIDTH / 5,
-            height: this.scale.height,
+            height: this.scene.scale.height,
             space: {
                 left: 10,
                 right: 10,
@@ -45,18 +53,18 @@ export default class ChallengesSelectionScene extends Phaser.Scene {
         ]
 
         for (const challenge of challenges) {
-            sizer.add(
+            this.sizer.add(
                 new Button({
                     x: 0,
                     y: 0,
-                    scene: this,
+                    scene: this.scene,
                     texture: challenge,
                     scale: 0.8,
                     pointerUpCallback: () => {
                         const level = PlayerDataManager.getChallengeLevel(challenge) + 1
                         if (level <= CHALLENGES_CONFIG[challenge].levels) {
-                            this.registry.set('challenge', { name: challenge, level: level })
-                            GameManager.updateGameState(GameState.CHALLENGE_READY, this)
+                            this.scene.registry.set('challenge', { name: challenge, level: level })
+                            GameManager.updateGameState(GameState.CHALLENGE_READY, this.scene)
                         }
                     },
                 }),
@@ -64,7 +72,7 @@ export default class ChallengesSelectionScene extends Phaser.Scene {
             )
         }
 
-        sizer
+        this.sizer
             .layout()
             .setChildrenInteractive({})
             .on('child.click', (child: Button) => {
@@ -75,14 +83,14 @@ export default class ChallengesSelectionScene extends Phaser.Scene {
     }
 
     private createBackButton() {
-        const backBtn = new Button({
-            scene: this,
+        this.backBtn = new Button({
+            scene: this.scene,
             x: CANVAS_WIDTH * 0.06,
-            y: this.scale.height * 0.035,
+            y: this.scene.scale.height * 0.035,
             texture: 'back-btn',
             scale: 0.3,
             pointerUpCallback: () => {
-                GameManager.updateGameState(GameState.READY, this)
+                GameManager.updateGameState(GameState.READY, this.scene)
             },
         })
     }

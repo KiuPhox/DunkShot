@@ -1,10 +1,13 @@
 import Phaser from 'phaser'
 import { CANVAS_WIDTH } from '../constant/CanvasSize'
 import { CHALLENGES, CHALLENGES_CONFIG } from '../constant/Challenges'
+import GameManager from '../manager/GameManager'
+import { GameState } from '../GameState'
 
-export default class PreloadScene extends Phaser.Scene {
+export default class BootScene extends Phaser.Scene {
     constructor() {
         super('preload')
+        GameManager.init()
     }
 
     preload() {
@@ -27,7 +30,7 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.load.on('complete', () => {
             progress.destroy()
-            this.scene.start('game').launch('result').launch('hud')
+            GameManager.updateGameState(GameState.READY, this)
             console.log('Loading complete')
         })
 

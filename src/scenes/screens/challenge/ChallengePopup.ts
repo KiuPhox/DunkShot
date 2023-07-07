@@ -1,8 +1,8 @@
-import { GameState } from '../../../../GameState'
-import { CHALLENGES, CHALLENGES_CONFIG } from '../../../../constant/Challenges'
-import GameManager from '../../../../manager/GameManager'
-import Button from '../../../../objects/Button/Button'
-import { IScreen } from '../../../../types/screen'
+import { GameState } from '../../../GameState'
+import { CHALLENGES_CONFIG, CHALLENGES } from '../../../constant/Challenges'
+import GameManager from '../../../manager/GameManager'
+import Button from '../../../objects/Button/Button'
+import { IScreen } from '../../../types/screen'
 
 export default class ChallengePopup extends Phaser.GameObjects.Container {
     private challengePopUp: Phaser.GameObjects.Image
@@ -106,6 +106,23 @@ export default class ChallengePopup extends Phaser.GameObjects.Container {
                 ease: 'Quad.out',
                 duration: 300,
             })
+        } else if (gameState === GameState.CHALLENGE_READY) {
+            this.scene.tweens.add({
+                targets: this,
+                scale: 1,
+                ease: 'Back.out',
+                duration: 300,
+            })
+
+            const { name, level } = this.scene.registry.get('challenge')
+
+            this.description.setText(CHALLENGES_CONFIG[name as CHALLENGES].description)
+            this.title.setText(`CHALLENGE ${level}`)
+
+            const color = CHALLENGES_CONFIG[name as CHALLENGES].color
+
+            this.bg.setTint(color)
+            this.button.setTint(color)
         }
     }
 

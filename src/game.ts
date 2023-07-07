@@ -1,15 +1,10 @@
 import Phaser from 'phaser'
-import PreloadScene from './scenes/PreloadScene'
+import BootScene from './scenes/BootScene'
 import DotLinePlugin from './plugins/DotLinePlugin'
-import ResultScene from './scenes/ResultScene'
-import PauseScene from './scenes/PauseScene'
-import CustomizeScene from './scenes/CustomizeScene'
-import SettingsScene from './scenes/SettingsScene'
-import ChallengesSelectionScene from './scenes/ChallengesSelectionScene'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from './constant/CanvasSize'
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
 import GameScene from './scenes/GameScene'
-import HUDScene from './scenes/global-scene/HUDScene'
+import HUDScene from './scenes/HUDScene'
 
 const config = {
     type: Phaser.WEBGL,
@@ -48,16 +43,7 @@ const config = {
     },
     roundPixels: true,
     backgroundColor: '0xe5e5e5',
-    scene: [
-        PreloadScene,
-        GameScene,
-        ResultScene,
-        HUDScene,
-        CustomizeScene,
-        ChallengesSelectionScene,
-        SettingsScene,
-        PauseScene,
-    ],
+    scene: [BootScene, GameScene, HUDScene],
 }
 
 export default new Phaser.Game(config)

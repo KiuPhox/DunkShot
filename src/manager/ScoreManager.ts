@@ -1,6 +1,3 @@
-import { GameState } from '../GameState'
-import { CANVAS_WIDTH } from '../constant/CanvasSize'
-import GameManager from './GameManager'
 import PlayerDataManager from './PlayerDataManager'
 
 export default class ScoreManager {
@@ -11,55 +8,13 @@ export default class ScoreManager {
     private static curScore: number
     private static highScore: number
 
-    constructor(scene: Phaser.Scene) {
+    constructor() {
         this.init()
-
-        this.createCurrentScoreText(scene)
-        this.createBestScoreText(scene)
-        this.createHighScoreText(scene)
-
-        if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) {
-            ScoreManager.curScoreText.alpha = 0
-            ScoreManager.highScoreText.alpha = 0
-            ScoreManager.bestScoreText.alpha = 0
-        }
     }
 
     private init(): void {
         ScoreManager.curScore = 0
         ScoreManager.highScore = PlayerDataManager.getHighScore()
-    }
-
-    private createCurrentScoreText(scene: Phaser.Scene): void {
-        ScoreManager.curScoreText = scene.add
-            .bitmapText(CANVAS_WIDTH * 0.5, scene.scale.height * 0.17, 'triomphe', '0', 180)
-            .setTint(0xc1c1c1)
-            .setDepth(-3)
-            .setOrigin(0.5)
-    }
-
-    private createBestScoreText(scene: Phaser.Scene): void {
-        ScoreManager.bestScoreText = scene.add
-            .bitmapText(CANVAS_WIDTH * 0.5, scene.scale.height * 0.02, 'triomphe', 'Best Score', 40)
-            .setTint(0xfb8b25)
-            .setDepth(-3)
-            .setOrigin(0.5)
-            .setAlpha(0)
-    }
-
-    private createHighScoreText(scene: Phaser.Scene): void {
-        ScoreManager.highScoreText = scene.add
-            .bitmapText(
-                CANVAS_WIDTH * 0.5,
-                scene.scale.height * 0.07,
-                'triomphe',
-                PlayerDataManager.getHighScore().toString(),
-                90
-            )
-            .setTint(0xfb8b25)
-            .setDepth(-3)
-            .setOrigin(0.5)
-            .setAlpha(0)
     }
 
     public static updateScore = (score: number) => {

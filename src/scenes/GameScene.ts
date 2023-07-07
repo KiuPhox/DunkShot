@@ -28,7 +28,6 @@ export default class GameplayScene extends Phaser.Scene {
     private fakeBall: Phaser.GameObjects.Arc
     private ballSpawnPos: Phaser.Math.Vector2
     private lives: number
-    private math: Phaser.Math.RandomDataGenerator = new Phaser.Math.RandomDataGenerator()
 
     private camera: Phaser.Cameras.Scene2D.Camera
 
@@ -101,7 +100,6 @@ export default class GameplayScene extends Phaser.Scene {
         this.bounceCount = 0
         this.previousCombo = 0
         this.camera = this.cameras.main
-        this.dotLine.init()
 
         this.sound.setMute(!PlayerDataManager.getPlayerData().settings.sound)
 
@@ -362,7 +360,7 @@ export default class GameplayScene extends Phaser.Scene {
 
         const score = Math.min(combo, 10) * (this.bounceCount > 0 ? 2 : 1)
         this.curScore += score
-        SoundManager.playNoteSound(this, Math.min(combo, 10) - 1)
+        SoundManager.playNoteSound(this, Math.min(combo, 10))
         ScoreManager.updateScore(this.curScore)
 
         // Bounce
@@ -409,16 +407,16 @@ export default class GameplayScene extends Phaser.Scene {
         this.targetBasket.changeBasketTexture(0)
         this.targetBasket.hadBall = false
 
-        this.targetBasket.y = this.math.integerInRange(basket.y - 450, basket.y - 150)
+        this.targetBasket.y = Random.Int(basket.y - 450, basket.y - 150)
 
         if (targetBasketIndex === 0) {
             // Right basket
-            this.targetBasket.x = this.math.integerInRange(CANVAS_WIDTH * 0.6, CANVAS_WIDTH * 0.8)
-            this.targetBasket.rotation = this.math.realInRange(-0.5, 0)
+            this.targetBasket.x = Random.Int(CANVAS_WIDTH * 0.6, CANVAS_WIDTH * 0.8)
+            this.targetBasket.rotation = Random.Float(-0.5, 0)
         } else {
             // Left basket
-            this.targetBasket.x = this.math.integerInRange(CANVAS_WIDTH * 0.2, CANVAS_WIDTH * 0.4)
-            this.targetBasket.rotation = this.math.realInRange(0, 0.5)
+            this.targetBasket.x = Random.Int(CANVAS_WIDTH * 0.2, CANVAS_WIDTH * 0.4)
+            this.targetBasket.rotation = Random.Float(0, 0.5)
         }
 
         if (Random.Percent(STAR_CHANCES)) {

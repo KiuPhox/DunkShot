@@ -1,8 +1,8 @@
-import { GameState } from '../../../GameState'
-import { CANVAS_WIDTH } from '../../../constant/CanvasSize'
-import GameManager from '../../../manager/GameManager'
-import Button from '../../../objects/Button/Button'
-import { IScreen } from '../../../types/screen'
+import { GameState } from '../../GameState'
+import { CANVAS_WIDTH } from '../../constant/CanvasSize'
+import GameManager from '../../manager/GameManager'
+import Button from '../../objects/Button/Button'
+import { IScreen } from '../../types/screen'
 
 export default class MainMenuScreen extends Phaser.GameObjects.Container {
     private pauseBtn: Button
@@ -38,8 +38,13 @@ export default class MainMenuScreen extends Phaser.GameObjects.Container {
             this.help.alpha = 0
             this.settingsBtn.alpha = 0
             this.pauseBtn.setTint(0xffffff).setAlpha(1)
+        } else if (GameManager.getCurrentState() === GameState.READY) {
+            this.scene.tweens.add({
+                targets: this.logo,
+                y: { value: this.scene.scale.height * 0.25, duration: 500 },
+                ease: 'Quad.out',
+            })
         }
-
         GameManager.emitter.on('game-state-changed', this.onGameStateChanged)
     }
 
@@ -47,12 +52,6 @@ export default class MainMenuScreen extends Phaser.GameObjects.Container {
         this.logo = this.scene.add
             .image(CANVAS_WIDTH * 0.5, -this.scene.scale.height * 0.25, 'logo')
             .setScale(0.85)
-
-        this.scene.tweens.add({
-            targets: this.logo,
-            y: { value: this.scene.scale.height * 0.25, duration: 500 },
-            ease: 'Quad.out',
-        })
     }
 
     private createHelpAnimation() {
@@ -142,7 +141,18 @@ export default class MainMenuScreen extends Phaser.GameObjects.Container {
     }
 
     private onGameStateChanged = (gameState: GameState) => {
-        if (gameState === GameState.GAME_OVER) {
+        if (gameState === GameState.READY) {
+            this.logo.alpha = 1
+            this.customizeBtn.alpha = 1
+            this.challengesBtn.alpha = 1
+            this.help.alpha = 1
+            this.settingsBtn.alpha = 1
+            this.scene.tweens.add({
+                targets: this.logo,
+                y: { value: this.scene.scale.height * 0.25, duration: 500 },
+                ease: 'Quad.out',
+            })
+        } else if (gameState === GameState.GAME_OVER) {
             this.scene.tweens.add({
                 targets: this.pauseBtn,
                 alpha: { value: 0, duration: 500 },
