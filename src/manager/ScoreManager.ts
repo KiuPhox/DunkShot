@@ -1,20 +1,15 @@
 import PlayerDataManager from './PlayerDataManager'
 
 export default class ScoreManager {
-    public static curScoreText: Phaser.GameObjects.BitmapText
-    public static highScoreText: Phaser.GameObjects.BitmapText
-    public static bestScoreText: Phaser.GameObjects.BitmapText
-
     private static curScore: number
     private static highScore: number
 
-    constructor() {
-        this.init()
-    }
+    public static emitter: Phaser.Events.EventEmitter
 
-    private init(): void {
-        ScoreManager.curScore = 0
-        ScoreManager.highScore = PlayerDataManager.getHighScore()
+    public static init(): void {
+        this.curScore = 0
+        this.highScore = PlayerDataManager.getHighScore()
+        this.emitter = new Phaser.Events.EventEmitter()
     }
 
     public static getScore(): number {
@@ -31,8 +26,8 @@ export default class ScoreManager {
             playerData.highScore = this.curScore
             PlayerDataManager.savePlayerData(playerData)
 
-            this.highScoreText.setText(this.highScore.toString())
+            this.emitter.emit('high-score-updated', this.highScore)
         }
-        this.curScoreText.setText(this.curScore.toString())
+        this.emitter.emit('score-updated', this.curScore)
     }
 }

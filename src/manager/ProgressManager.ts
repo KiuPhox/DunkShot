@@ -13,7 +13,8 @@ export default class ProgressManager {
     public static init() {
         this.bounce = 0
         this.perfect = 0
-        this.combo = 0
+        this.combo = 1
+        this.previousCombo = 1
 
         this.emitter = new Phaser.Events.EventEmitter()
     }
@@ -69,6 +70,5 @@ export default class ProgressManager {
         // Score
         // PopUpManager.create({ text: `+${score}`, color: 0xd0532a })
         // PopUpManager.playTweenQueue(basket.x, basket.y - 50)
-        ProgressManager.setBounce(0)
     }
 }

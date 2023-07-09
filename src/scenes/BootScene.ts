@@ -90,18 +90,36 @@ export default class BootScene extends Phaser.Scene {
             frameWidth: 224,
         })
 
-        this.load.image('time', 'assets/textures/challenges/time.png')
-        this.load.image('score', 'assets/textures/challenges/score.png')
-        this.load.image('bounce', 'assets/textures/challenges/bounce.png')
-        this.load.image('no-aim', 'assets/textures/challenges/no-aim.png')
+        this.load.image('time-btn', 'assets/textures/challenges/time-btn.png')
+        this.load.image('time-btn-2', 'assets/textures/challenges/time-btn-2.png')
+        this.load.image('score-btn', 'assets/textures/challenges/score-btn.png')
+        this.load.image('score-btn-2', 'assets/textures/challenges/score-btn-2.png')
+        this.load.image('bounce-btn', 'assets/textures/challenges/bounce-btn.png')
+        this.load.image('bounce-btn-2', 'assets/textures/challenges/bounce-btn-2.png')
+        this.load.image('no-aim-btn', 'assets/textures/challenges/no-aim-btn.png')
+        this.load.image('no-aim-btn-2', 'assets/textures/challenges/no-aim-btn-2.png')
+        this.load.image('time-icon', 'assets/textures/challenges/time-icon.png')
+        this.load.image('time-icon-2', 'assets/textures/challenges/time-icon-2.png')
+        this.load.image('score-icon', 'assets/textures/challenges/score-icon.png')
+        this.load.image('score-icon-2', 'assets/textures/challenges/score-icon-2.png')
+        this.load.image('bounce-icon', 'assets/textures/challenges/bounce-icon.png')
+        this.load.image('bounce-icon-2', 'assets/textures/challenges/bounce-icon-2.png')
+        this.load.image('no-aim-icon', 'assets/textures/challenges/no-aim-icon.png')
+        this.load.image('no-aim-icon-2', 'assets/textures/challenges/no-aim-icon-2.png')
         this.load.image('challenge-popup', 'assets/textures/challenges/popup.png')
         this.load.image('challenge-btn', 'assets/textures/challenges/btn.png')
         this.load.image('challenge-popup-bg', 'assets/textures/challenges/bg.png')
+        this.load.image('attempt-active', 'assets/textures/challenges/attempt-active.png')
+        this.load.image('attempt-inactive', 'assets/textures/challenges/attempt-inactive.png')
 
         // Effects
         this.load.image('e3', 'assets/textures/e3.png')
         this.load.image('e4', 'assets/textures/e4.png')
         this.load.image('circle', 'assets/textures/circle.png')
+        this.load.glsl({
+            key: 'shader',
+            url: 'assets/shaders/shader.frag',
+        })
 
         this.load.bitmapFont('triomphe', 'assets/fonts/triomphe.png', 'assets/fonts/triomphe.xml')
 
@@ -121,6 +139,7 @@ export default class BootScene extends Phaser.Scene {
         this.load.audio('combo-hit', `assets/audios/combo-hit.mp3`)
         this.load.audio('release', `assets/audios/release.mp3`)
         this.load.audio('game-over', `assets/audios/game-over.mp3`)
+        this.load.audio('timer-buzz', `assets/audios/timer-buzz.mp3`)
     }
 
     private loadChallengeLevels(): void {

@@ -1,47 +1,18 @@
-import { GameState } from '../GameState'
-import { CANVAS_WIDTH } from '../constant/CanvasSize'
-import GameManager from './GameManager'
 import PlayerDataManager from './PlayerDataManager'
 
 export default class StarManager {
-    public static curStarText: Phaser.GameObjects.BitmapText
+    private static currentStar: number
 
-    private static curStar: number
+    public static emitter: Phaser.Events.EventEmitter
 
-    constructor(scene: Phaser.Scene) {
-        StarManager.curStar = PlayerDataManager.getStars()
-
-        StarManager.curStarText = scene.add
-            .bitmapText(
-                CANVAS_WIDTH * 0.88,
-                scene.scale.height * 0.05,
-                'triomphe',
-                StarManager.curStar.toString(),
-                36
-            )
-            .setTint(0xfb8b25)
-            .setDepth(-3)
-            .setOrigin(0, 0.5)
-
-        const star = scene.physics.add
-            .sprite(CANVAS_WIDTH * 0.83, scene.scale.height * 0.05, 'star')
-            .setScale(0.3)
-
-        if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) {
-            StarManager.curStarText.alpha = 0
-            star.alpha = 0
-        }
+    public static init() {
+        this.currentStar = PlayerDataManager.getStars()
+        this.emitter = new Phaser.Events.EventEmitter()
     }
 
     public static updateStar(star: number) {
-        this.curStar = star
-
-        if (
-            GameManager.getPreviousState() === GameState.PAUSE ||
-            GameManager.getCurrentState() === GameState.PLAYING
-        ) {
-            this.curStarText.setText(star.toString())
-        }
+        this.currentStar = star
+        this.emitter.emit('star-updated', star)
 
         const playerData = PlayerDataManager.getPlayerData()
         playerData.stars = star
@@ -49,10 +20,10 @@ export default class StarManager {
     }
 
     public static increaseStar() {
-        this.updateStar(this.curStar + 1)
+        this.updateStar(this.currentStar + 1)
     }
 
     public static getCurrentStar(): number {
-        return this.curStar
+        return this.currentStar
     }
 }

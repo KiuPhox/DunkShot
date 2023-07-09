@@ -1,8 +1,9 @@
-import { GameState } from '../GameState'
+import { GameModeState, GameState } from '../GameState'
 
 export default class GameManager {
     private static currentState: GameState = GameState.PRELOAD
     private static previousState: GameState = GameState.PRELOAD
+    private static gameModeState: GameModeState = GameModeState.NORMAL
 
     public static emitter: Phaser.Events.EventEmitter
 
@@ -22,29 +23,17 @@ export default class GameManager {
             case GameState.PLAYING:
                 this.handlePlayingState(scene)
                 break
-            case GameState.GAME_OVER:
-                this.handleGameOverState(scene)
-                break
             case GameState.PAUSE:
                 this.handlePauseState(scene)
                 break
-            case GameState.CUSTOMIZE:
-                this.handleCustomizeState(scene)
-                break
             case GameState.SETTINGS:
                 this.handleSettingsState(scene)
-                break
-            case GameState.CHALLENGES_SELECTION:
-                this.handleChallengesSelectionState(scene)
                 break
             case GameState.CHALLENGE_READY:
                 this.handleChallengeReadyState(scene)
                 break
             case GameState.CHALLENGE_PLAYING:
                 this.handleChallengePlayingState(scene)
-                break
-            case GameState.CHALLENGE_COMPLETE:
-                this.handleChallengeComplete(scene)
                 break
         }
 
@@ -56,63 +45,36 @@ export default class GameManager {
     }
 
     private static handlePlayingState(scene: Phaser.Scene): void {
+        this.gameModeState = GameModeState.NORMAL
         if (this.previousState === GameState.PAUSE) {
             scene.scene.resume('game')
         }
     }
 
-    private static handleGameOverState(scene: Phaser.Scene): void {
-        //
-    }
-
     private static handlePauseState(scene: Phaser.Scene) {
         if (
-            this.previousState === GameState.CUSTOMIZE ||
-            this.previousState === GameState.SETTINGS
-        ) {
-            //scene.scene.wake('pause')
-        } else if (
             this.previousState === GameState.PLAYING ||
             this.previousState === GameState.CHALLENGE_PLAYING
         ) {
             scene.scene.pause('game')
         }
     }
-    private static handleCustomizeState(scene: Phaser.Scene) {
-        if (this.previousState === GameState.READY) {
-            //scene.scene.stop('game').stop('result').start('customize')
-        } else if (this.previousState === GameState.PAUSE) {
-            // scene.scene.sleep().launch('customize')
-        }
-    }
 
     private static handleSettingsState(scene: Phaser.Scene) {
-        if (this.previousState === GameState.GAME_OVER) {
-            //
-        } else if (this.previousState === GameState.READY) {
+        if (this.previousState === GameState.READY) {
             scene.scene.stop('game')
-        } else if (this.previousState === GameState.PAUSE) {
-            //scene.scene.sleep('pause')
         }
-    }
-
-    private static handleChallengesSelectionState(scene: Phaser.Scene) {
-        //scene.scene.stop('game').stop('result')
     }
 
     private static handleChallengeReadyState(scene: Phaser.Scene) {
-        //scene.scene.stop('game').start('game').launch('hud')
         scene.scene.start('game').start('hud')
     }
 
     private static handleChallengePlayingState(scene: Phaser.Scene) {
+        this.gameModeState = GameModeState.CHALLENGE
         if (this.previousState === GameState.PAUSE) {
             scene.scene.resume('game')
         }
-    }
-
-    private static handleChallengeComplete(scene: Phaser.Scene) {
-        //throw new Error('Method not implemented.')
     }
 
     public static getCurrentState(): GameState {
@@ -121,5 +83,9 @@ export default class GameManager {
 
     public static getPreviousState(): GameState {
         return this.previousState
+    }
+
+    public static getGameModeState(): GameModeState {
+        return this.gameModeState
     }
 }

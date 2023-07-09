@@ -8,6 +8,13 @@ import GameManager from '../../../manager/GameManager'
 import PlayerDataManager from '../../../manager/PlayerDataManager'
 import { IScreen } from '../../../types/screen'
 
+const challenges: CHALLENGES[] = [
+    CHALLENGES.TIME,
+    CHALLENGES.SCORE,
+    CHALLENGES.BOUNCE,
+    CHALLENGES.NO_AIM,
+]
+
 export default class ChallengeSelection extends Phaser.GameObjects.Container {
     private rexUI: RexUIPlugin
     private backBtn: Button
@@ -34,6 +41,23 @@ export default class ChallengeSelection extends Phaser.GameObjects.Container {
         this.add(this.sizer)
         this.add(this.scene.add.image(CANVAS_WIDTH / 2, 20, 'top-ornament').setDepth(-2))
         this.add(this.backBtn)
+
+        const children = this.sizer.getChildren() as Button[]
+
+        for (let i = 0; i < children.length; i++) {
+            const shader = this.scene.add.shader(
+                'shader',
+                children[i].x,
+                children[i].y,
+                children[i].displayWidth,
+                children[i].displayHeight
+            )
+
+            shader.setChannel0(`${challenges[i]}-btn-2`)
+            shader.setChannel1(`${challenges[i]}-icon-2`)
+
+            this.add(shader)
+        }
     }
 
     private createChallenges(): void {
@@ -55,20 +79,13 @@ export default class ChallengeSelection extends Phaser.GameObjects.Container {
             },
         }
 
-        const challenges: CHALLENGES[] = [
-            CHALLENGES.TIME,
-            CHALLENGES.SCORE,
-            CHALLENGES.BOUNCE,
-            CHALLENGES.NO_AIM,
-        ]
-
         for (const challenge of challenges) {
             this.sizer.add(
                 new Button({
                     x: 0,
                     y: 0,
                     scene: this.scene,
-                    texture: challenge,
+                    texture: `${challenge}-btn`,
                     scale: 0.8,
                     pointerUpCallback: () => {
                         const level = PlayerDataManager.getChallengeLevel(challenge) + 1

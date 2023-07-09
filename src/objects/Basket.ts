@@ -1,5 +1,5 @@
 import { GameState } from '../GameState'
-import DotLine from '../manager/DotLine'
+import DotLineManager from '../manager/DotLineManager'
 import GameManager from '../manager/GameManager'
 import ProgressManager from '../manager/ProgressManager'
 import Ball from './Ball'
@@ -153,7 +153,7 @@ export default class Basket extends Phaser.GameObjects.Container {
             }
 
             this.moveTween = this.scene.add.tween(config)
-            DotLine.drawLine(new Phaser.Math.Vector2(this.x, this.y), endPoint, 8)
+            DotLineManager.drawLine(new Phaser.Math.Vector2(this.x, this.y), endPoint, 8)
 
             this.moveTween.play()
         }
@@ -216,7 +216,7 @@ export default class Basket extends Phaser.GameObjects.Container {
                 })
 
                 this.ball.shoot(this.shootVelocity)
-                DotLine.clearTrajectoryLine()
+                DotLineManager.clearTrajectoryLine()
                 this.scene.time.delayedCall(300, () => {
                     this.isAvaliable = true
                 })
@@ -268,7 +268,7 @@ export default class Basket extends Phaser.GameObjects.Container {
                     this.scene.registry.get('challenge').name === 'no-aim'
                 )
                     return
-                DotLine.drawTrajectoryLine(
+                DotLineManager.drawTrajectoryLine(
                     new Phaser.Math.Vector2(this.ball.x, this.ball.y),
                     this.shootVelocity,
                     2000,

@@ -4,7 +4,7 @@ const INITIAL_DOT_COUNT = 10
 const FIRST_SIZE = 15
 const LAST_SIZE = 5
 
-export default class DotLine {
+export default class DotLineManager {
     private static trajectoryLineGraphics: Phaser.GameObjects.Graphics
     private static normalLineGraphics: Phaser.GameObjects.Graphics
     private static trajectoryDrawable: boolean

@@ -15,13 +15,13 @@ import Basket from '../../objects/Basket'
 import Bouncer from '../../objects/Bouncer'
 import MiniWall from '../../objects/MiniWall'
 import Shield from '../../objects/Shield'
-import DotLine from '../../manager/DotLine'
+import DotLineManager from '../../manager/DotLineManager'
 import { IScreen } from '../../types/screen'
 import { Random } from '../../utils/Random'
 import ProgressManager from '../../manager/ProgressManager'
 import PopUpManager from '../../manager/PopupManager'
 
-export default class GameScreen extends Phaser.GameObjects.Container {
+export default class NormalGame extends Phaser.GameObjects.Container {
     private ball: Ball
     private ballSpawnPos: Phaser.Math.Vector2
 
@@ -48,10 +48,6 @@ export default class GameScreen extends Phaser.GameObjects.Container {
         this.createDeadZone()
         this.createBaskets()
 
-        this.baskets.forEach((basket) => {
-            basket.emitter.on('onHasBall', this.handleBallTouch)
-        })
-
         this.add(this.baskets)
         this.add([this.baskets[0].basketTopSprite, this.baskets[1].basketTopSprite])
         this.add([this.bouncer, this.miniWall, this.shield])
@@ -69,8 +65,8 @@ export default class GameScreen extends Phaser.GameObjects.Container {
         )
         this.scene.physics.add.existing(this.deadZone)
         this.scene.physics.add.overlap(this.deadZone, this.ball, () => {
-            SoundManager.playGameOverSound()
             if (GameManager.getCurrentState() === GameState.PLAYING) {
+                SoundManager.playGameOverSound()
                 if (ScoreManager.getScore() === 0) {
                     this.ball
                         .setPosition(this.ballSpawnPos.x, this.ballSpawnPos.y - 200)
@@ -108,6 +104,10 @@ export default class GameScreen extends Phaser.GameObjects.Container {
         this.baskets[0].hadBall = true
         this.baskets[0].changeBasketTexture(1)
         this.targetBasket = this.baskets[1]
+
+        this.baskets.forEach((basket) => {
+            basket.emitter.on('onHasBall', this.handleBallTouch)
+        })
     }
 
     private createObstacles(): void {
@@ -133,7 +133,7 @@ export default class GameScreen extends Phaser.GameObjects.Container {
             return
         }
 
-        DotLine.clearNormalLine()
+        DotLineManager.clearNormalLine()
 
         this.generateNextBasket(basket)
 
@@ -149,6 +149,8 @@ export default class GameScreen extends Phaser.GameObjects.Container {
 
         PopUpManager.create({ text: `+${score}`, color: 0xd0532a })
         PopUpManager.playTweenQueue(basket.x, basket.y - 50)
+
+        ProgressManager.setBounce(0)
     }
 
     private generateNextBasket(basket: Basket): void {

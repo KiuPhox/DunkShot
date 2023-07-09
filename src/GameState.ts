@@ -11,3 +11,8 @@ export enum GameState {
     CHALLENGE_COMPLETE = 'challenge-complete',
     SETTINGS = 'settings',
 }
+
+export enum GameModeState {
+    NORMAL,
+    CHALLENGE,
+}

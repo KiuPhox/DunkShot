@@ -1,4 +1,4 @@
-import { GameState } from '../../GameState'
+import { GameModeState, GameState } from '../../GameState'
 import { CANVAS_WIDTH } from '../../constant/CanvasSize'
 import GameManager from '../../manager/GameManager'
 import Button from '../../objects/Button/Button'
@@ -59,7 +59,11 @@ export default class PauseScreen extends Phaser.GameObjects.Container {
             texture: 'resume-btn',
             scale: 0.4,
             pointerUpCallback: () => {
-                GameManager.updateGameState(GameState.PLAYING, this.scene)
+                if (GameManager.getGameModeState() === GameModeState.NORMAL) {
+                    GameManager.updateGameState(GameState.PLAYING, this.scene)
+                } else if (GameManager.getGameModeState() === GameModeState.CHALLENGE) {
+                    GameManager.updateGameState(GameState.CHALLENGE_PLAYING, this.scene)
+                }
             },
         })
 
@@ -67,16 +71,5 @@ export default class PauseScreen extends Phaser.GameObjects.Container {
         this.add(resumeBtn)
         this.add(mainmenuBtn)
         this.add(customizeBtn)
-
-        GameManager.emitter.on('game-state-changed', this.onGameStateChanged)
-    }
-
-    private onGameStateChanged = (gameState: GameState) => {
-        //
-    }
-
-    destroy(fromScene?: boolean | undefined): void {
-        super.destroy(fromScene)
-        GameManager.emitter.off('game-state-changed', this.onGameStateChanged)
     }
 }

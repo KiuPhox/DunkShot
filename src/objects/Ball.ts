@@ -25,7 +25,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
         this.fireDustParticle.stop()
         this.specialParticle.stop()
 
-        ProgressManager.setCombo(0)
+        ProgressManager.setCombo(1)
 
         b.scene.add.existing(this)
         b.scene.physics.add.existing(this)

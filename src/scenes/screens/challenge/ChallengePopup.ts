@@ -42,7 +42,12 @@ export default class ChallengePopup extends Phaser.GameObjects.Container {
 
             const { name, level } = this.scene.registry.get('challenge')
 
-            this.description.setText(CHALLENGES_CONFIG[name as CHALLENGES].description)
+            this.description.setText(
+                CHALLENGES_CONFIG[name as CHALLENGES].description.replace(
+                    '[x]',
+                    this.scene.registry.get('goal').slice(2)
+                )
+            )
             this.title.setText(`CHALLENGE ${level}`)
 
             const color = CHALLENGES_CONFIG[name as CHALLENGES].color

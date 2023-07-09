@@ -39,4 +39,8 @@ export default class SoundManager {
     public static playNoteSound(note: number) {
         this.scene.sound.play(`${note}`)
     }
+
+    public static playTimerBuzzSound() {
+        this.scene.sound.play('timer-buzz')
+    }
 }

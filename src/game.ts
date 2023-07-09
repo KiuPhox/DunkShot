@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
 import BootScene from './scenes/BootScene'
-import DotLine from './manager/DotLine'
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from './constant/CanvasSize'
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
 import GameScene from './scenes/GameScene'
@@ -28,12 +27,6 @@ const config = {
     },
     plugins: {
         scene: [
-            {
-                key: 'DotLinePlugin',
-                plugin: DotLine,
-                start: true,
-                mapping: 'dotLine',
-            },
             {
                 key: 'rexUI',
                 plugin: UIPlugin,

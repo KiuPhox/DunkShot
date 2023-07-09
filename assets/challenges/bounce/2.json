@@ -9,40 +9,7 @@
          "objects":[
                 {
                  "height":74.6667,
-                 "id":18,
-                 "name":"ball",
-                 "rotation":0,
-                 "type":"ball",
-                 "visible":true,
-                 "width":74.6667,
-                 "x":106.36361969697,
-                 "y":3411.51513484848
-                }, 
-                {
-                 "height":74.6667,
-                 "id":20,
-                 "name":"basket",
-                 "properties":[
-                        {
-                         "name":"direction",
-                         "type":"string",
-                         "value":"none"
-                        }, 
-                        {
-                         "name":"distance",
-                         "type":"int",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"basket",
-                 "visible":true,
-                 "width":74.6667,
-                 "x":420.030286363637,
-                 "y":2978.18180151515
-                }, 
-                {
-                 "height":74.6667,
-                 "id":29,
+                 "id":5,
                  "name":"initialbasket",
                  "properties":[
                         {
@@ -52,19 +19,30 @@
                         }, 
                         {
                          "name":"distance",
-                         "type":"int",
-                         "value":0
+                         "type":"string",
+                         "value":"0"
                         }],
                  "rotation":0,
                  "type":"basket",
                  "visible":true,
                  "width":74.6667,
-                 "x":106.696953030303,
-                 "y":3442.84846818182
+                 "x":476.727256060606,
+                 "y":1623.6363469697
                 }, 
                 {
                  "height":74.6667,
-                 "id":30,
+                 "id":18,
+                 "name":"ball",
+                 "rotation":0,
+                 "type":"ball",
+                 "visible":true,
+                 "width":74.6667,
+                 "x":475.999983333334,
+                 "y":1601.99998333333
+                }, 
+                {
+                 "height":74.6667,
+                 "id":21,
                  "name":"targetbasket",
                  "properties":[
                         {
@@ -74,19 +52,41 @@
                         }, 
                         {
                          "name":"distance",
-                         "type":"int",
-                         "value":0
+                         "type":"string",
+                         "value":"0"
                         }],
                  "rotation":0,
                  "type":"basket",
                  "visible":true,
                  "width":74.6667,
-                 "x":400.66665,
-                 "y":1275.66665
+                 "x":130.66665,
+                 "y":924.666650000003
                 }, 
                 {
                  "height":74.6667,
-                 "id":31,
+                 "id":27,
+                 "name":"miniwall",
+                 "rotation":0,
+                 "type":"miniwall",
+                 "visible":true,
+                 "width":74.6667,
+                 "x":35.9999833333334,
+                 "y":854.66665
+                }, 
+                {
+                 "height":74.6667,
+                 "id":29,
+                 "name":"miniwall",
+                 "rotation":0,
+                 "type":"miniwall",
+                 "visible":true,
+                 "width":74.6667,
+                 "x":179.999983333333,
+                 "y":1225.99998333334
+                }, 
+                {
+                 "height":74.6667,
+                 "id":30,
                  "name":"basket",
                  "properties":[
                         {
@@ -96,67 +96,34 @@
                         }, 
                         {
                          "name":"distance",
-                         "type":"int",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"basket",
-                 "visible":true,
-                 "width":74.6667,
-                 "x":107.696953030303,
-                 "y":2576.84846818182
-                }, 
-                {
-                 "height":74.6667,
-                 "id":32,
-                 "name":"basket",
-                 "properties":[
-                        {
-                         "name":"direction",
                          "type":"string",
-                         "value":"none"
-                        }, 
-                        {
-                         "name":"distance",
-                         "type":"int",
-                         "value":0
+                         "value":"0"
                         }],
                  "rotation":0,
                  "type":"basket",
                  "visible":true,
                  "width":74.6667,
-                 "x":412.83315,
-                 "y":2077.33165
+                 "x":269.333316666667,
+                 "y":1297.33331666667
                 },
             
                 {
                  "height":74.6667,
-                 "id":33,
-                 "name":"basket",
-                 "properties":[
-                        {
-                         "name":"direction",
-                         "type":"string",
-                         "value":"none"
-                        }, 
-                        {
-                         "name":"distance",
-                         "type":"int",
-                         "value":0
-                        }],
+                 "id":31,
+                 "name":"miniwall",
                  "rotation":0,
-                 "type":"basket",
+                 "type":"miniwall",
                  "visible":true,
                  "width":74.6667,
-                 "x":97.8334833333334,
-                 "y":1732.00165
+                 "x":423.999983333333,
+                 "y":925.333316666667
                 }],
          "opacity":1,
          "properties":[
                 {
                  "name":"goal",
                  "type":"int",
-                 "value":9
+                 "value":3
                 }],
          "type":"objectgroup",
          "visible":true,
@@ -164,11 +131,11 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":34,
+ "nextobjectid":32,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.1",
- "tileheight":200,
+ "tileheight":100,
  "tilesets":[],
  "tilewidth":100,
  "type":"map",

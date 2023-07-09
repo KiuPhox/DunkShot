@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import DotLine from '../manager/DotLine'
+import DotLineManager from '../manager/DotLineManager'
 import Ball from '../objects/Ball'
 import SkinManager from '../manager/SkinManager'
 import { CANVAS_WIDTH } from '../constant/CanvasSize'
@@ -9,9 +9,11 @@ import { GameState } from '../GameState'
 import GameManager from '../manager/GameManager'
 import PlayerDataManager from '../manager/PlayerDataManager'
 import SoundManager from '../manager/SoundManager'
-import GameScreen from './screens/GameScreen'
+import NormalGame from './screens/NormalGame'
 import ChallengeGame from './screens/challenge/ChallengeGame'
 import ProgressManager from '../manager/ProgressManager'
+import ScoreManager from '../manager/ScoreManager'
+import StarManager from '../manager/StarManager'
 
 export default class GameScene extends Phaser.Scene {
     private ball: Ball
@@ -20,7 +22,7 @@ export default class GameScene extends Phaser.Scene {
     private draggingZone: Phaser.GameObjects.Rectangle
     private walls: Phaser.GameObjects.Rectangle[] = []
 
-    private gameScreen: GameScreen
+    private gameScreen: NormalGame
     private challenge: ChallengeGame
 
     constructor() {
@@ -28,18 +30,20 @@ export default class GameScene extends Phaser.Scene {
     }
 
     init() {
-        DotLine.init(this)
+        DotLineManager.init(this)
         SkinManager.init()
         PopUpManager.init(this)
         SoundManager.init(this)
         ProgressManager.init()
+        ScoreManager.init()
+        StarManager.init()
     }
 
     create() {
         this.createBall()
 
         if (GameManager.getCurrentState() === GameState.READY) {
-            this.gameScreen = new GameScreen({ scene: this }, this.ball)
+            this.gameScreen = new NormalGame({ scene: this }, this.ball)
         } else if (GameManager.getCurrentState() === GameState.CHALLENGE_READY) {
             this.challenge = new ChallengeGame({ scene: this }, this.ball)
             this.challenge.loadChallengeLevel(this.registry.get('challenge'))
@@ -150,9 +154,5 @@ export default class GameScene extends Phaser.Scene {
         this.fakeBall.y = this.ball.y
         this.walls[0].y = this.ball.y
         this.walls[1].y = this.ball.y
-    }
-
-    private onGameStateChanged = (gameState: GameState, previousState: GameState) => {
-        //
     }
 }

@@ -13,14 +13,16 @@ import Bouncer from '../../../objects/Bouncer'
 import Timer from '../../../objects/Challenges/Timer'
 import MiniWall from '../../../objects/MiniWall'
 import { IScreen } from '../../../types/screen'
+import ChallengeTopbar from './ChallengeTopBar'
 
 export default class ChallengeGame extends Phaser.GameObjects.Container {
     private ball: Ball
     private ballSpawnPos: Phaser.Math.Vector2
-    private lives: number
+    private attempts: number
 
     private camera: Phaser.Cameras.Scene2D.Camera
 
+    private initialBasket: Basket
     private baskets: Basket[]
     private targetBasket: Basket
 
@@ -28,7 +30,12 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
 
     // Challenge
     private timer: Timer
-    private goals: number
+
+    private currentGoal: number
+    private goal: number
+
+    private mode: CHALLENGES
+    private currentHoops: number
 
     constructor(s: IScreen, ball: Ball) {
         super(s.scene, s.x, s.y)
@@ -44,19 +51,24 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
 
     private initializeVariables(): void {
         this.camera = this.scene.cameras.main
-        this.lives = 1
+        this.attempts = 1
         this.baskets = []
+        this.currentHoops = 0
+        this.currentGoal = 0
+
+        const { name } = this.scene.registry.get('challenge')
+        this.mode = name as CHALLENGES
 
         this.timer = new Timer(-1, false, () => {
             if (GameManager.getCurrentState() !== GameState.CHALLENGE_COMPLETE) {
+                SoundManager.playTimerBuzzSound()
                 GameManager.updateGameState(GameState.GAME_OVER, this.scene)
                 this.camera.stopFollow()
             }
         })
 
-        const { name } = this.scene.registry.get('challenge')
-        if (name === 'no-aim') {
-            this.lives = 3
+        if (this.mode === CHALLENGES.NO_AIM) {
+            this.attempts = 3
         }
     }
 
@@ -71,8 +83,8 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
         )
         this.scene.physics.add.existing(this.deadZone)
         this.scene.physics.add.overlap(this.deadZone, this.ball, () => {
-            SoundManager.playGameOverSound()
             if (GameManager.getCurrentState() === GameState.CHALLENGE_PLAYING) {
+                SoundManager.playGameOverSound()
                 if (ScoreManager.getScore() === 0) {
                     this.ball
                         .setPosition(this.ballSpawnPos.x, this.ballSpawnPos.y - 200)
@@ -80,13 +92,15 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
                         .setRotation(0)
                     this.timer.reset()
                     this.timer.setActive(false)
-                } else if (this.lives > 1) {
-                    this.lives = this.lives - 1
+                } else if (this.attempts > 1) {
+                    this.attempts = this.attempts - 1
+                    ChallengeTopbar.setAttempts(this.attempts)
                     this.ball
                         .setPosition(this.ballSpawnPos.x, this.ballSpawnPos.y - 200)
                         .setVelocity(0)
                         .setRotation(0)
                 } else {
+                    ChallengeTopbar.setAttempts(0)
                     GameManager.updateGameState(GameState.GAME_OVER, this.scene)
                     this.camera.stopFollow()
                 }
@@ -103,11 +117,13 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
         const objects = objectLayer.objects as any[]
         const height = this.scene.scale.height
         const offset = height - map.height * map.tileHeight
+        this.goal = (objectLayer.properties as any)[0].value
 
-        if (challenge.name === 'time') {
-            this.timer.setDuration((objectLayer.properties as any)[0].value)
-            this.scene.registry.set('goal', this.timer.current.toFixed(2))
+        if (this.mode === CHALLENGES.TIME) {
+            this.timer.setDuration(this.goal)
         }
+
+        this.scene.registry.set('goal', `0/${this.goal}`)
 
         objects.forEach((object) => {
             const x = object.x + object.width / 2
@@ -124,6 +140,7 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
                 } else if (object.name === 'initialbasket') {
                     basket.hadBall = true
                     basket.changeBasketTexture(1)
+                    this.initialBasket = basket
                 }
                 this.add(basket)
                 this.baskets.push(basket)
@@ -161,20 +178,23 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
 
     private handleBallTouch = (basket: Basket) => {
         if (basket.hadBall) {
+            if (
+                this.mode === CHALLENGES.TIME &&
+                this.currentHoops === 0 &&
+                basket === this.initialBasket
+            ) {
+                this.timer.reset()
+                this.timer.setActive(false)
+            }
             ProgressManager.setBounce(0)
             return
         }
 
+        this.currentHoops++
+
         this.ballSpawnPos = new Phaser.Math.Vector2(basket.x, basket.y)
 
-        if (basket === this.targetBasket) {
-            this.timer.setActive(false)
-            GameManager.updateGameState(GameState.CHALLENGE_COMPLETE, this.scene)
-            const { name, level } = this.scene.registry.get('challenge')
-            PlayerDataManager.setChallengeLevel(name as CHALLENGES, level)
-        }
-
-        this.deadZone.y = basket.y + 450
+        this.deadZone.y = basket.y + 500
 
         ProgressManager.setCombo(ProgressManager.getCombo() + 1)
         ProgressManager.handlePopup()
@@ -186,6 +206,36 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
 
         PopUpManager.create({ text: `+${score}`, color: 0xd0532a })
         PopUpManager.playTweenQueue(basket.x, basket.y - 50)
+
+        switch (this.mode) {
+            case CHALLENGES.SCORE:
+                this.currentGoal += score
+                break
+            case CHALLENGES.BOUNCE:
+                this.currentGoal += ProgressManager.getBounce()
+                break
+            case CHALLENGES.NO_AIM:
+                this.currentGoal += 1
+                break
+        }
+
+        if (this.mode !== CHALLENGES.TIME)
+            ChallengeTopbar.setGoal(`${this.currentGoal}/${this.goal}`)
+
+        ProgressManager.setBounce(0)
+
+        if (basket === this.targetBasket) {
+            this.timer.setActive(false)
+
+            if (this.mode === CHALLENGES.TIME || this.currentGoal >= this.goal) {
+                GameManager.updateGameState(GameState.CHALLENGE_COMPLETE, this.scene)
+                const { level } = this.scene.registry.get('challenge')
+                PlayerDataManager.setChallengeLevel(this.mode, level)
+            } else {
+                SoundManager.playGameOverSound()
+                GameManager.updateGameState(GameState.GAME_OVER, this.scene)
+            }
+        }
     }
 
     destroy(fromScene?: boolean | undefined): void {
@@ -197,6 +247,9 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
         this.baskets.forEach((basket) => {
             basket.update()
         })
-        this.timer.tick(delta)
+
+        if (this.mode === CHALLENGES.TIME) {
+            this.timer.tick(delta)
+        }
     }
 }

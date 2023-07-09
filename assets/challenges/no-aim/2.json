@@ -15,8 +15,8 @@
                  "type":"ball",
                  "visible":true,
                  "width":100,
-                 "x":130,
-                 "y":1531.03028636363
+                 "x":102,
+                 "y":1533.6969530303
                 }, 
                 {
                  "height":100,
@@ -31,14 +31,14 @@
                         {
                          "name":"distance",
                          "type":"int",
-                         "value":250
+                         "value":200
                         }],
                  "rotation":0,
                  "type":"basket",
                  "visible":true,
                  "width":100,
-                 "x":250,
-                 "y":1200
+                 "x":258,
+                 "y":1296
                 }, 
                 {
                  "height":100,
@@ -59,13 +59,35 @@
                  "type":"basket",
                  "visible":true,
                  "width":100,
-                 "x":130,
-                 "y":1600
+                 "x":102,
+                 "y":1602.66666666667
                 }, 
                 {
                  "height":100,
                  "id":30,
                  "name":"targetbasket",
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"right"
+                        }, 
+                        {
+                         "name":"distance",
+                         "type":"int",
+                         "value":200
+                        }],
+                 "rotation":0,
+                 "type":"basket",
+                 "visible":true,
+                 "width":100,
+                 "x":102,
+                 "y":402
+                }, 
+                {
+                 "height":100,
+                 "id":33,
+                 "name":"basket",
                  "properties":[
                         {
                          "name":"direction",
@@ -81,12 +103,12 @@
                  "type":"basket",
                  "visible":true,
                  "width":100,
-                 "x":100,
-                 "y":400
+                 "x":104,
+                 "y":1002
                 }, 
                 {
                  "height":100,
-                 "id":33,
+                 "id":34,
                  "name":"basket",
                  "properties":[
                         {
@@ -97,14 +119,14 @@
                         {
                          "name":"distance",
                          "type":"int",
-                         "value":250
+                         "value":200
                         }],
                  "rotation":0,
                  "type":"basket",
                  "visible":true,
                  "width":100,
-                 "x":100,
-                 "y":800
+                 "x":261.090909090909,
+                 "y":698.484848484848
                 }],
          "opacity":1,
          "properties":[
@@ -119,7 +141,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":34,
+ "nextobjectid":35,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.1",
