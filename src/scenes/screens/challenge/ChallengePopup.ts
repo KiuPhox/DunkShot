@@ -1,4 +1,5 @@
 import { GameModeState, GameState } from '../../../GameState'
+import { CANVAS_WIDTH } from '../../../constant/CanvasSize'
 import { CHALLENGES_CONFIG, CHALLENGES } from '../../../constant/Challenges'
 import GameManager from '../../../manager/GameManager'
 import Button from '../../../objects/Button/Button'
@@ -6,7 +7,8 @@ import { IScreen } from '../../../types/screen'
 
 export default class ChallengePopup extends Phaser.GameObjects.Container {
     private challengePopUp: Phaser.GameObjects.Image
-    private bg: Phaser.GameObjects.Image
+    private popUpBackground: Phaser.GameObjects.Image
+    private background: Phaser.GameObjects.Rectangle
     private title: Phaser.GameObjects.BitmapText
     private description: Phaser.GameObjects.BitmapText
 
@@ -21,12 +23,14 @@ export default class ChallengePopup extends Phaser.GameObjects.Container {
         this.createButton()
         this.createTitle()
         this.createDescription()
+        this.createPopUpBackground()
         this.createBackground()
 
+        this.add(this.background)
         this.add(this.challengePopUp)
         this.add(this.button)
         this.add(this.textButton)
-        this.add(this.bg)
+        this.add(this.popUpBackground)
         this.add(this.title)
         this.add(this.description)
 
@@ -52,14 +56,19 @@ export default class ChallengePopup extends Phaser.GameObjects.Container {
 
             const color = CHALLENGES_CONFIG[name as CHALLENGES].color
 
-            this.bg.setTint(color)
+            this.popUpBackground.setTint(color)
             this.button.setTint(color)
         }
 
         GameManager.emitter.on('game-state-changed', this.onGameStateChanged)
     }
-    private createBackground(): void {
-        this.bg = this.scene.add.image(0, -40, 'challenge-popup-bg').setScale(0.7)
+    private createBackground() {
+        this.background = this.scene.add
+            .rectangle(0, 0, CANVAS_WIDTH, this.scene.scale.height, 0xe5e5e5)
+            .setAlpha(0.7)
+    }
+    private createPopUpBackground(): void {
+        this.popUpBackground = this.scene.add.image(0, -40, 'challenge-popup-bg').setScale(0.7)
     }
 
     private createDescription(): void {
@@ -112,7 +121,7 @@ export default class ChallengePopup extends Phaser.GameObjects.Container {
 
             const color = CHALLENGES_CONFIG[name as CHALLENGES].color
 
-            this.bg.setTint(color)
+            this.popUpBackground.setTint(color)
             this.button.setTint(color)
         } else if (
             gameState === GameState.GAME_OVER &&

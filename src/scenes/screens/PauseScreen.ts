@@ -10,13 +10,15 @@ export default class PauseScreen extends Phaser.GameObjects.Container {
         s.scene.add.existing(this)
 
         this.add(
-            this.scene.add.rectangle(
-                CANVAS_WIDTH / 2,
-                s.scene.scale.height / 2,
-                CANVAS_WIDTH,
-                s.scene.scale.height,
-                0xe5e5e5
-            )
+            this.scene.add
+                .rectangle(
+                    CANVAS_WIDTH / 2,
+                    s.scene.scale.height / 2,
+                    CANVAS_WIDTH,
+                    s.scene.scale.height,
+                    0xe5e5e5
+                )
+                .setAlpha(0.8)
         )
 
         const mainmenuBtn = new Button({
