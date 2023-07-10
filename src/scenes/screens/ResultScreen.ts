@@ -1,4 +1,4 @@
-import { GameState } from '../../GameState'
+import { GameModeState, GameState } from '../../GameState'
 import { CANVAS_WIDTH } from '../../constant/CanvasSize'
 import GameManager from '../../manager/GameManager'
 import PlayerDataManager from '../../manager/PlayerDataManager'
@@ -145,7 +145,10 @@ export default class ResultScreen extends Phaser.GameObjects.Container {
     }
 
     private onGameStateChanged = (currentState: GameState) => {
-        if (currentState === GameState.GAME_OVER) {
+        if (
+            currentState === GameState.GAME_OVER &&
+            GameManager.getGameModeState() === GameModeState.NORMAL
+        ) {
             this.showResult()
         } else if (currentState === GameState.CHALLENGES_SELECTION) {
             this.curScoreText.setVisible(false)

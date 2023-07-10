@@ -1,4 +1,4 @@
-import { GameState } from '../../../GameState'
+import { GameModeState, GameState } from '../../../GameState'
 import { CHALLENGES_CONFIG, CHALLENGES } from '../../../constant/Challenges'
 import GameManager from '../../../manager/GameManager'
 import Button from '../../../objects/Button/Button'
@@ -94,30 +94,16 @@ export default class ChallengePopup extends Phaser.GameObjects.Container {
 
     private onGameStateChanged = (gameState: GameState) => {
         if (gameState === GameState.CHALLENGE_COMPLETE) {
-            this.scene.tweens.add({
-                targets: this,
-                scale: 1,
-                ease: 'Back.out',
-                duration: 300,
-            })
+            this.show()
+            this.title.setText(this.title.text + ' COMPLETED')
             this.textButton.setText('BACK')
             this.button.pointerUpCallback = () => {
                 GameManager.updateGameState(GameState.CHALLENGES_SELECTION, this.scene)
             }
         } else if (gameState === GameState.CHALLENGE_PLAYING) {
-            this.scene.tweens.add({
-                targets: this,
-                scale: 0,
-                ease: 'Quad.out',
-                duration: 300,
-            })
+            this.hide()
         } else if (gameState === GameState.CHALLENGE_READY) {
-            this.scene.tweens.add({
-                targets: this,
-                scale: 1,
-                ease: 'Back.out',
-                duration: 300,
-            })
+            this.show()
 
             const { name, level } = this.scene.registry.get('challenge')
 
@@ -128,7 +114,35 @@ export default class ChallengePopup extends Phaser.GameObjects.Container {
 
             this.bg.setTint(color)
             this.button.setTint(color)
+        } else if (
+            gameState === GameState.GAME_OVER &&
+            GameManager.getGameModeState() === GameModeState.CHALLENGE
+        ) {
+            this.show()
+            this.title.setText(this.title.text + ' FAILED')
+            this.textButton.setText('RESTART')
+            this.button.pointerUpCallback = () => {
+                GameManager.updateGameState(GameState.CHALLENGE_READY, this.scene)
+            }
         }
+    }
+
+    private show(): void {
+        this.scene.tweens.add({
+            targets: this,
+            scale: 1,
+            ease: 'Back.out',
+            duration: 300,
+        })
+    }
+
+    private hide(): void {
+        this.scene.tweens.add({
+            targets: this,
+            scale: 0,
+            ease: 'Quad.out',
+            duration: 300,
+        })
     }
 
     destroy(fromScene?: boolean | undefined): void {

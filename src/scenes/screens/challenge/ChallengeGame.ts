@@ -90,8 +90,11 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
                         .setPosition(this.ballSpawnPos.x, this.ballSpawnPos.y - 200)
                         .setVelocity(0)
                         .setRotation(0)
-                    this.timer.reset()
-                    this.timer.setActive(false)
+
+                    if (this.mode === CHALLENGES.TIME) {
+                        this.timer.setActive(false)
+                        this.timer.reset()
+                    }
                 } else if (this.attempts > 1) {
                     this.attempts = this.attempts - 1
                     ChallengeTopbar.setAttempts(this.attempts)
@@ -101,8 +104,9 @@ export default class ChallengeGame extends Phaser.GameObjects.Container {
                         .setRotation(0)
                 } else {
                     ChallengeTopbar.setAttempts(0)
-                    GameManager.updateGameState(GameState.GAME_OVER, this.scene)
+                    this.timer.setActive(false)
                     this.camera.stopFollow()
+                    GameManager.updateGameState(GameState.GAME_OVER, this.scene)
                 }
             }
         })
